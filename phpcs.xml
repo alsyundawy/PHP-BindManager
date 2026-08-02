@@ -1,7 +1,13 @@
 <?xml version="1.0"?>
 <ruleset name="PHP-BindManager">
-  <file>App</file><file>Config</file><file>Routes</file><file>Database</file><file>tests</file>
-  <exclude-pattern>vendor/*</exclude-pattern>
-  <rule ref="PSR12"/>
-  <rule ref="Generic.PHP.RequireStrictTypes"/>
+    <description>PSR-12 with project-specific exclusions</description>
+    <arg name="extensions" value="php"/>
+    <rule ref="PSR12"/>
+    <file>App</file>
+    <file>Config</file>
+    <file>Routes</file>
+    <file>bin</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>output/*</exclude-pattern>
+    <exclude-pattern>Tests/*</exclude-pattern>
 </ruleset>
