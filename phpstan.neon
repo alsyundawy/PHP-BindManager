@@ -1,16 +1,16 @@
+includes:
+  - vendor/phpstan/phpstan-strict-rules/rules.neon
 parameters:
-    level: max
-    paths:
-        - App
-        - Config
-        - Routes
-        - Database
-    excludePaths:
-        - vendor
-        - Storage
-    checkMissingIterableValueType: true
-    checkGenericClassInNonGenericObjectType: true
-    reportUnmatchedIgnoredErrors: true
-    treatPhpDocTypesAsCertain: false
-    strictRules: true
-    ignoreErrors: []
+  level: max
+  paths:
+    - App
+    - Config
+    - Routes
+    - Database
+  excludePaths:
+    - vendor
+    - Storage
+  checkMissingIterableValueType: true
+  checkGenericClassInNonGenericObjectType: true
+  reportUnmatchedIgnoredErrors: true
+  treatPhpDocTypesAsCertain: false

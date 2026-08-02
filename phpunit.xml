@@ -1,49 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="Tests/bootstrap.php"
-    cacheDirectory=".phpunit.cache"
-    executionOrder="depends,defects"
-    requireCoverageMetadata="false"
-    beStrictAboutCoverageMetadata="false"
-    beStrictAboutOutputDuringTests="true"
-    failOnRisky="true"
-    failOnWarning="true"
-    colors="true"
->
-    <testsuites>
-        <testsuite name="Unit">
-            <directory>Tests/Unit</directory>
-        </testsuite>
-        <testsuite name="Integration">
-            <directory>Tests/Integration</directory>
-        </testsuite>
-        <testsuite name="Functional">
-            <directory>Tests/Functional</directory>
-        </testsuite>
-    </testsuites>
-
-    <source>
-        <include>
-            <directory suffix=".php">App</directory>
-        </include>
-        <exclude>
-            <directory>App/Helpers</directory>
-        </exclude>
-    </source>
-
-    <coverage>
-        <report>
-            <html outputDirectory="coverage/html"/>
-            <clover outputFile="coverage/clover.xml"/>
-            <text outputFile="coverage/coverage.txt" showUncoveredFiles="false"/>
-        </report>
-    </coverage>
-
-    <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_DEBUG" value="true"/>
-        <env name="DB_PATH" value=":memory:"/>
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="Tests/bootstrap.php" cacheDirectory=".phpunit.cache" colors="true" beStrictAboutOutputDuringTests="true" failOnRisky="true" failOnWarning="true">
+  <testsuites>
+    <testsuite name="Unit"><directory>tests/Unit</directory></testsuite>
+    <testsuite name="Integration"><directory>tests/Integration</directory></testsuite>
+    <testsuite name="Functional"><directory>tests/Functional</directory></testsuite>
+  </testsuites>
+  <coverage>
+    <report>
+      <html outputDirectory="coverage/html"/>
+      <clover outputFile="coverage/clover.xml"/>
+      <text outputFile="coverage/coverage.txt" showUncoveredFiles="false"/>
+    </report>
+  </coverage>
+  <php><env name="APP_ENV" value="testing"/><env name="DB_PATH" value=":memory:"/></php>
 </phpunit>

@@ -1,37 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="PHP-BindManager">
-    <description>PHP-BindManager PSR-12 Coding Standard</description>
-
-    <file>App</file>
-    <file>Config</file>
-    <file>Routes</file>
-    <file>Database</file>
-    <file>Tests</file>
-
-    <exclude-pattern>vendor/*</exclude-pattern>
-    <exclude-pattern>Public/assets/dist/*</exclude-pattern>
-    <exclude-pattern>Storage/*</exclude-pattern>
-
-    <arg name="basepath" value="."/>
-    <arg name="colors"/>
-    <arg value="sp"/>
-    <arg name="parallel" value="8"/>
-    <arg name="extensions" value="php"/>
-
-    <rule ref="PSR12">
-        <exclude name="PSR12.Files.FileHeader"/>
-    </rule>
-
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
-    <rule ref="Generic.PHP.RequireStrictTypes"/>
-    <rule ref="Generic.Strings.UnnecessaryStringConcat">
-        <properties>
-            <property name="allowMultiLine" value="true"/>
-        </properties>
-    </rule>
-    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
-        <properties>
-            <property name="newlinesCountBetweenOpenTagAndDeclare" value="0"/>
-        </properties>
-    </rule>
+  <file>App</file><file>Config</file><file>Routes</file><file>Database</file><file>tests</file>
+  <exclude-pattern>vendor/*</exclude-pattern>
+  <rule ref="PSR12"/>
+  <rule ref="Generic.PHP.RequireStrictTypes"/>
 </ruleset>
