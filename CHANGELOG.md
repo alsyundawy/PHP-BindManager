@@ -16,6 +16,13 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - EditorConfig, `.gitignore`, `.env.example`
 - PHPUnit configuration and bootstrap
 - MIT License
+- Core application bootstrap with PSR-7 request handling
+- Lightweight dependency injection container
+- Router, route matching, kernel, and HTTP middleware stack
+- Secure session, CSRF service, auth service, and rate limiter service
+- SQLite initial schema migration and database seeder
+- Login and welcome views
+- Config files for app, database, session, security, BIND9, logging, API, and RBAC
 
 ### Changed
 - N/A
@@ -30,7 +37,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - N/A
 
 ### Security
-- N/A
+- Added HTTP security headers, secure session defaults, CSRF validation, and brute-force mitigation
 
 ---
 
