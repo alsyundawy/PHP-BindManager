@@ -1,0 +1,50 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Composer
+vendor/
+composer.lock
+
+# Database (runtime files only, not migrations)
+Database/*.sqlite
+Database/*.db
+Database/*.sqlite-shm
+Database/*.sqlite-wal
+
+# Storage
+Storage/Logs/*.log
+Storage/Cache/*
+Storage/Uploads/*
+Storage/Backups/*
+!Storage/Logs/.gitkeep
+!Storage/Cache/.gitkeep
+!Storage/Uploads/.gitkeep
+!Storage/Backups/.gitkeep
+
+# PHPUnit
+.phpunit.result.cache
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build
+Public/assets/dist/
+node_modules/
+
+# Temp
+*.tmp
+*.temp
+/tmp/

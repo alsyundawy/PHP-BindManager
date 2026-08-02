@@ -1,0 +1,104 @@
+{
+    "name": "alsyundawy/php-bindmanager",
+    "description": "Enterprise-grade Web GUI for BIND9 DNS Server Management",
+    "type": "project",
+    "license": "MIT",
+    "homepage": "https://github.com/alsyundawy/PHP-BindManager",
+    "keywords": [
+        "bind9",
+        "dns",
+        "dns-manager",
+        "bind",
+        "php",
+        "web-gui",
+        "dnssec",
+        "dns-server",
+        "named"
+    ],
+    "authors": [
+        {
+            "name": "alsyundawy",
+            "homepage": "https://github.com/alsyundawy"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "ext-pdo": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-sqlite3": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-curl": "*",
+        "ext-intl": "*",
+        "psr/http-message": "^2.0",
+        "psr/http-factory": "^1.1",
+        "psr/http-client": "^1.0",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/simple-cache": "^3.0",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1",
+        "laminas/laminas-httphandlerrunner": "^2.10",
+        "monolog/monolog": "^3.7",
+        "symfony/dotenv": "^7.2",
+        "symfony/validator": "^7.2",
+        "symfony/translation": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.4",
+        "squizlabs/php_codesniffer": "^3.11",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "vimeo/psalm": "^6.0",
+        "friendsofphp/php-cs-fixer": "^3.65",
+        "phpmd/phpmd": "^2.15",
+        "slevomat/coding-standard": "^8.15",
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/",
+            "Config\\": "Config/",
+            "Database\\": "Database/"
+        },
+        "files": [
+            "App/Helpers/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "Tests/"
+        }
+    },
+    "scripts": {
+        "phpcs": "phpcs --standard=phpcs.xml",
+        "phpcbf": "phpcbf --standard=phpcs.xml",
+        "phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=512M",
+        "psalm": "psalm --config=psalm.xml",
+        "php-cs-fixer": "php-cs-fixer fix --config=.php-cs-fixer.php",
+        "php-cs-fixer:check": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff",
+        "test": "phpunit --configuration=phpunit.xml",
+        "test:coverage": "phpunit --configuration=phpunit.xml --coverage-html=coverage/html --coverage-clover=coverage/clover.xml",
+        "qa": [
+            "@phpcs",
+            "@phpstan",
+            "@psalm",
+            "@php-cs-fixer:check",
+            "@test"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "platform": {
+            "php": "8.4.0"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
