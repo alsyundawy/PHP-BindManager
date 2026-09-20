@@ -4,14 +4,14 @@
 
 | Component      | Version                                                       | Notes                         |
 |----------------|---------------------------------------------------------------|-------------------------------|
-| PHP            | 8.4+                                                          | Required                      |
-| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required                  |
-| Nginx          | 1.24+                                                         | Recommended web server        |
-| PHP-FPM        | 8.4+                                                          | Required                      |
-| BIND9          | 9.16+                                                         | Must be installed and running |
-| Composer       | 2.x                                                           | Required                      |
-| OS             | Debian 12 / Ubuntu 22.04+                                     | Tested platforms              |
-| Disk           | 500MB+                                                        | For logs, cache, backups      |
+| PHP            | 8.1 – 8.5 (Recommended: 8.3 or 8.4)                           | Fully compatible across 8.1 - 8.5 |
+| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required                      |
+| Nginx          | 1.24+                                                         | Recommended web server            |
+| PHP-FPM        | 8.1+                                                          | Required (matching PHP version)   |
+| BIND9          | 9.16+                                                         | Must be installed and running     |
+| Composer       | 2.x                                                           | Required                          |
+| OS             | Debian 12 / Ubuntu 22.04+ / RHEL 9+                           | Tested platforms                  |
+| Disk           | 500MB+                                                        | For logs, cache, backups          |
 
 ---
 

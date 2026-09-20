@@ -48,9 +48,7 @@ return [
             $zones = $container->get(ZoneRepository::class);
 
             $zoneCount = count($zones->all());
-            /** @psalm-suppress ForbiddenCode */
-            $bind9Raw = shell_exec('systemctl is-active named 2>/dev/null');
-            $bind9Up  = is_string($bind9Raw) && trim($bind9Raw) === 'active';
+            $bind9Up   = isBind9Active();
 
             return Router::json([
                 'status'    => 'ok',

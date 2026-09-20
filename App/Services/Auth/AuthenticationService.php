@@ -34,19 +34,23 @@ final class AuthenticationService
             default  => 'Lax',
         };
 
-        ini_set('session.cookie_secure', '1');
-        ini_set('session.cookie_httponly', '1');
+        $secure   = (bool) $this->config->get('session.secure', false);
+        $httpOnly = (bool) $this->config->get('session.httponly', true);
+
+        ini_set('session.cookie_secure', $secure ? '1' : '0');
+        ini_set('session.cookie_httponly', $httpOnly ? '1' : '0');
         ini_set('session.cookie_samesite', $sameSite);
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
 
-        session_set_cookie_params(
-            (int) $this->config->get('session.lifetime', 7200),
-            '/',
-            '',
-            true,
-            true
-        );
+        session_set_cookie_params([
+            'lifetime' => (int) $this->config->get('session.lifetime', 7200),
+            'path'     => '/',
+            'domain'   => '',
+            'secure'   => $secure,
+            'httponly' => $httpOnly,
+            'samesite' => $sameSite,
+        ]);
 
         session_start();
     }

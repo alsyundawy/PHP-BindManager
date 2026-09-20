@@ -332,7 +332,7 @@ php bin/seed.php
 > **Default Admin Credentials**:
 >
 > - **Username**: `admin`
-> - **Password**: `Admin@12345`
+> - **Password**: `ChangeMe@2026!`
 > - *(Important: You will be prompted to change this immediately upon first login).*
 
 ### 4. File Permissions

@@ -18,6 +18,8 @@ final class CsrfMiddleware
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
         if (! in_array(strtoupper($request->getMethod()), ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
+            $this->csrfService->token();
+
             return $next($request);
         }
 

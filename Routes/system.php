@@ -40,9 +40,7 @@ return [
                     : number_format($bytes / 1024, 1) . ' KB';
             }
 
-            /** @psalm-suppress ForbiddenCode */
-            $bind9Raw     = shell_exec('systemctl is-active named 2>/dev/null');
-            $bind9Healthy = is_string($bind9Raw) && trim($bind9Raw) === 'active';
+            $bind9Healthy = isBind9Active();
 
             $html = View::render('system/index', [
                 'zoneCount'    => count($zones),

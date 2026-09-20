@@ -28,7 +28,9 @@ return [
         'path'       => $loginUri,
         'auth'       => false,
         'rate_limit' => 'web',
-        'handler'    => static function () use ($htmlHeaders): Response {
+        'handler'    => static function (
+            ServerRequestInterface $request
+        ) use ($htmlHeaders): Response {
             $flashError = '';
 
             if (isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])) {
@@ -36,8 +38,18 @@ return [
                 unset($_SESSION['flash_error']);
             }
 
+            /** @var \App\Container\Container|null $container */
+            $container = $request->getAttribute('container');
+            /** @var \App\Services\Auth\CsrfService|null $csrfService */
+            $csrfService = $container instanceof \App\Container\Container
+                ? $container->get(\App\Services\Auth\CsrfService::class)
+                : null;
+            $csrfToken = $csrfService instanceof \App\Services\Auth\CsrfService
+                ? $csrfService->token()
+                : (string) ($_SESSION['_csrf']['value'] ?? '');
+
             $html = View::render('auth/login', [
-                'csrfToken'  => ($_SESSION['_csrf']['value'] ?? ''),
+                'csrfToken'  => $csrfToken,
                 'flashError' => $flashError,
             ]);
 
@@ -98,9 +110,7 @@ return [
                 $recordCount += count($records->forZone((int) ($zone['id'] ?? 0)));
             }
 
-            /** @psalm-suppress ForbiddenCode */
-            $bind9Raw     = shell_exec('systemctl is-active named 2>/dev/null');
-            $bind9Healthy = is_string($bind9Raw) && trim($bind9Raw) === 'active';
+            $bind9Healthy = isBind9Active();
             $recentZones  = array_slice($zoneList, 0, 5);
 
             $html = View::render('dashboard/index', [

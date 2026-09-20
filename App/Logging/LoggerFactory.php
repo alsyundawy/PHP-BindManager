@@ -19,6 +19,10 @@ final class LoggerFactory
     public function make(string $channel): Logger
     {
         $basePath = rtrim((string) $this->config->get('logging.path', ''), '/');
+        if ($basePath !== '' && ! str_starts_with($basePath, '/')) {
+            $basePath = dirname(__DIR__, 2) . '/' . $basePath;
+        }
+
         if ($basePath !== '' && ! is_dir($basePath)) {
             @mkdir($basePath, 0o750, true);
         }

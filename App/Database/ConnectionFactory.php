@@ -6,6 +6,7 @@ namespace App\Database;
 
 use App\Exceptions\DatabaseConnectionException;
 use App\Support\Config;
+use App\Support\Path;
 use PDO;
 use PDOException;
 
@@ -18,6 +19,19 @@ final class ConnectionFactory
     public function create(): PDO
     {
         $path = (string) $this->config->get('database.path');
+
+        if ($path !== ':memory:') {
+            if ($path === '') {
+                $path = Path::base('Database/bindmanager.sqlite');
+            } elseif (! str_starts_with($path, '/')) {
+                $path = Path::base($path);
+            }
+
+            $dir = dirname($path);
+            if (! is_dir($dir)) {
+                @mkdir($dir, 0o775, true);
+            }
+        }
 
         try {
             $pdo = new PDO('sqlite:' . $path);

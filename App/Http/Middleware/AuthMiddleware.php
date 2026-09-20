@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Exceptions\AuthenticationException;
 use App\Services\Auth\AuthenticationService;
+use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -21,7 +22,17 @@ final class AuthMiddleware
         $authRequired = (bool) ($route['auth'] ?? false);
 
         if ($authRequired && ! $this->authenticationService->isAuthenticated()) {
-            throw new AuthenticationException();
+            $path   = $request->getUri()->getPath();
+            $accept = $request->getHeaderLine('Accept');
+
+            if (
+                str_starts_with($path, '/api')
+                || (str_contains($accept, 'application/json') && ! str_contains($accept, 'text/html'))
+            ) {
+                throw new AuthenticationException();
+            }
+
+            return new Response(302, ['Location' => '/login']);
         }
 
         return $next($request);

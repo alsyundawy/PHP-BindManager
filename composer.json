@@ -22,7 +22,7 @@
     }
   ],
   "require": {
-    "php": "^8.4",
+    "php": ">=8.1 <8.6",
     "ext-pdo": "*",
     "ext-pdo_sqlite": "*",
     "ext-sqlite3": "*",
@@ -81,6 +81,7 @@
     "php-cs-fixer:check": "php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --diff",
     "test": "phpunit --configuration=phpunit.xml",
     "test:coverage": "phpunit --configuration=phpunit.xml --coverage-html=coverage/html --coverage-clover=coverage/clover.xml",
+    "serve": "php -S 127.0.0.1:8080 -t Public Public/router.php",
     "qa": [
       "@phpcs",
       "@phpstan",

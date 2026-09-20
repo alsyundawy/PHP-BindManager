@@ -17,7 +17,13 @@ final class UserRepository
      */
     public function findByUsername(string $username): ?array
     {
-        $statement = $this->pdo->prepare('SELECT * FROM users WHERE username = :username LIMIT 1');
+        $sql = 'SELECT u.*, r.name AS role_name, r.permissions AS role_permissions '
+            . 'FROM users u '
+            . 'LEFT JOIN roles r ON u.role_id = r.id '
+            . 'WHERE u.username = :username '
+            . 'LIMIT 1';
+
+        $statement = $this->pdo->prepare($sql);
         $statement->execute([':username' => $username]);
         $record = $statement->fetch();
 
