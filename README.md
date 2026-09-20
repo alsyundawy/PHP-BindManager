@@ -56,7 +56,7 @@ This edition (**v1.0.0**) represents a clean-slate architectural, security, acce
 
 ### 🛡️ 1. Zero-CDN Offline Architecture & Content Security
 
-- **100% Local Distribution**: Ships with production bundles of **Bootstrap 5.3.3**, **jQuery 3.7.1**, and **Font Awesome 6.5.2** located in `Public/assets/vendor/`.
+- **100% Local Distribution**: Ships with production bundles of **Bootstrap 3.5.8**, **jQuery 3.7.1**, and **Font Awesome 6.7.2** located in `Public/assets/vendor/`.
 - **Air-Gapped & Offline Ready**: Runs reliably in isolated server networks, air-gapped enclaves, and private intranets without third-party CDN latency, outages, or telemetry tracking.
 - **Strict Content Security Policy (CSP)**: HTTP headers enforce `default-src 'self'` and `style-src 'self' 'unsafe-inline'` with zero external origins permitted.
 
@@ -169,21 +169,11 @@ PHP-BindManager validates and formats all standard DNS Resource Records:
 
 The interface has been meticulously designed following the acclaimed aesthetic of [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc):
 
-- **Curated Palette**:
-    - Deep obsidian dark background: `#0b0f19` / `#111827`.
-    - Subtle borders: `#1f2937` / `#334155`.
-    - Vibrant primary accents: `#3b82f6` with hover glow `#60a5fa`.
-    - Harmonious light mode counterparts for full accessibility in brightly lit environments.
-- **Glassmorphism Header**:
-    - Semi-transparent sticky navigation header with `backdrop-filter: blur(12px)`.
-- **Notch, Cutout & Dynamic Viewport Safeguards**:
-    - Uses `viewport-fit=cover` and CSS safe-area padding:
-        ```css
-        padding-top: env(safe-area-inset-top, 0px);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-        ```
-    - Replaces rigid `100vh` with adaptive `100dvh` (dynamic viewport height) to prevent content being concealed beneath mobile browser navigation bars.
-    - Horizontal table overflows use touch-friendly scrolling (`-webkit-overflow-scrolling: touch`) with rounded boundary wrappers.
+- **Curated Dark/Light Palette**: Deep obsidian dark background (`#0b0f19` / `#111827`), subtle borders (`#1f2937` / `#334155`), and vibrant primary accents (`#3b82f6` with `#60a5fa` hover glow).
+- **Glassmorphism Navigation Header**: Semi-transparent sticky navigation header with `backdrop-filter: blur(12px)`.
+- **Notch, Cutout & Safe Area Insets**: Integrated with `viewport-fit=cover` and CSS safe-area padding (`padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);`).
+- **Dynamic Viewport Height**: Replaces rigid `100vh` with adaptive `100dvh` to prevent content from being clipped beneath mobile browser address bars.
+- **Touch-Friendly Overflow Scrolling**: Horizontal table wrappers utilize `-webkit-overflow-scrolling: touch` with rounded boundary containers.
 
 ---
 
@@ -503,8 +493,8 @@ PHP-BindManager/
 │       ├── css/app.min.css     # Visual Subnet Calculator Theme CSS
 │       ├── js/app.min.js       # Theme & UI Controller JS
 │       └── vendor/             # Local Vendor Distributions
-│           ├── bootstrap/      # Bootstrap 5.3.3 (CSS & JS Bundle)
-│           ├── fontawesome/    # Font Awesome 6.5.2 (Webfonts & CSS)
+│           ├── bootstrap/      # Bootstrap 3.5.8 (CSS & JS Bundle)
+│           ├── fontawesome/    # Font Awesome 6.7.2 (Webfonts & CSS)
 │           └── jquery/         # jQuery 3.7.1 Minified
 ├── Resources/                  # Server-Side View Templates
 │   └── Views/                  # PHP HTML Views (Auth, Dashboard, Zones)
@@ -540,15 +530,7 @@ Contributions are welcome! Please follow these guidelines:
 
 1. Fork the repository and create your feature branch: `git checkout -b feature/amazing-feature`.
 2. Ensure all changes adhere strictly to PSR-12 and max 120-character line lengths.
-3. Verify that all quality gates pass:
-    ```bash
-    vendor/bin/phpunit
-    vendor/bin/phpstan analyse
-    vendor/bin/psalm
-    vendor/bin/phpcs --standard=phpcs.xml
-    vendor/bin/php-cs-fixer fix --dry-run --diff
-    trunk check --no-fix
-    ```
+3. Verify that all quality gates pass: `vendor/bin/phpunit`, `phpstan analyse`, `psalm`, `phpcs`, `php-cs-fixer`, and `trunk check --no-fix`.
 4. Commit your changes with conventional commit messages: `git commit -m 'feat: add DNSSEC rollover support'`.
 5. Push to your branch and open a Pull Request.
 

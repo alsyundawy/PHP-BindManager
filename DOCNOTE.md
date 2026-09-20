@@ -5,7 +5,7 @@
 PHP-BindManager is built with an enterprise-first, authoritative-only architecture:
 
 - **Authoritative DNS Focus**: Configured strictly as Primary/Secondary (Master/Slave) nameserver. Recursive resolution and RPZ bloat are intentionally excluded to eliminate cache poisoning and DNS amplification vectors.
-- **Zero CDN Dependency**: All frontend libraries (Bootstrap 5.3.3, jQuery 3.7.1, Font Awesome 6.5.2) reside locally in `Public/assets/vendor/`. No external asset requests are made at runtime, ensuring offline functionality, air-gapped support, and zero third-party tracking.
+- **Zero CDN Dependency**: All frontend libraries (Bootstrap 3.5.8, jQuery 3.7.1, Font Awesome 6.7.2) reside locally in `Public/assets/vendor/`. No external asset requests are made at runtime, ensuring offline functionality, air-gapped support, and zero third-party tracking.
 - **Modern Responsive Design**: Inspired by Visual Subnet Calculator, utilizing semantic CSS custom properties, dual `data-theme` / `data-bs-theme` synchronization, glassmorphism headers, `100dvh` viewport units, and notch / punch-hole cutout safe area protections.
 
 ## 2. Cross-Device & Mobile Viewport Engineering

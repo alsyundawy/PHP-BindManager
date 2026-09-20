@@ -15,7 +15,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 - Authoritative DNS Zone and Record management (SOA, NS, A, AAAA, CNAME, MX, TXT, SRV, PTR, CAA, SSHFP, TLSA).
 - Initial project scaffold and directory structure.
 - Full documentation suite (README, INSTALL, ARCHITECTURE, SECURITY, CONFIGURATION, API, ROADMAP, CONTRIBUTING, TUTORIAL, DOCNOTE).
-- Zero-CDN local vendor assets (Bootstrap 5.3.3, jQuery 3.7.1, Font Awesome 6.5.2) in `Public/assets/vendor/`.
+- Zero-CDN local vendor assets (Bootstrap 3.5.8, jQuery 3.7.1, Font Awesome 6.7.2) in `Public/assets/vendor/`.
 - Modern responsive dashboard inspired by Visual Subnet Calculator with dual `data-theme` / `data-bs-theme` synchronization.
 - Production BIND 9 Authoritative DNS deployment tutorial (`TUTORIAL.md`).
 - SQLite 3 database engine with WAL mode, transactions, indexed lookups, and migration seeder.
