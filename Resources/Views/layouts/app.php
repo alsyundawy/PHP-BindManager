@@ -23,7 +23,8 @@ $content = (string) ($templateVars['content'] ?? '');
     <script>
         try {
             const saved = localStorage.getItem("pbm-theme") || "auto";
-            const theme = saved === "auto" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : saved;
+            const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches;
+            const theme = saved === "auto" ? (prefersDark ? "dark" : "light") : saved;
             document.documentElement.dataset.theme = theme;
             document.documentElement.setAttribute("data-bs-theme", theme);
         } catch (e) {}
@@ -32,8 +33,8 @@ $content = (string) ($templateVars['content'] ?? '');
 </head>
 <body>
     <div class="pbm-app">
-        <?php include __DIR__ . '/../partials/sidebar.php'; ?>
-        <?php include __DIR__ . '/../partials/navbar.php'; ?>
+        <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+        <?php include_once __DIR__ . '/../partials/navbar.php'; ?>
         <main class="pbm-main">
             <div class="pbm-container">
                 <?= $content ?? '' ?>

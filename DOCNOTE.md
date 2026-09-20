@@ -26,3 +26,10 @@ The codebase adheres strictly to:
 - **Static Analysis**: PHPStan Level 8 and Psalm level 4 with zero errors.
 - **Testing**: 100% PHPUnit pass rate with strict error reporting and zero coverage driver warnings.
 - **Tooling Engine**: Trunk validation across Markdown, CSS, and PHP files.
+
+## 4. IDE Integration & Diagnostic Suppression Best Practices
+
+- **PHP Resolver Plugin (`stoildobreff.php-resolver`)**: The extension's `PHPWorkspaceDiagnosticsProvider` naively scans symbols and emits `Unresolved parent: ... (not found in workspace index)` because it lacks internal PHP core interface knowledge (e.g. `RuntimeException`, `Throwable`, `LogicException`). All diagnostic modules (`enableWorkspaceDiagnosticsModule`, `enableDeadCodeModule`, `enableUnusedImportModule`, `enableIndexHealthModule`) are disabled in `.vscode/settings.json`, and heavy directories (`vendor`, `node_modules`, `Storage`) are excluded.
+- **Intelephense Undefined Variables**: The schema requires enum strings (`"on"`, `"local"`, `"off"`). Configured strictly as `"off"` in `.vscode/settings.json`.
+- **Session Cookie Flags (SonarLint S3330)**: `session_set_cookie_params` uses explicit `secure: true` and `httponly: true` to guarantee compliance with static security analysis and zero-unencrypted transmission policy.
+- **Strict Line Length ($\le 120$ characters)**: Enforced across all PHP controllers, services, repositories, HTML/PHP view templates, and unit tests.

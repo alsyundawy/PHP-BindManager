@@ -5,7 +5,14 @@ declare(strict_types=1);
 ?>
 <header class="pbm-header">
     <div class="pbm-header-actions">
-        <button class="pbm-menu-btn" type="button" data-menu-toggle aria-controls="primary-sidebar" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+            class="pbm-menu-btn"
+            type="button"
+            data-menu-toggle
+            aria-controls="primary-sidebar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
             <i class="fa-solid fa-bars"></i>
         </button>
         <div>

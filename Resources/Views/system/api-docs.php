@@ -14,8 +14,10 @@ ob_start();
 
 <article class="pbm-card">
     <h2 class="pbm-card-title">Authentication</h2>
-    <p class="pbm-muted">Send a scoped token in the Authorization header.</p>
-    <pre style="overflow-x: auto; background: var(--pbm-surface-2); padding: 16px; border-radius: 12px; color: var(--pbm-text);">Authorization: Bearer pbm_your_token_here
+    <pre
+        style="overflow-x: auto; background: var(--pbm-surface-2);
+               padding: 16px; border-radius: 12px; color: var(--pbm-text);"
+    >Authorization: Bearer pbm_your_token_here
 GET /api/v1/zones</pre>
 
     <h2 class="pbm-card-title" style="margin-top: 24px;">Endpoints</h2>

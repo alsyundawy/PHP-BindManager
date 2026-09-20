@@ -18,13 +18,23 @@ final class RateLimiterServiceTest extends TestCase
     {
         $this->pdo = new PDO('sqlite::memory:');
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $this->pdo->exec('CREATE TABLE rate_limits (identifier TEXT NOT NULL, action TEXT NOT NULL, attempts INTEGER NOT NULL DEFAULT 0, reset_at INTEGER NOT NULL, PRIMARY KEY(identifier, action))');
+        $this->pdo->exec(
+            'CREATE TABLE rate_limits (' .
+            'identifier TEXT NOT NULL, ' .
+            'action TEXT NOT NULL, ' .
+            'attempts INTEGER NOT NULL DEFAULT 0, ' .
+            'reset_at INTEGER NOT NULL, ' .
+            'PRIMARY KEY(identifier, action))'
+        );
     }
 
     public function testItBlocksAfterConfiguredLimit(): void
     {
         $repo    = new LoginAttemptRepository($this->pdo);
-        $service = new RateLimiterService($repo, new Config(['security' => ['rate_limit_login' => 2], 'api' => ['rate_limit' => 300]]));
+        $service = new RateLimiterService($repo, new Config([
+            'security' => ['rate_limit_login' => 2],
+            'api'      => ['rate_limit' => 300],
+        ]));
 
         self::assertTrue($service->allow('login', '127.0.0.1'));
         $service->hit('login', '127.0.0.1');

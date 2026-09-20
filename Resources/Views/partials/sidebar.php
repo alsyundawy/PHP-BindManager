@@ -10,9 +10,15 @@ declare(strict_types=1);
     </div>
     <div class="pbm-nav-title">Authoritative DNS</div>
     <nav>
-        <a class="pbm-nav-link is-active" href="/dashboard"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a>
-        <a class="pbm-nav-link" href="/zones"><i class="fa-solid fa-layer-group"></i> <span>Zones</span></a>
-        <a class="pbm-nav-link" href="/records"><i class="fa-solid fa-list-check"></i> <span>DNS Records</span></a>
+        <a class="pbm-nav-link is-active" href="/dashboard">
+            <i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span>
+        </a>
+        <a class="pbm-nav-link" href="/zones">
+            <i class="fa-solid fa-layer-group"></i> <span>Zones</span>
+        </a>
+        <a class="pbm-nav-link" href="/records">
+            <i class="fa-solid fa-list-check"></i> <span>DNS Records</span>
+        </a>
     </nav>
     <div class="pbm-nav-title">Administration</div>
     <nav>

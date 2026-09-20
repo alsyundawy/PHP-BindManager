@@ -37,8 +37,8 @@ final class AuthenticationService
         session_set_cookie_params([
             'lifetime' => (int) $this->config->get('session.lifetime', 7200),
             'path'     => '/',
-            'secure'   => (bool) $this->config->get('session.secure', true),
-            'httponly' => (bool) $this->config->get('session.httponly', true),
+            'secure'   => true,
+            'httponly' => true,
             'samesite' => $sameSite,
         ]);
 

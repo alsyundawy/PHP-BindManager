@@ -19,17 +19,43 @@ $message = (string) ($templateVars['message'] ?? 'An error occurred');
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/app.min.css">
     <style>
-        body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--pbm-bg, #0b0f19); color: var(--pbm-text, #f8fafc); }
-        .wrap { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 24px; }
-        .box { width: 100%; max-width: 640px; background: var(--pbm-surface, #111827); border: 1px solid var(--pbm-border, #334155); border-radius: 16px; padding: 28px; box-shadow: var(--pbm-shadow); }
-        a { color: var(--pbm-primary, #3b82f6); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, sans-serif;
+            background: var(--pbm-bg, #0b0f19);
+            color: var(--pbm-text, #f8fafc);
+        }
+        .wrap {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+        .box {
+            width: 100%;
+            max-width: 640px;
+            background: var(--pbm-surface, #111827);
+            border: 1px solid var(--pbm-border, #334155);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--pbm-shadow);
+        }
+        a {
+            color: var(--pbm-primary, #3b82f6);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 <div class="wrap">
     <div class="box">
-        <h1 class="h2 fw-bold text-danger"><i class="fa-solid fa-triangle-exclamation me-2"></i><?= e((string) $statusCode) ?></h1>
+        <h1 class="h2 fw-bold text-danger">
+            <i class="fa-solid fa-triangle-exclamation me-2"></i><?= e((string) $statusCode) ?>
+        </h1>
         <p class="text-secondary"><?= e($message ?? 'An error occurred.') ?></p>
         <p class="mt-4"><a href="/"><i class="fa-solid fa-house me-1"></i>Return to home</a></p>
     </div>
