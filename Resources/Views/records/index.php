@@ -72,7 +72,11 @@ ob_start();
 <article class="pbm-card">
     <div class="pbm-card-head">
         <h2 class="pbm-card-title">
-            <?= $selectedZoneName !== '' ? 'Records for ' . htmlspecialchars($selectedZoneName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') : 'All DNS records' ?>
+            <?php if ($selectedZoneName !== '') : ?>
+                Records for <?= htmlspecialchars($selectedZoneName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+            <?php else : ?>
+                All DNS records
+            <?php endif; ?>
         </h2>
         <span class="pbm-badge"><?= count($records) ?> records</span>
     </div>
@@ -99,30 +103,40 @@ ob_start();
             </thead>
             <tbody>
                 <?php foreach ($records as $record) : ?>
-                <?php
-                $rid      = (int) ($record['id'] ?? 0);
-                $type     = strtoupper((string) ($record['record_type'] ?? 'A'));
-                $color    = $typeColors[$type] ?? '#6b7280';
-                $priority = $record['priority'] ?? null;
-                $rzid     = (int) ($record['zone_id'] ?? $zoneId);
-                ?>
+                    <?php
+                    $rid      = (int) ($record['id'] ?? 0);
+                    $type     = strtoupper((string) ($record['record_type'] ?? 'A'));
+                    $color    = $typeColors[$type] ?? '#6b7280';
+                    $priority = $record['priority'] ?? null;
+                    $rzid     = (int) ($record['zone_id'] ?? $zoneId);
+                    ?>
                 <tr>
                     <td>
-                        <code><?= htmlspecialchars((string) ($record['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+                        <code><?=
+                            htmlspecialchars((string) ($record['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                        ?></code>
                     </td>
                     <td>
                         <span
                             class="pbm-badge"
                             style="background: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>22;
                                    color: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>;
-                                   border-color: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>44;"
+                                   border-color: <?=
+                                       htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                                    ?>44;"
                         ><?= htmlspecialchars($type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                     </td>
                     <td><?= (int) ($record['ttl'] ?? 3600) ?>s</td>
                     <td>
                         <code style="font-size: .8rem; word-break: break-all;">
                             <?= $priority !== null ? (int) $priority . ' ' : '' ?>
-                            <?= htmlspecialchars((string) ($record['content'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                            <?=
+                            htmlspecialchars(
+                                (string) ($record['content'] ?? ''),
+                                ENT_QUOTES | ENT_SUBSTITUTE,
+                                'UTF-8'
+                            )
+                            ?>
                         </code>
                     </td>
                     <td>

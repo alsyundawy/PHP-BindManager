@@ -36,13 +36,17 @@ ob_start();
 <section class="pbm-page-heading">
     <div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <h1 style="margin: 0;"><code><?= htmlspecialchars($zname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code></h1>
+            <h1 style="margin: 0;">
+                <code><?= htmlspecialchars($zname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+            </h1>
             <span class="pbm-badge"><?= htmlspecialchars($ztype, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
             <span class="pbm-status <?= $zstat === 'active' ? 'pbm-success' : 'pbm-muted' ?>">
                 <?= htmlspecialchars(ucfirst($zstat), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
             </span>
         </div>
-        <div class="pbm-muted" style="margin-top: 4px;">File: <code><?= htmlspecialchars($zpath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code></div>
+        <div class="pbm-muted" style="margin-top: 4px;">
+            File: <code><?= htmlspecialchars($zpath, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+        </div>
     </div>
     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <a class="pbm-btn" href="/zones"><i class="fa-solid fa-arrow-left me-1"></i>Back</a>
@@ -101,15 +105,15 @@ ob_start();
             </thead>
             <tbody>
                 <?php foreach ($records as $record) : ?>
-                <?php
-                $rid     = (int) ($record['id'] ?? 0);
-                $rname   = (string) ($record['name'] ?? '');
-                $rtype   = strtoupper((string) ($record['record_type'] ?? 'A'));
-                $color   = $typeColors[$rtype] ?? '#6b7280';
-                $rttl    = (int) ($record['ttl'] ?? 3600);
-                $rval    = (string) ($record['content'] ?? '');
-                $priority = $record['priority'] ?? null;
-                ?>
+                    <?php
+                    $rid      = (int) ($record['id'] ?? 0);
+                    $rname    = (string) ($record['name'] ?? '');
+                    $rtype    = strtoupper((string) ($record['record_type'] ?? 'A'));
+                    $color    = $typeColors[$rtype] ?? '#6b7280';
+                    $rttl     = (int) ($record['ttl'] ?? 3600);
+                    $rval     = (string) ($record['content'] ?? '');
+                    $priority = $record['priority'] ?? null;
+                    ?>
                 <tr>
                     <td><code><?= htmlspecialchars($rname, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code></td>
                     <td>
@@ -117,7 +121,9 @@ ob_start();
                             class="pbm-badge"
                             style="background: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>22;
                                    color: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>;
-                                   border-color: <?= htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>44;"
+                                   border-color: <?=
+                                       htmlspecialchars($color, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
+                                    ?>44;"
                         ><?= htmlspecialchars($rtype, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                     </td>
                     <td><?= $rttl ?>s</td>
@@ -162,7 +168,10 @@ ob_start();
         <h2 class="pbm-card-title">BIND9 zone file preview</h2>
         <span class="pbm-badge">RFC 1035 format</span>
     </div>
-    <pre style="overflow-x: auto; background: var(--pbm-surface-2); padding: 16px; border-radius: 8px; color: var(--pbm-text); font-family: monospace; font-size: .85rem;"><?= htmlspecialchars($exportText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></pre>
+    <pre
+        style="overflow-x: auto; background: var(--pbm-surface-2); padding: 16px; border-radius: 8px;
+               color: var(--pbm-text); font-family: monospace; font-size: .85rem;"
+    ><?= htmlspecialchars($exportText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></pre>
 </article>
 <?php
 $content = (string) ob_get_clean();

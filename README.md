@@ -116,7 +116,7 @@ modern DNS administration:
 ## 🎯 Key Features
 
 | Capability Area           | Highlights & Implementations                                                                                                                           |
-| :------------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+|:--------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Zone Management**       | Forward zones, Reverse IPv4 (`in-addr.arpa`), Reverse IPv6 (`ip6.arpa`), zone imports, export to standard RFC master files, SOA serial auto-increment. |
 | **Record Types**          | Native validation and form schemas for `A`, `AAAA`, `CNAME`, `MX`, `NS`, `TXT`, `SRV`, `PTR`, `CAA`, `SSHFP`, `TLSA`, and `SOA`.                       |
 | **Access Control (RBAC)** | Role-Based Access Control distinguishing `admin` (full access), `editor` (zone/record management), and `viewer` (read-only audit).                     |
@@ -177,7 +177,7 @@ flowchart TB
 PHP-BindManager validates and formats all standard DNS Resource Records:
 
 | Record Type | Description                           | RFC Standard       | Syntax Validation                                              |
-| :---------- | :------------------------------------ | :----------------- | :------------------------------------------------------------- |
+|:------------|:--------------------------------------|:-------------------|:---------------------------------------------------------------|
 | **`A`**     | IPv4 Host Address                     | RFC 1035           | Dotted-decimal `0.0.0.0` – `255.255.255.255`                   |
 | **`AAAA`**  | IPv6 Host Address                     | RFC 3596           | Standard compressed or uncompressed RFC 4291 IPv6              |
 | **`CNAME`** | Canonical Name (Alias)                | RFC 1035           | Fully Qualified Domain Name (FQDN)                             |
@@ -218,7 +218,7 @@ the primary variation lies in service naming and file locations:
 ### Distribution Paths & Configuration Mapping
 
 | Component / Setting      | Ubuntu 22.04 / 24.04 & Debian 11 / 12  | Rocky Linux 8 / 9 & CentOS 7 / Stream     |
-| :----------------------- | :------------------------------------- | :---------------------------------------- |
+|:-------------------------|:---------------------------------------|:------------------------------------------|
 | **Package Name**         | `bind9`, `bind9-utils`, `bind9-doc`    | `bind`, `bind-utils`                      |
 | **Systemd Service**      | `bind9.service` or `named.service`     | `named.service` or `named-chroot.service` |
 | **Main Config File**     | `/etc/bind/named.conf`                 | `/etc/named.conf`                         |
@@ -398,7 +398,7 @@ server {
 Key variables available in your `.env` configuration:
 
 | Setting Key                 | Default Value                           | Description                                                   |
-| :-------------------------- | :-------------------------------------- | :------------------------------------------------------------ |
+|:----------------------------|:----------------------------------------|:--------------------------------------------------------------|
 | `APP_NAME`                  | `"PHP-BindManager"`                     | Application title displayed across headers and metadata.      |
 | `APP_ENV`                   | `"production"`                          | Environment profile (`production`, `local`, `testing`).       |
 | `APP_DEBUG`                 | `false`                                 | Enable detailed stack traces (Must be `false` in production). |
@@ -430,7 +430,7 @@ Authorization: Bearer pbm_your_generated_api_token_here
 ### Core Endpoints
 
 | Method | Endpoint                     | Required Scope  | Description                                    |
-| :----- | :--------------------------- | :-------------- | :--------------------------------------------- |
+|:-------|:-----------------------------|:----------------|:-----------------------------------------------|
 | `GET`  | `/api/v1/zones`              | `zones:read`    | List all configured authoritative DNS zones.   |
 | `POST` | `/api/v1/zones`              | `zones:write`   | Create a new forward or reverse DNS zone.      |
 | `GET`  | `/api/v1/zones/{id}/records` | `records:read`  | Fetch all records associated with a zone.      |
@@ -458,7 +458,7 @@ curl -X POST https://dns.example.com/api/v1/zones/1/records \
 Every commit of PHP-BindManager passes rigorous automated quality gates:
 
 | Quality Gate             | Verification Engine                                               | Target / Standard                   | Pass Criteria               |       Status        |
-| :----------------------- | :---------------------------------------------------------------- | :---------------------------------- | :-------------------------- | :-----------------: |
+|:-------------------------|:------------------------------------------------------------------|:------------------------------------|:----------------------------|:-------------------:|
 | **Unit & Service Tests** | [`PHPUnit 11.5`](https://phpunit.de)                              | Core models, services, repositories | 100% assertions pass        |   **✔ 9/9 PASS**    |
 | **Static Analysis**      | [`PHPStan`](https://phpstan.org)                                  | Strict Level 8 analysis             | 0 errors                    | **✔ LEVEL 8 CLEAN** |
 | **Type Inference**       | [`Psalm`](https://psalm.dev)                                      | Level 4 strict type safety          | 0 errors, 96.27% inference  |     **✔ CLEAN**     |

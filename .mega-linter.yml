@@ -31,6 +31,7 @@ ENABLE_LINTERS:
   - PHP_PSALM            # Psalm            — level 4
   - PHP_PHPLINT          # php -l syntax check
   - PHP_PHPMD            # PHP Mess Detector
+  - PHP_PHPCSFIXER       # PHP-CS-Fixer
   # HTML
   - HTML_DJLINT          # djLint — HTML / Jinja / Twig
   - HTML_HTMLHINT        # HTMLHint
@@ -41,18 +42,21 @@ ENABLE_LINTERS:
   - JAVASCRIPT_PRETTIER  # Prettier
   # Markdown
   - MARKDOWN_MARKDOWNLINT
-  - MARKDOWN_MARKDOWN_LINK_CHECK
-  - MARKDOWN_REMARK_LINT
 
 # ---------------------------------------------------------------------------
 # Apply automatic fixes where supported
 # ---------------------------------------------------------------------------
 APPLY_FIXES:
   - PHP_PHPCS
+  - PHP_PHPCSFIXER
   - CSS_STYLELINT
   - JAVASCRIPT_ES
   - JAVASCRIPT_PRETTIER
   - MARKDOWN_MARKDOWNLINT
+
+PRE_COMMANDS:
+  - command: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+    cwd: workspace
 
 # ---------------------------------------------------------------------------
 # Paths / exclusions
@@ -72,6 +76,12 @@ PHP_PHPCS_ARGUMENTS: --standard=PSR12 --extensions=php
 PHP_PHPCS_FILE_EXTENSIONS:
   - .php
 PHP_PHPCS_CONFIG_FILE: phpcs.xml
+
+# ---------------------------------------------------------------------------
+# PHP_PHPCSFIXER — .php-cs-fixer.php
+# ---------------------------------------------------------------------------
+PHP_PHPCSFIXER_CONFIG_FILE: .php-cs-fixer.php
+PHP_PHPCSFIXER_ARGUMENTS: --config=.php-cs-fixer.php
 
 # ---------------------------------------------------------------------------
 # PHP_PHPSTAN — level 8

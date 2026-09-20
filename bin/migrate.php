@@ -16,10 +16,10 @@ $config = new Config([
     'database' => require_once Path::config('database.php'),
 ]);
 
-$factory = new ConnectionFactory($config);
-$pdo = $factory->create();
+$factory        = new ConnectionFactory($config);
+$pdo            = $factory->create();
 $migrationsPath = Path::base('Database/Migrations');
-$files = glob($migrationsPath . '/*.php');
+$files          = glob($migrationsPath . '/*.php');
 
 if ($files === false) {
     fwrite(STDERR, "Unable to read migration directory.\n");

@@ -17,7 +17,7 @@ $config = new Config([
 ]);
 
 $factory = new ConnectionFactory($config);
-$pdo = $factory->create();
+$pdo     = $factory->create();
 
 $roles = [
     [
@@ -56,8 +56,8 @@ foreach ($roles as $role) {
     ]);
 }
 
-$roleQuery = $pdo->query("SELECT id FROM roles WHERE name = 'admin' LIMIT 1");
-$roleId = $roleQuery !== false ? (int) $roleQuery->fetchColumn() : 1;
+$roleQuery    = $pdo->query("SELECT id FROM roles WHERE name = 'admin' LIMIT 1");
+$roleId       = $roleQuery !== false ? (int) $roleQuery->fetchColumn() : 1;
 $passwordHash = password_hash('ChangeMe@2026!', PASSWORD_ARGON2ID);
 
 $userSql = 'INSERT INTO users (role_id, username, email, password_hash) '

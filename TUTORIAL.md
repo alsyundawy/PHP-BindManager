@@ -2,7 +2,10 @@
 
 ## 1. Overview and Architecture
 
-PHP-BindManager is designed strictly as an **Authoritative Primary (Master) and Secondary (Slave) DNS Management Platform**. In accordance with modern Internet security and RFC standards (RFC 7706, RFC 8482), recursive resolution should never be commingled on public authoritative nameservers. This eliminates DNS amplification, cache poisoning (Kaminsky attacks), and unnecessary RPZ (Response Policy Zone) overhead.
+PHP-BindManager is designed strictly as an **Authoritative Primary (Master) and Secondary (Slave) DNS Management
+Platform**. In accordance with modern Internet security and RFC standards (RFC 7706, RFC 8482), recursive resolution
+should never be commingled on public authoritative nameservers. This eliminates DNS amplification, cache poisoning
+(Kaminsky attacks), and unnecessary RPZ (Response Policy Zone) overhead.
 
 ```text
        ┌─────────────────────────────────────────────────────────────┐
@@ -293,9 +296,11 @@ When managing DNS for Zimbra Collaboration Suites (Open Source, Zextras, or Netw
 2. **DNS Disaster Recovery Protocol**:
     - In cross-datacenter failover, lower the zone TTL from `86400` to `300` at least 24 hours prior to scheduled migration.
     - Verify secondary slave synchronization immediately using `dig AXFR`:
+
         ```bash
         dig @ns2.example.com example.com AXFR
         ```
+
     - Update `mail.example.com` A and MX records to point to standby Zimbra infrastructure.
 
 ---

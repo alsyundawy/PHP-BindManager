@@ -15,3 +15,13 @@ if (! function_exists('asset')) {
         return '/' . ltrim($path, '/');
     }
 }
+
+if (! function_exists('pbmNavActive')) {
+    function pbmNavActive(string $path, string $currentPath): string
+    {
+        $active = ($currentPath === $path)
+            || ($path !== '/' && str_starts_with($currentPath, $path));
+
+        return $active ? ' is-active' : '';
+    }
+}

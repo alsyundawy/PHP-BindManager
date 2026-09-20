@@ -3,7 +3,7 @@
 ## Requirements
 
 | Component      | Version                                                       | Notes                         |
-| -------------- | ------------------------------------------------------------- | ----------------------------- |
+|----------------|---------------------------------------------------------------|-------------------------------|
 | PHP            | 8.4+                                                          | Required                      |
 | PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required                  |
 | Nginx          | 1.24+                                                         | Recommended web server        |
@@ -16,7 +16,8 @@
 ---
 
 > [!TIP]
-> For a comprehensive guide on BIND9 primary/secondary architecture, TSIG, Zimbra mail DNS records, rate-limiting, and Rocky Linux/CentOS commands, see **[TUTORIAL.md](TUTORIAL.md)**.
+> For a comprehensive guide on BIND9 primary/secondary architecture, TSIG, Zimbra mail DNS records,
+> rate-limiting, and Rocky Linux/CentOS commands, see **[TUTORIAL.md](TUTORIAL.md)**.
 
 ## Step 1 — Install System Dependencies
 
@@ -201,7 +202,7 @@ php bin/migrate.php
 ## Troubleshooting
 
 | Issue              | Solution                                   |
-| ------------------ | ------------------------------------------ |
+|--------------------|--------------------------------------------|
 | 502 Bad Gateway    | Check `systemctl status php8.4-fpm`        |
 | Permission denied  | Check `Storage/` and `Database/` ownership |
 | BIND9 not updating | Check `www-data` is in `bind` group        |

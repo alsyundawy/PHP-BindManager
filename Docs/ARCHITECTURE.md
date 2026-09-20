@@ -2,7 +2,8 @@
 
 ## Overview
 
-PHP-BindManager follows a layered **MVC + Repository + Service** architecture, built on top of a lightweight custom PHP framework (no full-stack framework dependency).
+PHP-BindManager follows a layered **MVC + Repository + Service** architecture,
+built on top of a lightweight custom PHP framework (no full-stack framework dependency).
 
 ---
 

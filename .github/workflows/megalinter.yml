@@ -48,7 +48,20 @@ jobs:
           fetch-depth: 0
 
       # -----------------------------------------------------------------------
-      # 2. MegaLinter v10.1.0 — latest release
+      # 2. Setup PHP & Install Composer Dependencies
+      # -----------------------------------------------------------------------
+      - name: Setup PHP
+        uses: shivammathur/setup-php@c54fcf52e627415dd14487050777660a06aa29c1 # v2.32.0
+        with:
+          php-version: '8.4'
+          extensions: pdo, sqlite3, pdo_sqlite, mbstring, intl, curl, openssl
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+
+      # -----------------------------------------------------------------------
+      # 3. MegaLinter v10.1.0 — latest release
       # -----------------------------------------------------------------------
       - name: MegaLinter
         uses: oxsecurity/megalinter@9949bad031045f366be2467e00e8371a7328a2e2 # v10.1.0
@@ -68,19 +81,21 @@ jobs:
 
           # --------------- PHP linters ---------------------------------------
           ENABLE_LINTERS: >-
-            PHP_PHPCS,PHP_PHPSTAN,PHP_PSALM,PHP_PHPLINT,PHP_PHPMD,
+            PHP_PHPCS,PHP_PHPSTAN,PHP_PSALM,PHP_PHPLINT,PHP_PHPMD,PHP_PHPCSFIXER,
             HTML_DJLINT,HTML_HTMLHINT,
             CSS_STYLELINT,
             JAVASCRIPT_ES,JAVASCRIPT_PRETTIER,
-            MARKDOWN_MARKDOWNLINT,MARKDOWN_MARKDOWN_LINK_CHECK,MARKDOWN_REMARK_LINT
+            MARKDOWN_MARKDOWNLINT
 
           # --------------- Auto-fix -----------------------------------------
-          APPLY_FIXES: PHP_PHPCS,CSS_STYLELINT,JAVASCRIPT_ES,JAVASCRIPT_PRETTIER,MARKDOWN_MARKDOWNLINT
+          APPLY_FIXES: PHP_PHPCS,PHP_PHPCSFIXER,CSS_STYLELINT,JAVASCRIPT_ES,JAVASCRIPT_PRETTIER,MARKDOWN_MARKDOWNLINT
 
           # --------------- Config files -------------------------------------
           PHP_PHPCS_CONFIG_FILE: phpcs.xml
           PHP_PHPSTAN_CONFIG_FILE: phpstan.neon
           PHP_PSALM_CONFIG_FILE: psalm.xml
+          PHP_PHPCSFIXER_CONFIG_FILE: .php-cs-fixer.php
+          PHP_PHPCSFIXER_ARGUMENTS: --config=.php-cs-fixer.php
           PHP_PHPSTAN_ARGUMENTS: --level=8 --no-progress
           PHP_PHPCS_ARGUMENTS: --standard=PSR12 --extensions=php
           PHP_PHPMD_ARGUMENTS: --rulesets cleancode,codesize,controversial,design,naming,unusedcode

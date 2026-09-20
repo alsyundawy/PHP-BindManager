@@ -50,7 +50,7 @@ Tokens are generated from the web UI under **Settings → API Tokens**.
 ## HTTP Status Codes
 
 | Code | Meaning                          |
-| ---- | -------------------------------- |
+|------|----------------------------------|
 | 200  | OK                               |
 | 201  | Created                          |
 | 204  | No Content (delete success)      |
@@ -208,7 +208,7 @@ X-RateLimit-Reset: 1722600000
 ## API Scopes
 
 | Scope           | Access                         |
-| --------------- | ------------------------------ |
+|-----------------|--------------------------------|
 | `zones:read`    | List and view zones            |
 | `zones:write`   | Create, update, delete zones   |
 | `records:read`  | List and view records          |

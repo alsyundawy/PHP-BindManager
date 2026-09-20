@@ -7,19 +7,6 @@ if ($currentPath === false) {
     $currentPath = '/';
 }
 $csrfToken = (string) ($_SESSION['_csrf']['value'] ?? '');
-
-/**
- * @param string $path
- * @param string $currentPath
- * @return string
- */
-function pbmNavActive(string $path, string $currentPath): string
-{
-    $active = ($currentPath === $path)
-        || ($path !== '/' && str_starts_with($currentPath, $path));
-
-    return $active ? ' is-active' : '';
-}
 ?>
 <aside class="pbm-sidebar" id="primary-sidebar" aria-label="Primary navigation">
     <div class="pbm-brand">
@@ -49,7 +36,11 @@ function pbmNavActive(string $path, string $currentPath): string
     </nav>
     <div style="margin-top: auto; padding-top: 16px;">
         <form method="post" action="/logout" style="margin: 0;">
-            <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+            <input
+                type="hidden"
+                name="_csrf_token"
+                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+            >
             <button
                 type="submit"
                 class="pbm-nav-link"

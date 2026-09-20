@@ -47,14 +47,14 @@ ob_start();
             </thead>
             <tbody>
                 <?php foreach ($zones as $zone) : ?>
-                <?php
-                $zid   = (int) ($zone['id'] ?? 0);
-                $zname = (string) ($zone['name'] ?? '');
-                $ztype = (string) ($zone['zone_type'] ?? 'master');
-                $zpath = (string) ($zone['file_path'] ?? '');
-                $zstat = (string) ($zone['status'] ?? 'draft');
-                $rcnt  = (int) ($recordCounts[$zid] ?? 0);
-                ?>
+                    <?php
+                    $zid   = (int) ($zone['id'] ?? 0);
+                    $zname = (string) ($zone['name'] ?? '');
+                    $ztype = (string) ($zone['zone_type'] ?? 'master');
+                    $zpath = (string) ($zone['file_path'] ?? '');
+                    $zstat = (string) ($zone['status'] ?? 'draft');
+                    $rcnt  = (int) ($recordCounts[$zid] ?? 0);
+                    ?>
                 <tr>
                     <td>
                         <a href="/zones/<?= $zid ?>" style="font-weight: 600; text-decoration: none;">

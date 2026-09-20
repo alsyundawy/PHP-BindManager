@@ -86,7 +86,7 @@ php bin/seed.php
 ## Branch Naming
 
 | Type          | Pattern                |
-| ------------- | ---------------------- |
+|---------------|------------------------|
 | Feature       | `feat/description`     |
 | Bug Fix       | `fix/description`      |
 | Documentation | `docs/description`     |

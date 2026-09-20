@@ -12,6 +12,7 @@ $finder = Finder::create()
         __DIR__ . '/Routes',
         __DIR__ . '/Database',
         __DIR__ . '/Tests',
+        __DIR__ . '/bin',
     ])
     ->exclude(['vendor', 'Storage'])
     ->name('*.php');

@@ -177,14 +177,14 @@ textarea {
         background 0.18s;
 }
 
+.pbm-menu-btn {
+    display: none;
+}
+
 .pbm-icon-btn:hover,
 .pbm-menu-btn:hover {
     border-color: var(--pbm-primary);
     background: var(--pbm-surface-2);
-}
-
-.pbm-menu-btn {
-    display: none;
 }
 
 .pbm-main {

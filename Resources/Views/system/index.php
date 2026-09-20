@@ -39,7 +39,9 @@ ob_start();
     </article>
     <article class="pbm-card">
         <div class="pbm-kpi-label">PHP Environment</div>
-        <div class="pbm-kpi-value" style="font-size: 1.25rem;">v<?= htmlspecialchars($phpVersion, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+        <div class="pbm-kpi-value" style="font-size: 1.25rem;">
+            v<?= htmlspecialchars($phpVersion, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+        </div>
         <div class="pbm-kpi-meta pbm-success"><i class="fa-solid fa-shield me-1"></i>Hardened</div>
     </article>
     <article class="pbm-card">
@@ -47,7 +49,9 @@ ob_start();
         <div class="pbm-kpi-value <?= $bind9Healthy ? 'pbm-success' : 'pbm-muted' ?>" style="font-size: 1.25rem;">
             <?= $bind9Healthy ? 'Active' : 'Standby / Inactive' ?>
         </div>
-        <div class="pbm-kpi-meta pbm-muted">Directory: <code><?= htmlspecialchars($zonesDir, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code></div>
+        <div class="pbm-kpi-meta pbm-muted">
+            Directory: <code><?= htmlspecialchars($zonesDir, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code>
+        </div>
     </article>
 </section>
 

@@ -91,7 +91,10 @@ ob_start();
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
-                <label for="record-ttl" style="display: block; font-weight: 600; margin-bottom: 6px;">TTL (seconds)</label>
+                <label
+                    for="record-ttl"
+                    style="display: block; font-weight: 600; margin-bottom: 6px;"
+                >TTL (seconds)</label>
                 <input
                     id="record-ttl"
                     type="number"

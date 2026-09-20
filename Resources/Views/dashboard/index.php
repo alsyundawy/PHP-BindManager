@@ -85,12 +85,12 @@ ob_start();
                     </tr>
                     <?php else : ?>
                         <?php foreach ($recentZones as $rz) : ?>
-                        <?php
-                        $rzid   = (int) ($rz['id'] ?? 0);
-                        $rzname = (string) ($rz['name'] ?? '');
-                        $rztype = (string) ($rz['zone_type'] ?? 'master');
-                        $rzstat = (string) ($rz['status'] ?? 'draft');
-                        ?>
+                            <?php
+                            $rzid   = (int) ($rz['id'] ?? 0);
+                            $rzname = (string) ($rz['name'] ?? '');
+                            $rztype = (string) ($rz['zone_type'] ?? 'master');
+                            $rzstat = (string) ($rz['status'] ?? 'draft');
+                            ?>
                         <tr>
                             <td>
                                 <a href="/zones/<?= $rzid ?>" style="text-decoration: none; font-weight: 600;">

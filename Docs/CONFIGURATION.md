@@ -98,7 +98,7 @@ API_TOKEN_LIFETIME=31536000  # 1 year in seconds
 ## Config Files
 
 | File                  | Purpose                          |
-| --------------------- | -------------------------------- |
+|-----------------------|----------------------------------|
 | `Config/app.php`      | App-level settings               |
 | `Config/database.php` | Database connection config       |
 | `Config/session.php`  | Session settings                 |
