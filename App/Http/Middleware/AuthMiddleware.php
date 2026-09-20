@@ -7,13 +7,19 @@ namespace App\Http\Middleware;
 use App\Exceptions\AuthenticationException;
 use App\Services\Auth\AuthenticationService;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class AuthMiddleware
 {
-    public function __construct(private readonly AuthenticationService $authenticationService)
-    {
+    private readonly ResponseFactoryInterface $responseFactory;
+
+    public function __construct(
+        private readonly AuthenticationService $authenticationService,
+        ?ResponseFactoryInterface $responseFactory = null
+    ) {
+        $this->responseFactory = $responseFactory ?? new Psr17Factory();
     }
 
     /**
@@ -44,6 +50,6 @@ final class AuthMiddleware
             throw new AuthenticationException();
         }
 
-        return new Psr17Factory()->createResponse(302)->withHeader('Location', '/login');
+        return $this->responseFactory->createResponse(302)->withHeader('Location', '/login');
     }
 }
