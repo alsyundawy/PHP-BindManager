@@ -34,7 +34,7 @@ final class AuthenticationService
             default  => 'Lax',
         };
 
-        $secure   = (bool) $this->config->get('session.secure', false);
+        $secure   = (bool) $this->config->get('session.secure', true);
         $httpOnly = (bool) $this->config->get('session.httponly', true);
 
         ini_set('session.cookie_secure', $secure ? '1' : '0');
