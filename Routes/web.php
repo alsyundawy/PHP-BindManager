@@ -152,7 +152,7 @@ return [
             return new Response(302, ['Location' => $loginUri]);
         },
     ],
-    // ─── Profile ──────────────────────────────────────────────────────────────
+    // --- Profile ---
     [
         'method'     => 'GET',
         'path'       => $routeProfile,
@@ -245,7 +245,7 @@ return [
             return new Response(302, ['Location' => $routeProfile]);
         },
     ],
-    // ─── User Management (Admin Only) ──────────────────────────────────────────
+    // --- User Management (Admin Only) ---
     [
         'method'     => 'GET',
         'path'       => $routeUsers,

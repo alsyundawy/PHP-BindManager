@@ -8,6 +8,11 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
+$views        = $views ?? [];
+$csrfToken    = $csrfToken ?? '';
+$flashSuccess = $flashSuccess ?? null;
+$flashError   = $flashError ?? null;
+
 $title = 'Split-Horizon Views — PHP-BindManager';
 ?>
 <?php ob_start(); ?>
@@ -15,7 +20,9 @@ $title = 'Split-Horizon Views — PHP-BindManager';
 <div class="pbm-page-heading">
     <div>
         <h1><i class="fa-solid fa-diagram-project me-2"></i>Split-Horizon DNS Views</h1>
-        <p class="pbm-muted">Define named BIND9 <code>view</code> blocks to serve different data to different clients.</p>
+        <p class="pbm-muted">
+            Define named BIND9 <code>view</code> blocks to serve different data to different clients.
+        </p>
     </div>
     <button type="button" class="pbm-btn"
             onclick="document.getElementById('view-form').style.display='block';this.style.display='none';">
@@ -42,7 +49,7 @@ $title = 'Split-Horizon Views — PHP-BindManager';
         <input type="hidden" name="_csrf_token"
                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="_action" value="create">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
                 <label class="pbm-label" for="v-name">View Name <span class="pbm-required">*</span></label>
                 <input id="v-name" type="text" name="name" class="pbm-input"
@@ -58,10 +65,12 @@ $title = 'Split-Horizon Views — PHP-BindManager';
         <div class="pbm-form-group">
             <label class="pbm-label" for="v-clients">
                 match-clients <span class="pbm-required">*</span>
-                <span class="pbm-muted" style="font-weight:400;"> — ACL names or IPs, one per line</span>
+                <span class="pbm-muted" style="font-weight:400;">
+                    — comma- or newline-separated ACLs, IPs, or CIDRs
+                </span>
             </label>
-            <textarea id="v-clients" name="match_clients" class="pbm-input" rows="4" required
-                      placeholder="trusted-resolvers&#10;192.168.0.0/16"></textarea>
+            <textarea id="v-clients" name="match_clients" class="pbm-input" rows="3" required
+                      placeholder="trusted-resolvers; 192.168.0.0/16; !10.0.0.0/8;"></textarea>
         </div>
         <div style="display:flex;gap:12px;">
             <button type="submit" class="pbm-btn">
@@ -97,23 +106,35 @@ $title = 'Split-Horizon Views — PHP-BindManager';
                 </thead>
                 <tbody>
                     <?php foreach ($views as $v) : ?>
+                        <?php
+                        $vName    = (string) ($v['name'] ?? '');
+                        $vDesc    = (string) ($v['description'] ?? '—');
+                        $vClients = (string) ($v['match_clients'] ?? '');
+                        $vUpdated = (string) ($v['updated_at'] ?? '');
+                        ?>
                         <tr>
                             <td><?= (int) ($v['id'] ?? 0) ?></td>
-                            <td><strong><?= htmlspecialchars((string) ($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></td>
-                            <td><?= htmlspecialchars((string) ($v['description'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($vName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
+                            </td>
+                            <td><?= htmlspecialchars($vDesc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                             <td style="max-width:200px;">
                                 <code style="font-size:.78rem;white-space:pre-wrap;word-break:break-all;">
-                                    <?= htmlspecialchars((string) ($v['match_clients'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                    <?= htmlspecialchars($vClients, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </code>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($v['updated_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($vUpdated, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
                                 <form method="post" action="/views"
-                                      onsubmit="return confirm('Delete view \'' + <?= json_encode((string) ($v['name'] ?? '')) ?> + '\'? Zones assigned to this view will lose their association.');">
+                                      onsubmit="return confirm('Delete view? Zones will lose their association.');">
                                     <input type="hidden" name="_csrf_token"
-                                           value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                           value="<?= htmlspecialchars(
+                                               $csrfToken,
+                                               ENT_QUOTES | ENT_SUBSTITUTE,
+                                               'UTF-8'
+                                           ) ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= (int) ($v['id'] ?? 0) ?>">
                                     <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger">
@@ -131,5 +152,4 @@ $title = 'Split-Horizon Views — PHP-BindManager';
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

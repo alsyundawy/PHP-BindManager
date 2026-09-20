@@ -10,11 +10,11 @@ use App\Exceptions\HttpException;
 use App\Http\Kernel;
 use App\Http\Router;
 use App\Logging\LoggerFactory;
+use App\Repositories\Api\ApiTokenRepository;
 use App\Repositories\Auth\LoginAttemptRepository;
 use App\Repositories\Auth\RoleRepository;
 use App\Repositories\Auth\SessionRepository;
 use App\Repositories\Auth\UserRepository;
-use App\Repositories\Api\ApiTokenRepository;
 use App\Repositories\Dns\AclRepository;
 use App\Repositories\Dns\DnssecKeyRepository;
 use App\Repositories\Dns\DnsViewRepository;
@@ -63,6 +63,20 @@ final class Application
         ]);
 
         $container = new Container();
+        self::registerCoreServices($container, $config);
+        self::registerAuthServices($container);
+        self::registerDnsServices($container);
+        self::registerSystemServices($container);
+
+        return new self(
+            $basePath,
+            $container,
+            $container->get(Kernel::class)
+        );
+    }
+
+    private static function registerCoreServices(Container $container, Config $config): void
+    {
         $container->set(Config::class, static fn () => $config);
         $container->set(Psr17Factory::class, static fn (): Psr17Factory => new Psr17Factory());
         $container->set(
@@ -73,6 +87,23 @@ final class Application
             LoggerFactory::class,
             static fn (): LoggerFactory => new LoggerFactory($config)
         );
+        $container->set(
+            Router::class,
+            static fn (): Router => Router::loadFromFiles([
+                Path::routes('web.php'),
+                Path::routes('dns.php'),
+                Path::routes('system.php'),
+                Path::routes('api.php'),
+            ])
+        );
+        $container->set(
+            Kernel::class,
+            static fn (Container $c): Kernel => new Kernel($c)
+        );
+    }
+
+    private static function registerAuthServices(Container $container): void
+    {
         $container->set(
             SessionRepository::class,
             static fn (Container $c): SessionRepository => new SessionRepository(
@@ -117,6 +148,10 @@ final class Application
                 $c->get(Config::class)
             )
         );
+    }
+
+    private static function registerDnsServices(Container $container): void
+    {
         $container->set(
             ZoneRepository::class,
             static fn (Container $c): ZoneRepository => new ZoneRepository(
@@ -146,6 +181,28 @@ final class Application
                 );
             }
         );
+        $container->set(
+            AclRepository::class,
+            static fn (Container $c): AclRepository => new AclRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            DnsViewRepository::class,
+            static fn (Container $c): DnsViewRepository => new DnsViewRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            DnssecKeyRepository::class,
+            static fn (Container $c): DnssecKeyRepository => new DnssecKeyRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+    }
+
+    private static function registerSystemServices(Container $container): void
+    {
         $container->set(
             ActivityLogRepository::class,
             static fn (Container $c): ActivityLogRepository => new ActivityLogRepository(
@@ -182,45 +239,6 @@ final class Application
                     $backupDir,
                 );
             }
-        );
-        $container->set(
-            AclRepository::class,
-            static fn (Container $c): AclRepository => new AclRepository(
-                $c->get(ConnectionFactory::class)->create()
-            )
-        );
-        $container->set(
-            DnsViewRepository::class,
-            static fn (Container $c): DnsViewRepository => new DnsViewRepository(
-                $c->get(ConnectionFactory::class)->create()
-            )
-        );
-        $container->set(
-            DnssecKeyRepository::class,
-            static fn (Container $c): DnssecKeyRepository => new DnssecKeyRepository(
-                $c->get(ConnectionFactory::class)->create()
-            )
-        );
-        $container->set(
-            Router::class,
-            static function (): Router {
-                return Router::loadFromFiles([
-                    Path::routes('web.php'),
-                    Path::routes('dns.php'),
-                    Path::routes('system.php'),
-                    Path::routes('api.php'),
-                ]);
-            }
-        );
-        $container->set(
-            Kernel::class,
-            static fn (Container $c): Kernel => new Kernel($c)
-        );
-
-        return new self(
-            $basePath,
-            $container,
-            $container->get(Kernel::class)
         );
     }
 

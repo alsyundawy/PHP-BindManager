@@ -8,6 +8,11 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
+$acls         = $acls ?? [];
+$csrfToken    = $csrfToken ?? '';
+$flashSuccess = $flashSuccess ?? null;
+$flashError   = $flashError ?? null;
+
 $title = 'Access Control Lists — PHP-BindManager';
 ?>
 <?php ob_start(); ?>
@@ -17,7 +22,8 @@ $title = 'Access Control Lists — PHP-BindManager';
         <h1><i class="fa-solid fa-shield-halved me-2"></i>Access Control Lists</h1>
         <p class="pbm-muted">Manage named ACLs used in BIND9 <code>named.conf</code> directives.</p>
     </div>
-    <button type="button" class="pbm-btn" onclick="document.getElementById('acl-form').style.display='block';this.style.display='none';">
+    <button type="button" class="pbm-btn"
+            onclick="document.getElementById('acl-form').style.display='block';this.style.display='none';">
         <i class="fa-solid fa-plus me-1"></i>New ACL
     </button>
 </div>
@@ -41,7 +47,7 @@ $title = 'Access Control Lists — PHP-BindManager';
         <input type="hidden" name="_csrf_token"
                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="_action" value="create">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
                 <label class="pbm-label" for="acl-name">ACL Name <span class="pbm-required">*</span></label>
                 <input id="acl-name" type="text" name="name" class="pbm-input"
@@ -96,29 +102,40 @@ $title = 'Access Control Lists — PHP-BindManager';
                 </thead>
                 <tbody>
                     <?php foreach ($acls as $acl) : ?>
+                        <?php
+                        $aclName = (string) ($acl['name'] ?? '');
+                        $aclDesc = (string) ($acl['description'] ?? '—');
+                        $rawEnt  = (string) ($acl['entries'] ?? '');
+                        $lines   = explode("\n", $rawEnt);
+                        $preview = implode(', ', array_slice($lines, 0, 3));
+                        if (count($lines) > 3) {
+                            $preview .= '…';
+                        }
+                        $updated = (string) ($acl['updated_at'] ?? '');
+                        ?>
                         <tr>
                             <td><?= (int) ($acl['id'] ?? 0) ?></td>
-                            <td><strong><?= htmlspecialchars((string) ($acl['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></td>
-                            <td><?= htmlspecialchars((string) ($acl['description'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($aclName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
+                            </td>
+                            <td><?= htmlspecialchars($aclDesc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                             <td style="max-width:220px;">
                                 <code style="font-size:.78rem;white-space:pre-wrap;word-break:break-all;">
-                                    <?php
-                                    $lines = explode("\n", (string) ($acl['entries'] ?? ''));
-                                    echo htmlspecialchars(implode(', ', array_slice($lines, 0, 3)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                                    if (count($lines) > 3) {
-                                        echo '…';
-                                    }
-                                    ?>
+                                    <?= htmlspecialchars($preview, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </code>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($acl['updated_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($updated, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
                                 <form method="post" action="/acls"
-                                      onsubmit="return confirm('Delete ACL \'' + <?= json_encode((string) ($acl['name'] ?? '')) ?> + '\'?');">
+                                      onsubmit="return confirm('Delete this ACL?');">
                                     <input type="hidden" name="_csrf_token"
-                                           value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                           value="<?= htmlspecialchars(
+                                               $csrfToken,
+                                               ENT_QUOTES | ENT_SUBSTITUTE,
+                                               'UTF-8'
+                                           ) ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= (int) ($acl['id'] ?? 0) ?>">
                                     <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger">
@@ -136,5 +153,4 @@ $title = 'Access Control Lists — PHP-BindManager';
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

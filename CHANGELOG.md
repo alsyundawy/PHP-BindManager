@@ -7,15 +7,53 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
+## [1.1.0] - 2026-09-21
+
+### Added
+
+- **Backup & Restore System**: Web UI and backend service (`/system/backups`) for creating, restoring,
+  and deleting SQLite database snapshots with SHA-256 integrity verification.
+- **Activity Log Viewer**: Comprehensive audit log interface (`/system/activity`) with category filtering
+  (auth, zone, record, user, system, api, backup) and user attribution.
+- **Audit Trail Inspector**: Immutable change tracker (`/system/audit-logs`) with expandable before/after
+  diff view for compliance.
+- **API Token Management**: Token generator (`/system/tokens`) supporting custom expiration dates,
+  granular permission scopes, SHA-256 hashing, one-time reveal, and instant revocation.
+- **Access Control Lists (ACL)**: Named BIND9 ACL management (`/acls`) for restricting query access.
+- **Split-Horizon DNS Views**: Multi-view configuration (`/views`) with `match-clients` rules for internal
+  and external split-horizon resolution.
+- **DNSSEC Key Management**: Cryptographic key pair generation (`/dnssec`) with KSK, ZSK, and CSK roles,
+  algorithm selection (ECDSA, Ed25519, RSA), and key retirement workflows.
+- New repositories: `BackupRepository`, `AclRepository`, `DnsViewRepository`, `DnssecKeyRepository`.
+
+### Changed
+
+- Modularized `App\Application::boot()` by extracting `registerCoreServices()`, `registerAuthServices()`,
+  `registerDnsServices()`, and `registerSystemServices()` to ensure clean dependency injection.
+- Optimized `Public/assets/css/app.min.css` with cross-browser `text-size-adjust` fallbacks
+  (`-webkit-text-size-adjust`, `-moz-text-size-adjust`, `text-size-adjust`) and thin scrollbars.
+- Hardened Xiaomi/Redmi/POCO responsive viewports with dynamic `100svh`/`100dvh` units and
+  safe-area-inset bounds to prevent clipping under MIUI/HyperOS navigation bars.
+
+### Fixed
+
+- Fixed column name mismatch in `ApiTokenRepository` (`scopes_json` -> `scopes`).
+- Fixed `PDOStatement|false` checks in `ApiTokenRepository::all()` and `ActivityLogRepository::count()`.
+- Fixed short ternary operators, redundant casts, and non-boolean `if` conditions in `Routes/system.php`
+  to achieve 100% PHPStan Level 8 strict compliance.
+- Re-formatted all system views (`backups.php`, `activity.php`, `audit-logs.php`, `tokens.php`,
+  `acls/index.php`, `views/index.php`, `dnssec/index.php`) to strictly conform to PSR-12, line length <= 120 chars,
+  and `require_once` semantics.
+- Fixed accessible grouping on API token scope checkboxes (`role="group"` and `aria-labelledby`).
+
+---
+
 ## [1.0.0] - 2026-09-20
 
 ### Added
 
 - Initial release of PHP-BindManager: Enterprise Web GUI for BIND9 Authoritative DNS.
 - Authoritative DNS Zone and Record management (SOA, NS, A, AAAA, CNAME, MX, TXT, SRV, PTR, CAA, SSHFP, TLSA).
-- Initial project scaffold and directory structure.
-- Full documentation suite (README, INSTALL, ARCHITECTURE, SECURITY, CONFIGURATION, API, ROADMAP, CONTRIBUTING,
-  TUTORIAL, DOCNOTE).
 - Zero-CDN local vendor assets (Bootstrap 3.5.8, jQuery 3.7.1, Font Awesome 6.7.2) in `Public/assets/vendor/`.
 - Modern responsive dashboard inspired by Visual Subnet Calculator with dual `data-theme` / `data-bs-theme` synchronization.
 - Production BIND 9 Authoritative DNS deployment tutorial (`TUTORIAL.md`).
@@ -24,32 +62,3 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   and secure session management.
 - REST API layer with scoped Bearer token authentication and OpenAPI-ready documentation.
 - Comprehensive PHPUnit test suite, PHPStan Level 8, Psalm Level 4, PHPCS, PHP-CS-Fixer, and Trunk check compliance.
-
-### Changed
-
-- Refactored routes (`web.php`, `dns.php`, `system.php`) and configs to strict multiline PSR-12 arrays.
-- Enhanced mobile responsiveness with `viewport-fit=cover`, safe-area insets, `100dvh`, and responsive table wrappers.
-- Hardened database repositories and services with typed docblocks and PDO query safety checks.
-
-### Fixed
-
-- Resolved Intelephense schema type mismatch in `.vscode/settings.json` (`undefinedVariables` set to string `"off"`).
-- Suppressed non-standard CSS `text-size-adjust` linter warning in `Public/assets/css/app.min.css`
-  in favor of `-webkit-text-size-adjust: 100%`.
-- Cleared trailing blank line at EOF in `Public/assets/css/app.min.css` for Trunk check compliance.
-- Hardened session cookies in `App/Services/Auth/AuthenticationService.php` with explicit `secure: true`
-  and `httponly: true` flags (SonarLint S3330).
-- Re-formatted all template views (`errors/generic.php`, `layouts/app.php`, `welcome.php`, `system/api-docs.php`,
-  `partials/navbar.php`, `partials/sidebar.php`) to strictly adhere to max 120-character line limit.
-- Replaced `include` with `include_once` for view partials and added trailing newline to `Resources/Views/layouts/app.php`.
-- Formatted long SQL schema statements in unit test fixtures (`RateLimiterServiceTest.php`,
-  `ApiTokenServiceTest.php`) to adhere to line length constraints.
-- Fixed missing `/dashboard` and `/logout` paths in `Routes/web.php`.
-- Fixed `ZoneOptimizerTest` normalization assertion mismatch.
-- Added untyped readonly properties and missing getters in `App/Application.php`.
-- Configured Psalm 8.4 runtime mapping and PHP-CS-Fixer 8.5 runtime allowance.
-
-### Security
-
-- Enforced strict HTTP security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
-- Localized all frontend assets to eliminate external CDN tracking, downtime, and supply chain risks.

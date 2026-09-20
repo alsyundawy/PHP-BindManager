@@ -91,6 +91,9 @@ final class ApiTokenRepository
              LEFT JOIN users u ON u.id = t.user_id
              ORDER BY t.id DESC'
         );
+        if ($stmt === false) {
+            return [];
+        }
 
         return $stmt->fetchAll();
     }

@@ -9,6 +9,12 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
+$tokens       = $tokens ?? [];
+$csrfToken    = $csrfToken ?? '';
+$newToken     = $newToken ?? null;
+$flashSuccess = $flashSuccess ?? null;
+$flashError   = $flashError ?? null;
+
 $title       = 'API Tokens — PHP-BindManager';
 $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 'system:read'];
 ?>
@@ -63,7 +69,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
         <input type="hidden" name="_csrf_token"
                value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="_action" value="create">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
                 <label class="pbm-label" for="tok-name">Token Name <span class="pbm-required">*</span></label>
                 <input id="tok-name" type="text" name="name" class="pbm-input"
@@ -76,8 +82,9 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
             </div>
         </div>
         <div class="pbm-form-group">
-            <label class="pbm-label">Scopes</label>
-            <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;">
+            <div id="scopes-heading" class="pbm-label">Scopes</div>
+            <div role="group" aria-labelledby="scopes-heading"
+                 style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;">
                 <?php foreach ($allScopes as $scope) : ?>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
                         <input type="checkbox" name="scopes[]"
@@ -128,10 +135,17 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                         $scopesJson = (string) ($tok['scopes'] ?? '[]');
                         $scopes     = json_decode($scopesJson, true);
                         $scopes     = is_array($scopes) ? $scopes : [];
+                        $tokName    = (string) ($tok['name'] ?? '');
+                        $lastUsed   = (string) ($tok['last_used_at'] ?? '—');
+                        $expires    = (string) ($tok['expires_at'] ?? '∞');
+                        $created    = (string) ($tok['created_at'] ?? '');
+                        $tokId      = (int) ($tok['id'] ?? 0);
                         ?>
                         <tr style="<?= $isRevoked || $isExpired ? 'opacity:.55;' : '' ?>">
-                            <td><?= (int) ($tok['id'] ?? 0) ?></td>
-                            <td><strong><?= htmlspecialchars((string) ($tok['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></td>
+                            <td><?= $tokId ?></td>
+                            <td>
+                                <strong><?= htmlspecialchars($tokName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
+                            </td>
                             <td style="max-width:220px;">
                                 <?php foreach ($scopes as $s) : ?>
                                     <span class="pbm-badge pbm-badge-secondary"
@@ -141,10 +155,10 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                                 <?php endforeach; ?>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($tok['last_used_at'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($lastUsed, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($tok['expires_at'] ?? '∞'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($expires, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
                                 <?php if ($isRevoked) : ?>
@@ -156,16 +170,20 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                                 <?php endif; ?>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($tok['created_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($created, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
                                 <?php if (! $isRevoked) : ?>
                                     <form method="post" action="/system/tokens"
                                           onsubmit="return confirm('Revoke this token permanently?');">
                                         <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                               value="<?= htmlspecialchars(
+                                                   $csrfToken,
+                                                   ENT_QUOTES | ENT_SUBSTITUTE,
+                                                   'UTF-8'
+                                               ) ?>">
                                         <input type="hidden" name="_action" value="revoke">
-                                        <input type="hidden" name="id" value="<?= (int) ($tok['id'] ?? 0) ?>">
+                                        <input type="hidden" name="id" value="<?= $tokId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger"
                                                 title="Revoke token">
                                             <i class="fa-solid fa-ban"></i>
@@ -175,9 +193,13 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                                     <form method="post" action="/system/tokens"
                                           onsubmit="return confirm('Delete this token record?');">
                                         <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                               value="<?= htmlspecialchars(
+                                                   $csrfToken,
+                                                   ENT_QUOTES | ENT_SUBSTITUTE,
+                                                   'UTF-8'
+                                               ) ?>">
                                         <input type="hidden" name="_action" value="delete">
-                                        <input type="hidden" name="id" value="<?= (int) ($tok['id'] ?? 0) ?>">
+                                        <input type="hidden" name="id" value="<?= $tokId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-secondary"
                                                 title="Delete revoked token">
                                             <i class="fa-solid fa-trash"></i>
@@ -195,5 +217,4 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

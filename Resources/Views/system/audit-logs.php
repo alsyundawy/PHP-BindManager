@@ -6,6 +6,9 @@ declare(strict_types=1);
  * @var array<int, array<string, mixed>> $logs
  * @var int                              $total
  */
+$logs  = $logs ?? [];
+$total = $total ?? 0;
+
 $title = 'Audit Trail — PHP-BindManager';
 
 $actionBadge = [
@@ -49,48 +52,66 @@ $actionBadge = [
                 </thead>
                 <tbody>
                     <?php foreach ($logs as $log) : ?>
+                        <?php
+                        $act       = strtoupper((string) ($log['action'] ?? ''));
+                        $timeStr   = (string) ($log['created_at'] ?? '');
+                        $entity    = (string) ($log['entity_type'] ?? '');
+                        $entityId  = (string) ($log['entity_id'] ?? '—');
+                        $uname     = (string) ($log['username'] ?? '');
+                        $userStr   = $uname !== '' ? $uname : '—';
+                        $ipStr     = (string) ($log['ip_address'] ?? '');
+                        $oldVal    = (string) ($log['old_value'] ?? '');
+                        $newVal    = (string) ($log['new_value'] ?? '');
+                        $hasChange = ($oldVal !== '' || $newVal !== '');
+                        ?>
                         <tr>
                             <td><?= (int) ($log['id'] ?? 0) ?></td>
                             <td style="white-space:nowrap;font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($log['created_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($timeStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
-                                <?php $act = strtoupper((string) ($log['action'] ?? '')); ?>
                                 <span class="pbm-badge <?= $actionBadge[$act] ?? 'pbm-badge-secondary' ?>">
                                     <?= htmlspecialchars($act, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
                             <td>
                                 <code style="font-size:.82rem;">
-                                    <?= htmlspecialchars((string) ($log['entity_type'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                    <?= htmlspecialchars($entity, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </code>
                             </td>
-                            <td><?= htmlspecialchars((string) ($log['entity_id'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                             <td>
-                                <?php
-                                $uname = (string) ($log['username'] ?? '');
-                                echo htmlspecialchars($uname !== '' ? $uname : '—', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                                ?>
+                                <?= htmlspecialchars($entityId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars($userStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($log['ip_address'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($ipStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
-                                <?php
-                                $oldVal = (string) ($log['old_value'] ?? '');
-                                $newVal = (string) ($log['new_value'] ?? '');
-                                if ($oldVal !== '' || $newVal !== '') :
-                                ?>
+                                <?php if ($hasChange) : ?>
                                     <details style="cursor:pointer;">
                                         <summary style="font-size:.78rem;color:var(--pbm-muted);">View diff</summary>
                                         <div style="margin-top:6px;font-size:.78rem;">
                                             <?php if ($oldVal !== '') : ?>
                                                 <div class="pbm-muted">Before:</div>
-                                                <pre style="margin:2px 0 8px;white-space:pre-wrap;word-break:break-all;"><?= htmlspecialchars($oldVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></pre>
+                                                <pre
+                                                    style="margin:2px 0 8px;white-space:pre-wrap;word-break:break-all;"
+                                                ><?= htmlspecialchars(
+                                                    $oldVal,
+                                                    ENT_QUOTES | ENT_SUBSTITUTE,
+                                                    'UTF-8'
+                                                ) ?></pre>
                                             <?php endif; ?>
                                             <?php if ($newVal !== '') : ?>
                                                 <div class="pbm-muted">After:</div>
-                                                <pre style="margin:2px 0;white-space:pre-wrap;word-break:break-all;"><?= htmlspecialchars($newVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></pre>
+                                                <pre
+                                                    style="margin:2px 0;white-space:pre-wrap;word-break:break-all;"
+                                                ><?= htmlspecialchars(
+                                                    $newVal,
+                                                    ENT_QUOTES | ENT_SUBSTITUTE,
+                                                    'UTF-8'
+                                                ) ?></pre>
                                             <?php endif; ?>
                                         </div>
                                     </details>
@@ -108,5 +129,4 @@ $actionBadge = [
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

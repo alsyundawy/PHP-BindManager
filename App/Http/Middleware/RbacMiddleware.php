@@ -12,6 +12,7 @@ final class RbacMiddleware
 {
     /**
      * @param callable(ServerRequestInterface): ResponseInterface $next
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
@@ -57,6 +58,9 @@ final class RbacMiddleware
         return $next($request);
     }
 
+    /**
+     * @return ResponseInterface
+     */
     private function buildForbiddenResponse(
         bool $isApi,
         string $sessionMessage,

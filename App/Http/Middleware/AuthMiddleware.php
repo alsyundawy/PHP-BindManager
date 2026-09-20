@@ -18,6 +18,7 @@ final class AuthMiddleware
 
     /**
      * @param callable(ServerRequestInterface): ResponseInterface $next
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
@@ -42,8 +43,6 @@ final class AuthMiddleware
             throw new AuthenticationException();
         }
 
-        $redirect = new Response(302, ['Location' => '/login']);
-
-        return $redirect;
+        return new Response(302, ['Location' => '/login']);
     }
 }

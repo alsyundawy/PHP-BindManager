@@ -34,7 +34,7 @@ $parseBody = static function (ServerRequestInterface $req): array {
 $zoneNotFound = ['error' => 'Zone not found.'];
 
 return [
-    // ─── Health check ─────────────────────────────────────────────────────────
+    // --- Health check ---
     [
         'method'     => 'GET',
         'path'       => '/api/v1/system/health',
@@ -62,7 +62,7 @@ return [
         },
     ],
 
-    // ─── Zones ────────────────────────────────────────────────────────────────
+    // --- Zones ---
     [
         'method'     => 'GET',
         'path'       => '/api/v1/zones',
@@ -219,7 +219,7 @@ return [
         },
     ],
 
-    // ─── Records ──────────────────────────────────────────────────────────────
+    // --- Records ---
     [
         'method'     => 'GET',
         'path'       => '/api/v1/records',

@@ -20,9 +20,60 @@ use Nyholm\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
 $htmlHeaders = ['Content-Type' => 'text/html; charset=UTF-8'];
+$pathBackups = '/system/backups';
+$pathTokens  = '/system/tokens';
+$pathAcls    = '/acls';
+$pathViews   = '/views';
+$pathDnssec  = '/dnssec';
+$errPrefix   = 'Error: ';
+
+/**
+ * Helper to run dnssec-keygen if available.
+ *
+ * @return array{keyFile: string, keyTag: int, publicKey: string|null}
+ */
+$generateDnssecKey = static function (int $zoneId, string $keyRole, int $algorithm, string $zonesDir): array {
+    $keyFile   = 'K' . $zoneId . '-' . $keyRole . '-' . time();
+    $keyTag    = random_int(1, 65535);
+    $publicKey = null;
+
+    $dnssecKeygen = '/usr/sbin/dnssec-keygen';
+    if (is_executable($dnssecKeygen)) {
+        $roleFlag = $keyRole === 'ksk' ? ' -f KSK' : '';
+        $cmd      = escapeshellcmd($dnssecKeygen)
+                   . $roleFlag
+                   . ' -a ' . $algorithm
+                   . ' -n ZONE'
+                   . ' -K ' . escapeshellarg($zonesDir)
+                   . ' zone' . $zoneId;
+        $output  = [];
+        $retCode = 0;
+        exec($cmd . ' 2>&1', $output, $retCode);
+        if ($retCode === 0 && isset($output[0])) {
+            $keyFile = $output[0];
+            $pubFile = $zonesDir . '/' . $keyFile . '.key';
+            if (is_file($pubFile)) {
+                $content = file_get_contents($pubFile);
+                if ($content !== false && $content !== '') {
+                    $publicKey = $content;
+                }
+                $matches = [];
+                if (preg_match('/\+(\d{5})$/', $keyFile, $matches) === 1) {
+                    $keyTag = (int) $matches[1];
+                }
+            }
+        }
+    }
+
+    return [
+        'keyFile'   => $keyFile,
+        'keyTag'    => $keyTag,
+        'publicKey' => $publicKey,
+    ];
+};
 
 return [
-    // ─── System Health / Overview ──────────────────────────────────────────────
+    // --- System Health / Overview ---
     [
         'method'     => 'GET',
         'path'       => '/system',
@@ -64,7 +115,7 @@ return [
             return new Response(200, $htmlHeaders, $html);
         },
     ],
-    // ─── API Docs ──────────────────────────────────────────────────────────────
+    // --- API Docs ---
     [
         'method'     => 'GET',
         'path'       => '/api/docs',
@@ -76,10 +127,10 @@ return [
             View::render('system/api-docs')
         ),
     ],
-    // ─── Backups ───────────────────────────────────────────────────────────────
+    // --- Backups ---
     [
         'method'     => 'GET',
-        'path'       => '/system/backups',
+        'path'       => $pathBackups,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
@@ -117,11 +168,11 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/system/backups',
+        'path'       => $pathBackups,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($pathBackups, $errPrefix): Response {
             /** @var Container $c */
             $c = $req->getAttribute('container');
             /** @var BackupService $backupService */
@@ -170,13 +221,13 @@ return [
                     $_SESSION['flash_success'] = 'Backup deleted.';
                 }
             } catch (\Throwable $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
             }
 
-            return new Response(302, ['Location' => '/system/backups']);
+            return new Response(302, ['Location' => $pathBackups]);
         },
     ],
-    // ─── Activity Log ──────────────────────────────────────────────────────────
+    // --- Activity Log ---
     [
         'method'     => 'GET',
         'path'       => '/system/activity',
@@ -203,7 +254,7 @@ return [
             return new Response(200, $htmlHeaders, $html);
         },
     ],
-    // ─── Audit Trail ───────────────────────────────────────────────────────────
+    // --- Audit Trail ---
     [
         'method'     => 'GET',
         'path'       => '/system/audit-logs',
@@ -227,10 +278,10 @@ return [
             return new Response(200, $htmlHeaders, $html);
         },
     ],
-    // ─── API Tokens ────────────────────────────────────────────────────────────
+    // --- API Tokens ---
     [
         'method'     => 'GET',
-        'path'       => '/system/tokens',
+        'path'       => $pathTokens,
         'auth'       => true,
         'rate_limit' => 'web',
         'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
@@ -239,7 +290,7 @@ return [
             /** @var ApiTokenRepository $tokenRepo */
             $tokenRepo = $c->get(ApiTokenRepository::class);
 
-            $userId = (int) ($_SESSION['user_id'] ?? 0);
+            $userId  = (int) ($_SESSION['user_id'] ?? 0);
             $isAdmin = (($_SESSION['user_role'] ?? '') === 'admin');
 
             $flashSuccess = '';
@@ -273,24 +324,25 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/system/tokens',
+        'path'       => $pathTokens,
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($pathTokens, $errPrefix): Response {
             /** @var Container $c */
             $c = $req->getAttribute('container');
             /** @var ApiTokenRepository $tokenRepo */
             $tokenRepo = $c->get(ApiTokenRepository::class);
 
-            $body     = (array) ($req->getParsedBody() ?? []);
-            $action   = (string) ($body['_action'] ?? '');
-            $userId   = (int) ($_SESSION['user_id'] ?? 0);
+            $body   = (array) ($req->getParsedBody() ?? []);
+            $action = (string) ($body['_action'] ?? '');
+            $userId = (int) ($_SESSION['user_id'] ?? 0);
 
             try {
                 if ($action === 'create') {
-                    $name      = trim((string) ($body['name'] ?? ''));
-                    $expiresAt = trim((string) ($body['expires_at'] ?? '')) ?: null;
-                    $rawScopes = isset($body['scopes']) && is_array($body['scopes'])
+                    $name       = trim((string) ($body['name'] ?? ''));
+                    $rawExpires = trim((string) ($body['expires_at'] ?? ''));
+                    $expiresAt  = $rawExpires !== '' ? $rawExpires : null;
+                    $rawScopes  = isset($body['scopes']) && is_array($body['scopes'])
                         ? array_map('strval', $body['scopes'])
                         : [];
 
@@ -300,8 +352,8 @@ return [
                         $plainToken = bin2hex(random_bytes(32));
                         $hash       = hash('sha256', $plainToken);
                         $tokenRepo->create($userId, $name, $hash, $rawScopes, $expiresAt);
-                        $_SESSION['new_api_token']  = $plainToken;
-                        $_SESSION['flash_success']  = "Token '{$name}' created.";
+                        $_SESSION['new_api_token'] = $plainToken;
+                        $_SESSION['flash_success'] = "Token '{$name}' created.";
                     }
                 } elseif ($action === 'revoke') {
                     $id = (int) ($body['id'] ?? 0);
@@ -313,16 +365,16 @@ return [
                     $_SESSION['flash_success'] = 'Token deleted.';
                 }
             } catch (\Throwable $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
             }
 
-            return new Response(302, ['Location' => '/system/tokens']);
+            return new Response(302, ['Location' => $pathTokens]);
         },
     ],
-    // ─── ACL Management ────────────────────────────────────────────────────────
+    // --- ACL Management ---
     [
         'method'     => 'GET',
-        'path'       => '/acls',
+        'path'       => $pathAcls,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
@@ -355,11 +407,11 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/acls',
+        'path'       => $pathAcls,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($pathAcls, $errPrefix): Response {
             /** @var Container $c */
             $c = $req->getAttribute('container');
             /** @var AclRepository $aclRepo */
@@ -372,7 +424,8 @@ return [
                 if ($action === 'create') {
                     $name    = trim((string) ($body['name'] ?? ''));
                     $entries = trim((string) ($body['entries'] ?? ''));
-                    $desc    = trim((string) ($body['description'] ?? '')) ?: null;
+                    $rawDesc = trim((string) ($body['description'] ?? ''));
+                    $desc    = $rawDesc !== '' ? $rawDesc : null;
 
                     if ($name === '' || $entries === '') {
                         $_SESSION['flash_error'] = 'ACL name and entries are required.';
@@ -388,16 +441,16 @@ return [
                     $_SESSION['flash_success'] = 'ACL deleted.';
                 }
             } catch (\Throwable $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
             }
 
-            return new Response(302, ['Location' => '/acls']);
+            return new Response(302, ['Location' => $pathAcls]);
         },
     ],
-    // ─── DNS Views (Split-Horizon) ─────────────────────────────────────────────
+    // --- DNS Views (Split-Horizon) ---
     [
         'method'     => 'GET',
-        'path'       => '/views',
+        'path'       => $pathViews,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
@@ -430,11 +483,11 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/views',
+        'path'       => $pathViews,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($pathViews, $errPrefix): Response {
             /** @var Container $c */
             $c = $req->getAttribute('container');
             /** @var DnsViewRepository $viewRepo */
@@ -447,7 +500,8 @@ return [
                 if ($action === 'create') {
                     $name         = trim((string) ($body['name'] ?? ''));
                     $matchClients = trim((string) ($body['match_clients'] ?? ''));
-                    $desc         = trim((string) ($body['description'] ?? '')) ?: null;
+                    $rawDesc      = trim((string) ($body['description'] ?? ''));
+                    $desc         = $rawDesc !== '' ? $rawDesc : null;
 
                     if ($name === '' || $matchClients === '') {
                         $_SESSION['flash_error'] = 'View name and match-clients are required.';
@@ -463,16 +517,16 @@ return [
                     $_SESSION['flash_success'] = 'View deleted.';
                 }
             } catch (\Throwable $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
             }
 
-            return new Response(302, ['Location' => '/views']);
+            return new Response(302, ['Location' => $pathViews]);
         },
     ],
-    // ─── DNSSEC ────────────────────────────────────────────────────────────────
+    // --- DNSSEC ---
     [
         'method'     => 'GET',
-        'path'       => '/dnssec',
+        'path'       => $pathDnssec,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
@@ -508,11 +562,15 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/dnssec',
+        'path'       => $pathDnssec,
         'auth'       => true,
         'role'       => 'admin',
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use (
+            $pathDnssec,
+            $errPrefix,
+            $generateDnssecKey
+        ): Response {
             /** @var Container $c */
             $c = $req->getAttribute('container');
             /** @var DnssecKeyRepository $keyRepo */
@@ -532,38 +590,15 @@ return [
                     if ($zoneId < 1) {
                         $_SESSION['flash_error'] = 'Please select a zone.';
                     } else {
-                        // Generate key using dnssec-keygen if available; store result in DB
-                        $zonesDir  = $zfs->zonesDirectory();
-                        $keyFile   = 'K' . $zoneId . '-' . $keyRole . '-' . time();
-                        $keyTag    = random_int(1, 65535);
-                        $publicKey = null;
-
-                        $dnssecKeygen = '/usr/sbin/dnssec-keygen';
-                        if (is_executable($dnssecKeygen)) {
-                            $roleFlag  = $keyRole === 'ksk' ? ' -f KSK' : '';
-                            $cmd       = escapeshellcmd($dnssecKeygen)
-                                       . $roleFlag
-                                       . ' -a ' . (int) $algorithm
-                                       . ' -n ZONE'
-                                       . ' -K ' . escapeshellarg($zonesDir)
-                                       . ' zone' . $zoneId;
-                            $output    = [];
-                            $retCode   = 0;
-                            exec($cmd . ' 2>&1', $output, $retCode);
-                            if ($retCode === 0 && isset($output[0])) {
-                                $keyFile = (string) $output[0];
-                                $pubFile = $zonesDir . '/' . $keyFile . '.key';
-                                if (is_file($pubFile)) {
-                                    $publicKey = file_get_contents($pubFile) ?: null;
-                                    // Extract key tag from filename (Kexample.+NNN+TTTTT)
-                                    if (preg_match('/\+(\d{5})$/', $keyFile, $m)) {
-                                        $keyTag = (int) $m[1];
-                                    }
-                                }
-                            }
-                        }
-
-                        $keyRepo->create($zoneId, $keyRole, $keyTag, $algorithm, $keyFile, $publicKey);
+                        $keyData = $generateDnssecKey($zoneId, $keyRole, $algorithm, $zfs->zonesDirectory());
+                        $keyRepo->create(
+                            $zoneId,
+                            $keyRole,
+                            $keyData['keyTag'],
+                            $algorithm,
+                            $keyData['keyFile'],
+                            $keyData['publicKey']
+                        );
                         $_SESSION['flash_success'] = 'DNSSEC key generated.';
                     }
                 } elseif ($action === 'retire') {
@@ -572,10 +607,10 @@ return [
                     $_SESSION['flash_success'] = 'Key retired.';
                 }
             } catch (\Throwable $e) {
-                $_SESSION['flash_error'] = 'Error: ' . $e->getMessage();
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
             }
 
-            return new Response(302, ['Location' => '/dnssec']);
+            return new Response(302, ['Location' => $pathDnssec]);
         },
     ],
 ];

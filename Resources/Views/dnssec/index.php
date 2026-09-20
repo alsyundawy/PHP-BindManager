@@ -9,6 +9,12 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
+$zones        = $zones ?? [];
+$keys         = $keys ?? [];
+$csrfToken    = $csrfToken ?? '';
+$flashSuccess = $flashSuccess ?? null;
+$flashError   = $flashError ?? null;
+
 $title = 'DNSSEC Manager — PHP-BindManager';
 
 $keyRoleLabels = ['ksk' => 'KSK', 'zsk' => 'ZSK', 'csk' => 'CSK'];
@@ -114,42 +120,57 @@ $algoLabels    = [
                 </thead>
                 <tbody>
                     <?php foreach ($keys as $k) : ?>
+                        <?php
+                        $zName       = (string) ($k['zone_name'] ?? '');
+                        $role        = (string) ($k['key_role'] ?? 'zsk');
+                        $roleLabel   = $keyRoleLabels[$role] ?? strtoupper($role);
+                        $roleBadge   = $role === 'ksk' ? 'pbm-badge-danger' : 'pbm-badge-info';
+                        $algoNum     = (int) ($k['algorithm'] ?? 0);
+                        $algoText    = $algoNum . ' — ' . ($algoLabels[$algoNum] ?? 'Unknown');
+                        $status      = (string) ($k['status'] ?? 'active');
+                        $statusBadge = match ($status) {
+                            'active'  => 'pbm-badge-success',
+                            'retired' => 'pbm-badge-warning',
+                            'revoked' => 'pbm-badge-danger',
+                            default   => 'pbm-badge-secondary',
+                        };
+                        ?>
                         <tr>
                             <td><?= (int) ($k['id'] ?? 0) ?></td>
                             <td>
-                                <strong><?= htmlspecialchars((string) ($k['zone_name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
+                                <strong><?= htmlspecialchars($zName, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
                             </td>
                             <td>
-                                <?php $role = (string) ($k['key_role'] ?? 'zsk'); ?>
-                                <span class="pbm-badge <?= $role === 'ksk' ? 'pbm-badge-danger' : 'pbm-badge-info' ?>">
-                                    <?= htmlspecialchars($keyRoleLabels[$role] ?? strtoupper($role), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <span class="pbm-badge <?= $roleBadge ?>">
+                                    <?= htmlspecialchars($roleLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
                             <td><code><?= (int) ($k['key_tag'] ?? 0) ?></code></td>
                             <td>
-                                <?php $algoNum = (int) ($k['algorithm'] ?? 0); ?>
-                                <?= $algoNum ?> — <?= htmlspecialchars($algoLabels[$algoNum] ?? 'Unknown', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($algoText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
-                                <?php $status = (string) ($k['status'] ?? 'active'); ?>
-                                <span class="pbm-badge <?= match ($status) {
-                                    'active'  => 'pbm-badge-success',
-                                    'retired' => 'pbm-badge-warning',
-                                    'revoked' => 'pbm-badge-danger',
-                                    default   => 'pbm-badge-secondary',
-                                } ?>">
+                                <span class="pbm-badge <?= $statusBadge ?>">
                                     <?= htmlspecialchars(ucfirst($status), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($k['created_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars(
+                                    (string) ($k['created_at'] ?? ''),
+                                    ENT_QUOTES | ENT_SUBSTITUTE,
+                                    'UTF-8'
+                                ) ?>
                             </td>
                             <td>
                                 <?php if ($status === 'active') : ?>
                                     <form method="post" action="/dnssec"
-                                          onsubmit="return confirm('Retire this key? It will no longer be used for signing.');">
+                                          onsubmit="return confirm('Retire key? It will no longer sign.');">
                                         <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                               value="<?= htmlspecialchars(
+                                                   $csrfToken,
+                                                   ENT_QUOTES | ENT_SUBSTITUTE,
+                                                   'UTF-8'
+                                               ) ?>">
                                         <input type="hidden" name="_action" value="retire">
                                         <input type="hidden" name="id" value="<?= (int) ($k['id'] ?? 0) ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-warning">
@@ -168,5 +189,4 @@ $algoLabels    = [
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

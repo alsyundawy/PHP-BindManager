@@ -7,6 +7,10 @@ declare(strict_types=1);
  * @var string                           $category
  * @var int                              $total
  */
+$logs     = $logs ?? [];
+$category = $category ?? '';
+$total    = $total ?? 0;
+
 $title = 'Activity Log — PHP-BindManager';
 
 $categories = ['auth', 'zone', 'record', 'user', 'system', 'api', 'backup'];
@@ -78,30 +82,37 @@ $badgeMap   = [
                 </thead>
                 <tbody>
                     <?php foreach ($logs as $log) : ?>
+                        <?php
+                        $actCat    = (string) ($log['category'] ?? 'system');
+                        $createdAt = (string) ($log['created_at'] ?? '');
+                        $actionStr = (string) ($log['action'] ?? '');
+                        $userStr   = (string) ($log['username'] ?? '—');
+                        $msgStr    = (string) ($log['message'] ?? '');
+                        $ipAddr    = (string) ($log['ip_address'] ?? '');
+                        ?>
                         <tr>
                             <td><?= (int) ($log['id'] ?? 0) ?></td>
                             <td style="white-space:nowrap;font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($log['created_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($createdAt, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
-                                <?php $cat = (string) ($log['category'] ?? 'system'); ?>
-                                <span class="pbm-badge <?= $badgeMap[$cat] ?? 'pbm-badge-secondary' ?>">
-                                    <?= htmlspecialchars($cat, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <span class="pbm-badge <?= $badgeMap[$actCat] ?? 'pbm-badge-secondary' ?>">
+                                    <?= htmlspecialchars($actCat, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
                             <td>
                                 <code style="font-size:.82rem;">
-                                    <?= htmlspecialchars((string) ($log['action'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                    <?= htmlspecialchars($actionStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </code>
                             </td>
                             <td>
-                                <?= htmlspecialchars((string) ($log['username'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($userStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td style="max-width:280px;overflow-wrap:break-word;word-break:break-word;">
-                                <?= htmlspecialchars((string) ($log['message'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($msgStr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars((string) ($log['ip_address'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                <?= htmlspecialchars($ipAddr, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -113,5 +124,4 @@ $badgeMap   = [
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

@@ -16,7 +16,7 @@ $pathZones   = '/zones';
 $pathRecords = '/records';
 
 return [
-    // ─── Zones ────────────────────────────────────────────────────────────────
+    // --- Zones ---
     [
         'method'     => 'GET',
         'path'       => $pathZones,
@@ -198,7 +198,7 @@ return [
         },
     ],
 
-    // ─── Records ──────────────────────────────────────────────────────────────
+    // --- Records ---
     [
         'method'     => 'GET',
         'path'       => $pathRecords,

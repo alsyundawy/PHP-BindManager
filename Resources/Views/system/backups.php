@@ -9,18 +9,24 @@ declare(strict_types=1);
  * @var string|null                      $flashError
  * @var string                           $dbPath
  */
+$backups      = $backups ?? [];
+$csrfToken    = $csrfToken ?? '';
+$flashSuccess = $flashSuccess ?? null;
+$flashError   = $flashError ?? null;
+$dbPath       = $dbPath ?? '';
+
 $title = 'Backups & Restore — PHP-BindManager';
 
-function fmtSize(int $bytes): string
-{
+$fmtSize = static function (int $bytes): string {
     if ($bytes >= 1_048_576) {
         return number_format($bytes / 1_048_576, 1) . ' MB';
     }
     if ($bytes >= 1024) {
         return number_format($bytes / 1024, 1) . ' KB';
     }
+
     return $bytes . ' B';
-}
+};
 ?>
 <?php ob_start(); ?>
 
@@ -30,7 +36,8 @@ function fmtSize(int $bytes): string
         <p class="pbm-muted">Create and manage SQLite database snapshots.</p>
     </div>
     <form method="post" action="/system/backups">
-        <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token"
+               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="_action" value="create">
         <button type="submit" class="pbm-btn">
             <i class="fa-solid fa-plus me-1"></i>New Backup
@@ -94,42 +101,56 @@ function fmtSize(int $bytes): string
                 </thead>
                 <tbody>
                     <?php foreach ($backups as $bk) : ?>
+                        <?php
+                        $bkType = (string) ($bk['backup_type'] ?? '');
+                        $bkSrc  = (string) ($bk['source_name'] ?? '');
+                        $bkSize = $fmtSize((int) ($bk['size_bytes'] ?? 0));
+                        $bkSha  = substr((string) ($bk['sha256'] ?? ''), 0, 12);
+                        $bkTime = (string) ($bk['created_at'] ?? '');
+                        $bkId   = (int) ($bk['id'] ?? 0);
+                        ?>
                         <tr>
-                            <td><?= (int) ($bk['id'] ?? 0) ?></td>
+                            <td><?= $bkId ?></td>
                             <td>
                                 <span class="pbm-badge pbm-badge-info">
-                                    <?= htmlspecialchars((string) ($bk['backup_type'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                    <?= htmlspecialchars($bkType, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
-                            <td><?= htmlspecialchars((string) ($bk['source_name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
-                            <td><?= fmtSize((int) ($bk['size_bytes'] ?? 0)) ?></td>
+                            <td><?= htmlspecialchars($bkSrc, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
+                            <td><?= $bkSize ?></td>
                             <td>
                                 <code style="font-size:.75rem;">
-                                    <?= htmlspecialchars(substr((string) ($bk['sha256'] ?? ''), 0, 12), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>…
+                                    <?= htmlspecialchars($bkSha, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>…
                                 </code>
                             </td>
-                            <td><?= htmlspecialchars((string) ($bk['created_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
+                            <td><?= htmlspecialchars($bkTime, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                             <td>
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                     <form method="post" action="/system/backups"
-                                          onsubmit="return confirm('Restore will overwrite the live database. Proceed?');">
+                                          onsubmit="return confirm('Restore live database? Proceed?');">
                                         <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                               value="<?= htmlspecialchars(
+                                                   $csrfToken,
+                                                   ENT_QUOTES | ENT_SUBSTITUTE,
+                                                   'UTF-8'
+                                               ) ?>">
                                         <input type="hidden" name="_action" value="restore">
-                                        <input type="hidden" name="id"
-                                               value="<?= (int) ($bk['id'] ?? 0) ?>">
+                                        <input type="hidden" name="id" value="<?= $bkId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-warning"
                                                 title="Restore this backup">
                                             <i class="fa-solid fa-rotate-left"></i>
                                         </button>
                                     </form>
                                     <form method="post" action="/system/backups"
-                                          onsubmit="return confirm('Delete this backup permanently?');">
+                                          onsubmit="return confirm('Delete backup permanently?');">
                                         <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                               value="<?= htmlspecialchars(
+                                                   $csrfToken,
+                                                   ENT_QUOTES | ENT_SUBSTITUTE,
+                                                   'UTF-8'
+                                               ) ?>">
                                         <input type="hidden" name="_action" value="delete">
-                                        <input type="hidden" name="id"
-                                               value="<?= (int) ($bk['id'] ?? 0) ?>">
+                                        <input type="hidden" name="id" value="<?= $bkId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger"
                                                 title="Delete this backup">
                                             <i class="fa-solid fa-trash"></i>
@@ -147,5 +168,4 @@ function fmtSize(int $bytes): string
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../layouts/app.php';
-?>
+require_once __DIR__ . '/../layouts/app.php';

@@ -73,7 +73,11 @@ final class ActivityLogRepository
 
     public function count(): int
     {
-        $row = $this->pdo->query('SELECT COUNT(*) FROM activity_logs')->fetch(PDO::FETCH_NUM);
+        $stmt = $this->pdo->query('SELECT COUNT(*) FROM activity_logs');
+        if ($stmt === false) {
+            return 0;
+        }
+        $row = $stmt->fetch(PDO::FETCH_NUM);
 
         return is_array($row) ? (int) ($row[0] ?? 0) : 0;
     }

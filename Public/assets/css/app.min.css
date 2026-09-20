@@ -60,6 +60,7 @@ body {
         sans-serif;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
     min-height: 100vh;
     min-height: 100dvh;
     min-height: 100svh;
@@ -294,9 +295,19 @@ textarea {
     overflow-x: auto;
     width: 100%;
     touch-action: pan-x pan-y;
-    scrollbar-width: thin;
     overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
+}
+
+.pbm-table-wrap::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+
+.pbm-table-wrap::-webkit-scrollbar-thumb,
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--pbm-border);
+    border-radius: 4px;
 }
 
 .pbm-table {

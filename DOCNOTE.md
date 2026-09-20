@@ -51,3 +51,15 @@ The codebase adheres strictly to:
   `httponly: true` to guarantee compliance with static security analysis and zero-unencrypted transmission policy.
 - **Strict Line Length ($\le 120$ characters)**: Enforced across all PHP controllers, services, repositories,
   HTML/PHP view templates, and unit tests.
+
+## 5. v1.1.0 Feature Additions & Mobile Viewport Resilience
+
+- **DNSSEC Lifecycle**: Fully integrated KSK/ZSK/CSK cryptographic key pair generation (Algorithms 5, 7, 8, 10,
+  13, 14, 15, 16) with automated key tag computation, rollover management, and zone signing state machine.
+- **Split-Horizon DNS & Named ACLs**: Multi-view query routing powered by BIND9 `match-clients` rules with
+  integrated CIDR group management.
+- **System Maintenance & Backups**: Automated SQLite live snapshotting (`bin/backup.php` and `/system/backups` UI)
+  with instant rollbacks, plus audit trails recording before/after JSON diffs.
+- **Xiaomi, Redmi, & POCO Viewport Resilience**: HyperOS / MIUI floating gestures and dynamic address bars
+  are accommodated via `100svh` / `100dvh` units, `env(safe-area-inset-*)`, and `min-width: 0` flex/grid constraints
+  to prevent text truncation and horizontal overflow during system font scaling.
