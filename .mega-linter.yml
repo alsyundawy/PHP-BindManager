@@ -1,0 +1,137 @@
+# ============================================================
+# MegaLinter Configuration — PHP-BindManager
+# https://megalinter.io/latest/configuration/
+# Focused: PHP · HTML · CSS · JavaScript · Markdown only
+# ============================================================
+
+# ---------------------------------------------------------------------------
+# Scope
+# ---------------------------------------------------------------------------
+VALIDATE_ALL_CODEBASE: true
+
+# ---------------------------------------------------------------------------
+# Enable ONLY the linter families we care about.
+# Everything outside PHP, HTML, CSS, JS, MARKDOWN is disabled.
+# ---------------------------------------------------------------------------
+ENABLE:
+  - PHP
+  - HTML
+  - CSS
+  - JAVASCRIPT
+  - MARKDOWN
+
+# ---------------------------------------------------------------------------
+# Specific linters activated (latest bundled versions in v10)
+# ---------------------------------------------------------------------------
+# PHP family
+ENABLE_LINTERS:
+  # PHP
+  - PHP_PHPCS            # PHP_CodeSniffer  — PSR-12
+  - PHP_PHPSTAN          # PHPStan          — level 8
+  - PHP_PSALM            # Psalm            — level 4
+  - PHP_PHPLINT          # php -l syntax check
+  - PHP_PHPMD            # PHP Mess Detector
+  # HTML
+  - HTML_DJLINT          # djLint — HTML / Jinja / Twig
+  - HTML_HTMLHINT        # HTMLHint
+  # CSS
+  - CSS_STYLELINT        # Stylelint
+  # JavaScript
+  - JAVASCRIPT_ES        # ESLint
+  - JAVASCRIPT_PRETTIER  # Prettier
+  # Markdown
+  - MARKDOWN_MARKDOWNLINT
+  - MARKDOWN_MARKDOWN_LINK_CHECK
+  - MARKDOWN_REMARK_LINT
+
+# ---------------------------------------------------------------------------
+# Apply automatic fixes where supported
+# ---------------------------------------------------------------------------
+APPLY_FIXES:
+  - PHP_PHPCS
+  - CSS_STYLELINT
+  - JAVASCRIPT_ES
+  - JAVASCRIPT_PRETTIER
+  - MARKDOWN_MARKDOWNLINT
+
+# ---------------------------------------------------------------------------
+# Paths / exclusions
+# ---------------------------------------------------------------------------
+FILTER_REGEX_EXCLUDE: >-
+  (vendor/|\.git/|node_modules/|\.cache/|\.phpunit\.cache/|\.php-cs-fixer\.cache|megalinter-reports/)
+
+# Only scan these top-level directories
+# (Public for CSS/JS/HTML assets, App for PHP, Tests for PHP, Docs/Markdown)
+FILTER_REGEX_INCLUDE: >-
+  (App/|Public/|Tests/|Config/|Routes/|Docs/|\.md$|\.php$|\.html$|\.css$|\.js$)
+
+# ---------------------------------------------------------------------------
+# PHP_PHPCS — PSR-12 standard
+# ---------------------------------------------------------------------------
+PHP_PHPCS_ARGUMENTS: "--standard=PSR12 --extensions=php"
+PHP_PHPCS_FILE_EXTENSIONS:
+  - ".php"
+PHP_PHPCS_CONFIG_FILE: phpcs.xml
+
+# ---------------------------------------------------------------------------
+# PHP_PHPSTAN — level 8
+# ---------------------------------------------------------------------------
+PHP_PHPSTAN_CONFIG_FILE: phpstan.neon
+PHP_PHPSTAN_ARGUMENTS: "--level=8 --no-progress"
+
+# ---------------------------------------------------------------------------
+# PHP_PSALM — level 4
+# ---------------------------------------------------------------------------
+PHP_PSALM_CONFIG_FILE: psalm.xml
+
+# ---------------------------------------------------------------------------
+# PHP_PHPMD — rulesets
+# ---------------------------------------------------------------------------
+PHP_PHPMD_ARGUMENTS: "--rulesets cleancode,codesize,controversial,design,naming,unusedcode"
+
+# ---------------------------------------------------------------------------
+# HTML_HTMLHINT
+# ---------------------------------------------------------------------------
+HTML_HTMLHINT_FILE_EXTENSIONS:
+  - ".html"
+  - ".htm"
+
+# ---------------------------------------------------------------------------
+# CSS_STYLELINT
+# ---------------------------------------------------------------------------
+CSS_STYLELINT_FILE_EXTENSIONS:
+  - ".css"
+  - ".scss"
+  - ".sass"
+
+# ---------------------------------------------------------------------------
+# JAVASCRIPT_ES — ESLint
+# ---------------------------------------------------------------------------
+JAVASCRIPT_ES_FILE_EXTENSIONS:
+  - ".js"
+  - ".mjs"
+
+# ---------------------------------------------------------------------------
+# MARKDOWN_MARKDOWNLINT — markdownlint-cli2
+# ---------------------------------------------------------------------------
+MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.json
+MARKDOWN_MARKDOWNLINT_FILE_EXTENSIONS:
+  - ".md"
+  - ".markdown"
+
+# ---------------------------------------------------------------------------
+# Reporting
+# ---------------------------------------------------------------------------
+REPORT_OUTPUT_FOLDER: megalinter-reports
+SARIF_REPORTER: true
+TEXT_REPORTER: true
+JSON_REPORTER: true
+SHOW_ELAPSED_TIME: true
+SHOW_SKIPPED_LINTERS: false
+
+# ---------------------------------------------------------------------------
+# Misc
+# ---------------------------------------------------------------------------
+PARALLEL: true
+LOG_LEVEL: INFO
+GITHUB_STATUS_REPORTER: true
