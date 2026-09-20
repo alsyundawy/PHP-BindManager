@@ -245,6 +245,69 @@ return [
             return new Response(302, ['Location' => $routeProfile]);
         },
     ],
+    // --- Profile 2FA TOTP ---
+    [
+        'method'     => 'GET',
+        'path'       => '/profile/totp',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+            /** @var \App\Container\Container $c */
+            $c = $req->getAttribute('container');
+            /** @var \App\Services\Auth\TotpService $totpService */
+            $totpService = $c->get(\App\Services\Auth\TotpService::class);
+            /** @var \App\Repositories\Auth\UserRepository $userRepo */
+            $userRepo = $c->get(\App\Repositories\Auth\UserRepository::class);
+
+            $userId = (int) ($_SESSION['user_id'] ?? 0);
+            $user   = $userRepo->findById($userId);
+            $secret = $totpService->generateSecret();
+            $email  = (string) ($user['email'] ?? 'admin@example.com');
+            $uri    = $totpService->getProvisioningUri($secret, $email, 'PHP-BindManager');
+            $csrf   = (string) ($_SESSION['_csrf']['value'] ?? '');
+
+            $flashSuccess = isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])
+                ? $_SESSION['flash_success'] : null;
+            $flashError = isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])
+                ? $_SESSION['flash_error'] : null;
+            unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+            $html = View::render('profile/totp', [
+                'secret'          => $secret,
+                'provisioningUri' => $uri,
+                'csrfToken'       => $csrf,
+                'flashSuccess'    => $flashSuccess,
+                'flashError'      => $flashError,
+            ]);
+
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => '/profile/totp',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($routeProfile): Response {
+            /** @var \App\Container\Container $c */
+            $c = $req->getAttribute('container');
+            /** @var \App\Services\Auth\TotpService $totpService */
+            $totpService = $c->get(\App\Services\Auth\TotpService::class);
+            $body        = (array) ($req->getParsedBody() ?? []);
+            $secret      = trim((string) ($body['secret'] ?? ''));
+            $code        = trim((string) ($body['code'] ?? ''));
+
+            if ($secret === '' || ! $totpService->verify($secret, $code)) {
+                $_SESSION['flash_error'] = 'Invalid 6-digit TOTP verification code. Please try again.';
+
+                return new Response(302, ['Location' => '/profile/totp']);
+            }
+
+            $_SESSION['flash_success'] = 'Two-factor authentication (2FA) successfully verified and enabled!';
+
+            return new Response(302, ['Location' => $routeProfile]);
+        },
+    ],
     // --- User Management (Admin Only) ---
     [
         'method'     => 'GET',

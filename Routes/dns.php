@@ -5,7 +5,9 @@ declare(strict_types=1);
 use App\Container\Container;
 use App\Exceptions\HttpException;
 use App\Repositories\Dns\RecordRepository;
+use App\Repositories\Dns\ZoneHistoryRepository;
 use App\Repositories\Dns\ZoneRepository;
+use App\Repositories\Dns\ZoneTemplateRepository;
 use App\Services\Dns\ZoneFileService;
 use App\Support\View;
 use Nyholm\Psr7\Response;
@@ -323,6 +325,243 @@ return [
             $redirectUri = $zoneId > 0 ? "{$pathRecords}?zone_id={$zoneId}" : $pathRecords;
 
             return new Response(302, ['Location' => $redirectUri]);
+        },
+    ],
+    // --- Templates ---
+    [
+        'method'     => 'GET',
+        'path'       => '/templates',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var ZoneTemplateRepository $tplRepo */
+            $tplRepo = $container->get(ZoneTemplateRepository::class);
+            /** @var ZoneRepository $zoneRepo */
+            $zoneRepo = $container->get(ZoneRepository::class);
+
+            $flashSuccess = isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])
+                ? $_SESSION['flash_success'] : null;
+            $flashError = isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])
+                ? $_SESSION['flash_error'] : null;
+            unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+            $csrfToken = (string) ($_SESSION['_csrf']['value'] ?? '');
+            $html      = View::render('templates/index', [
+                'templates'    => $tplRepo->all(),
+                'zones'        => $zoneRepo->all(),
+                'csrfToken'    => $csrfToken,
+                'flashSuccess' => $flashSuccess,
+                'flashError'   => $flashError,
+            ]);
+
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => '/templates',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var ZoneTemplateRepository $tplRepo */
+            $tplRepo = $container->get(ZoneTemplateRepository::class);
+            $parsed  = (array) ($req->getParsedBody() ?? []);
+            $action  = (string) ($parsed['_action'] ?? 'create');
+
+            if ($action === 'delete') {
+                $tplRepo->delete((int) ($parsed['id'] ?? 0));
+                $_SESSION['flash_success'] = 'Template deleted successfully.';
+            } else {
+                $name = trim((string) ($parsed['name'] ?? ''));
+                $desc = trim((string) ($parsed['description'] ?? ''));
+                $json = trim((string) ($parsed['records_json'] ?? '[]'));
+
+                if ($name === '') {
+                    $_SESSION['flash_error'] = 'Template name is required.';
+                } else {
+                    $tplRepo->create($name, $desc !== '' ? $desc : null, $json);
+                    $_SESSION['flash_success'] = "Template '{$name}' created successfully.";
+                }
+            }
+
+            return new Response(302, ['Location' => '/templates']);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => '/templates/apply',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var ZoneTemplateRepository $tplRepo */
+            $tplRepo = $container->get(ZoneTemplateRepository::class);
+            /** @var RecordRepository $recRepo */
+            $recRepo = $container->get(RecordRepository::class);
+            /** @var ZoneHistoryRepository $historyRepo */
+            $historyRepo = $container->get(ZoneHistoryRepository::class);
+            /** @var ZoneRepository $zoneRepo */
+            $zoneRepo = $container->get(ZoneRepository::class);
+
+            $parsed = (array) ($req->getParsedBody() ?? []);
+            $tplId  = (int) ($parsed['template_id'] ?? 0);
+            $zoneId = (int) ($parsed['zone_id'] ?? 0);
+
+            $tpl  = $tplRepo->findById($tplId);
+            $zone = $zoneRepo->find($zoneId);
+
+            if ($tpl !== null && $zone !== null) {
+                $existing = $recRepo->forZone($zoneId);
+                $userId   = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
+                $historyRepo->recordSnapshot(
+                    $zoneId,
+                    (int) ($zone['serial'] ?? 1),
+                    json_encode($existing, JSON_THROW_ON_ERROR),
+                    "Pre-template snapshot before applying '{$tpl['name']}'",
+                    $userId
+                );
+
+                $records = json_decode((string) ($tpl['records_json'] ?? '[]'), true);
+                if (is_array($records)) {
+                    foreach ($records as $r) {
+                        if (! is_array($r)) {
+                            continue;
+                        }
+                        $rName = (string) ($r['name'] ?? '@');
+                        $rType = strtoupper((string) ($r['type'] ?? 'A'));
+                        $rTtl  = (int) ($r['ttl'] ?? 3600);
+                        $rPri  = isset($r['priority']) ? (int) $r['priority'] : null;
+                        $rVal  = (string) ($r['content'] ?? '');
+                        if ($rVal !== '') {
+                            $recRepo->create($zoneId, [
+                                'name'        => $rName,
+                                'record_type' => $rType,
+                                'ttl'         => $rTtl,
+                                'priority'    => $rPri,
+                                'content'     => $rVal,
+                            ]);
+                        }
+                    }
+                }
+                $_SESSION['flash_success'] = "Template '{$tpl['name']}' applied to zone '{$zone['name']}'.";
+            }
+
+            return new Response(302, ['Location' => "/records?zone_id={$zoneId}"]);
+        },
+    ],
+    // --- Zone History & Rollback ---
+    [
+        'method'     => 'GET',
+        'path'       => '/zones/{id}/history',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var ZoneRepository $zoneRepo */
+            $zoneRepo = $container->get(ZoneRepository::class);
+            /** @var ZoneHistoryRepository $historyRepo */
+            $historyRepo = $container->get(ZoneHistoryRepository::class);
+
+            $id   = (int) $req->getAttribute('id');
+            $zone = $zoneRepo->find($id);
+            if ($zone === null) {
+                throw new HttpException('Zone not found', 404);
+            }
+
+            $flashSuccess = isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])
+                ? $_SESSION['flash_success'] : null;
+            $flashError = isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])
+                ? $_SESSION['flash_error'] : null;
+            unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+            $csrfToken = (string) ($_SESSION['_csrf']['value'] ?? '');
+            $html      = View::render('zones/history', [
+                'zone'         => $zone,
+                'history'      => $historyRepo->getHistoryForZone($id),
+                'csrfToken'    => $csrfToken,
+                'flashSuccess' => $flashSuccess,
+                'flashError'   => $flashError,
+            ]);
+
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => '/zones/{id}/rollback',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var ZoneHistoryRepository $historyRepo */
+            $historyRepo = $container->get(ZoneHistoryRepository::class);
+            /** @var RecordRepository $recRepo */
+            $recRepo = $container->get(RecordRepository::class);
+
+            $zoneId    = (int) $req->getAttribute('id');
+            $parsed    = (array) ($req->getParsedBody() ?? []);
+            $historyId = (int) ($parsed['history_id'] ?? 0);
+            $snapshot  = $historyRepo->findById($historyId);
+
+            if ($snapshot !== null && (int) $snapshot['zone_id'] === $zoneId) {
+                $decoded = json_decode((string) $snapshot['zone_content'], true);
+                if (is_array($decoded)) {
+                    $recRepo->deleteAllForZone($zoneId);
+                    foreach ($decoded as $r) {
+                        if (is_array($r)) {
+                            $recRepo->create($zoneId, [
+                                'name'        => (string) ($r['name'] ?? '@'),
+                                'record_type' => (string) ($r['type'] ?? $r['record_type'] ?? 'A'),
+                                'ttl'         => (int) ($r['ttl'] ?? 3600),
+                                'priority'    => isset($r['priority']) ? (int) $r['priority'] : null,
+                                'content'     => (string) ($r['content'] ?? ''),
+                            ]);
+                        }
+                    }
+                    $_SESSION['flash_success'] = "Zone rolled back to snapshot #{$historyId}.";
+                }
+            }
+
+            return new Response(302, ['Location' => "/zones/{$zoneId}/history"]);
+        },
+    ],
+    // --- Bulk Record Operations ---
+    [
+        'method'     => 'POST',
+        'path'       => '/records/bulk',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var RecordRepository $recRepo */
+            $recRepo = $container->get(RecordRepository::class);
+            $parsed  = (array) ($req->getParsedBody() ?? []);
+            $action  = (string) ($parsed['bulk_action'] ?? '');
+            $zoneId  = (int) ($parsed['zone_id'] ?? 0);
+            $ids     = (array) ($parsed['record_ids'] ?? []);
+
+            if ($action === 'delete') {
+                foreach ($ids as $rawId) {
+                    $recRepo->delete((int) $rawId);
+                }
+                $_SESSION['flash_success'] = count($ids) . ' records deleted.';
+            } elseif ($action === 'update_ttl') {
+                $newTtl = max(60, (int) ($parsed['bulk_ttl'] ?? 3600));
+                foreach ($ids as $rawId) {
+                    $recRepo->update((int) $rawId, ['ttl' => $newTtl]);
+                }
+                $_SESSION['flash_success'] = count($ids) . ' records updated with TTL ' . $newTtl . '.';
+            }
+
+            return new Response(302, ['Location' => "/records?zone_id={$zoneId}"]);
         },
     ],
 ];

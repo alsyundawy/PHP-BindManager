@@ -9,22 +9,13 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-if (! isset($tokens) || ! is_array($tokens)) {
-    $tokens = [];
-}
-if (! isset($csrfToken) || ! is_string($csrfToken)) {
-    $csrfToken = '';
-}
-if (! isset($newToken)) {
-    $newToken = null;
-}
-if (! isset($flashSuccess)) {
-    $flashSuccess = null;
-}
-if (! isset($flashError)) {
-    $flashError = null;
-}
-$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$templateVars = get_defined_vars();
+$tokens       = (array) ($templateVars['tokens'] ?? []);
+$csrfToken    = (string) ($templateVars['csrfToken'] ?? '');
+$newToken     = isset($templateVars['newToken']) ? (string) $templateVars['newToken'] : null;
+$flashSuccess = isset($templateVars['flashSuccess']) ? (string) $templateVars['flashSuccess'] : null;
+$flashError   = isset($templateVars['flashError']) ? (string) $templateVars['flashError'] : null;
+$csrfVal      = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title       = 'API Tokens — PHP-BindManager';
 $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 'system:read'];
@@ -38,7 +29,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
     </div>
 </div>
 
-<?php if (isset($newToken) && $newToken !== null && $newToken !== '') : ?>
+<?php if ($newToken !== null && $newToken !== '') : ?>
     <div class="pbm-alert pbm-alert-success" role="alert">
         <i class="fa-solid fa-circle-check me-2"></i>
         <strong>Token created!</strong> Copy it now — it will not be shown again.
@@ -59,13 +50,13 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
     </div>
 <?php endif; ?>
 
-<?php if (isset($flashSuccess) && $flashSuccess !== '') : ?>
+<?php if ($flashSuccess !== null && $flashSuccess !== '') : ?>
     <div class="pbm-alert pbm-alert-success" role="alert">
         <i class="fa-solid fa-circle-check me-2"></i>
         <?= htmlspecialchars($flashSuccess, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
     </div>
 <?php endif; ?>
-<?php if (isset($flashError) && $flashError !== '') : ?>
+<?php if ($flashError !== null && $flashError !== '') : ?>
     <div class="pbm-alert pbm-alert-error" role="alert">
         <i class="fa-solid fa-circle-xmark me-2"></i>
         <?= htmlspecialchars($flashError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>

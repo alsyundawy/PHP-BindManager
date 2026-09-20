@@ -31,6 +31,9 @@ $csrfToken   = (string) ($_SESSION['_csrf']['value'] ?? '');
         <a class="pbm-nav-link<?= pbmNavActive('/views', $currentPath) ?>" href="/views">
             <i class="fa-solid fa-diagram-project"></i> <span>Split-Horizon Views</span>
         </a>
+        <a class="pbm-nav-link<?= pbmNavActive('/templates', $currentPath) ?>" href="/templates">
+            <i class="fa-solid fa-copy"></i> <span>Zone Templates</span>
+        </a>
         <a class="pbm-nav-link<?= pbmNavActive('/dnssec', $currentPath) ?>" href="/dnssec">
             <i class="fa-solid fa-key"></i> <span>DNSSEC Manager</span>
         </a>
@@ -42,6 +45,9 @@ $csrfToken   = (string) ($_SESSION['_csrf']['value'] ?? '');
         </a>
         <a class="pbm-nav-link<?= pbmNavActive('/system/backups', $currentPath) ?>" href="/system/backups">
             <i class="fa-solid fa-box-archive"></i> <span>Backups & Restore</span>
+        </a>
+        <a class="pbm-nav-link<?= pbmNavActive('/system/webhooks', $currentPath) ?>" href="/system/webhooks">
+            <i class="fa-solid fa-satellite-dish"></i> <span>Webhooks</span>
         </a>
         <a class="pbm-nav-link<?= pbmNavActive('/system/activity', $currentPath) ?>" href="/system/activity">
             <i class="fa-solid fa-clock-rotate-left"></i> <span>Activity Log</span>

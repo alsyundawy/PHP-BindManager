@@ -137,6 +137,25 @@ ob_start();
             </div>
         </form>
     </article>
+
+    <!-- Two-Factor Authentication (TOTP) -->
+    <article class="pbm-card">
+        <div class="pbm-card-head">
+            <h2 class="pbm-card-title">
+                <i class="fa-solid fa-mobile-screen-button me-2"></i>Two-Factor Authentication (2FA)
+            </h2>
+        </div>
+        <p style="color: var(--pbm-muted); font-size: .875rem; margin-top: 12px; margin-bottom: 16px;">
+            Protect your administrator account with time-based one-time password (TOTP) authentication
+            using apps like Google Authenticator, Microsoft Authenticator, or Authy.
+        </p>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <a href="/profile/totp" class="pbm-btn pbm-btn-primary">
+                <i class="fa-solid fa-shield-halved me-1"></i>Configure 2FA
+            </a>
+            <span class="pbm-badge pbm-badge-secondary">RFC 6238 TOTP</span>
+        </div>
+    </article>
 </div>
 <?php
 $content = (string) ob_get_clean();

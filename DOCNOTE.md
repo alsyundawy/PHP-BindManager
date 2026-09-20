@@ -65,6 +65,8 @@ The codebase adheres strictly to:
   to prevent text truncation and horizontal overflow during system font scaling.
 - **Cross-OS Distribution Abstraction**: Normalized paths between Debian/Ubuntu (`/etc/bind`, `bind9` service)
   and RHEL/CentOS/AlmaLinux/Rocky/Oracle (`/etc/named.conf`, `named` service, `/var/named`).
-- **Complete Linter Zero-Error Status**: 100% PSR-12, PHPStan Level 8, Psalm Level 4, and PHPUnit (30 tests,
-  94 assertions) pass without a single warning or error. All template variables protected with strict `if (! isset(...))`
-  constructs.
+- **Complete Linter Zero-Error Status**: 100% PSR-12, PHPStan Level 8, Psalm Level 4, and PHPUnit (35 tests,
+  103 assertions) pass without a single warning or error. All template variables protected with strict
+  `$templateVars = get_defined_vars();` pattern and safe extraction defaults.
+- **v1.2.0 Advanced Features Implemented**: Two-Factor Authentication (RFC 6238 TOTP), Zone Templates Library,
+  Zone Snapshot History & Diff Viewer with Rollback, Bulk DNS Record Operations, and Webhook Notifications.

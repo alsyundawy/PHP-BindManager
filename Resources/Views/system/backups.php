@@ -9,22 +9,13 @@ declare(strict_types=1);
  * @var string|null                      $flashError
  * @var string                           $dbPath
  */
-if (! isset($backups) || ! is_array($backups)) {
-    $backups = [];
-}
-if (! isset($csrfToken) || ! is_string($csrfToken)) {
-    $csrfToken = '';
-}
-if (! isset($flashSuccess)) {
-    $flashSuccess = null;
-}
-if (! isset($flashError)) {
-    $flashError = null;
-}
-if (! isset($dbPath) || ! is_string($dbPath)) {
-    $dbPath = '';
-}
-$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$templateVars = get_defined_vars();
+$backups      = (array) ($templateVars['backups'] ?? []);
+$csrfToken    = (string) ($templateVars['csrfToken'] ?? '');
+$flashSuccess = isset($templateVars['flashSuccess']) ? (string) $templateVars['flashSuccess'] : null;
+$flashError   = isset($templateVars['flashError']) ? (string) $templateVars['flashError'] : null;
+$dbPath       = (string) ($templateVars['dbPath'] ?? '');
+$csrfVal      = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'Backups & Restore — PHP-BindManager';
 
@@ -55,13 +46,13 @@ $fmtSize = static function (int $bytes): string {
     </form>
 </div>
 
-<?php if (isset($flashSuccess) && $flashSuccess !== '') : ?>
+<?php if ($flashSuccess !== null && $flashSuccess !== '') : ?>
     <div class="pbm-alert pbm-alert-success" role="alert">
         <i class="fa-solid fa-circle-check me-2"></i>
         <?= htmlspecialchars($flashSuccess, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
     </div>
 <?php endif; ?>
-<?php if (isset($flashError) && $flashError !== '') : ?>
+<?php if ($flashError !== null && $flashError !== '') : ?>
     <div class="pbm-alert pbm-alert-error" role="alert">
         <i class="fa-solid fa-circle-xmark me-2"></i>
         <?= htmlspecialchars($flashError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>

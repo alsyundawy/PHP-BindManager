@@ -12,6 +12,7 @@ use App\Repositories\Dns\ZoneRepository;
 use App\Repositories\System\ActivityLogRepository;
 use App\Repositories\System\AuditLogRepository;
 use App\Repositories\System\BackupRepository;
+use App\Repositories\System\WebhookRepository;
 use App\Services\Dns\ZoneFileService;
 use App\Services\System\BackupService;
 use App\Support\Config;
@@ -19,13 +20,14 @@ use App\Support\View;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
-$htmlHeaders = ['Content-Type' => 'text/html; charset=UTF-8'];
-$pathBackups = '/system/backups';
-$pathTokens  = '/system/tokens';
-$pathAcls    = '/acls';
-$pathViews   = '/views';
-$pathDnssec  = '/dnssec';
-$errPrefix   = 'Error: ';
+$htmlHeaders  = ['Content-Type' => 'text/html; charset=UTF-8'];
+$pathBackups  = '/system/backups';
+$pathTokens   = '/system/tokens';
+$pathAcls     = '/acls';
+$pathViews    = '/views';
+$pathDnssec   = '/dnssec';
+$pathWebhooks = '/system/webhooks';
+$errPrefix    = 'Error: ';
 
 /**
  * Helper to run dnssec-keygen if available.
@@ -611,6 +613,74 @@ return [
             }
 
             return new Response(302, ['Location' => $pathDnssec]);
+        },
+    ],
+    // --- Webhooks ---
+    [
+        'method'     => 'GET',
+        'path'       => $pathWebhooks,
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var WebhookRepository $webhookRepo */
+            $webhookRepo = $container->get(WebhookRepository::class);
+
+            $flashSuccess = isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])
+                ? $_SESSION['flash_success'] : null;
+            $flashError = isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])
+                ? $_SESSION['flash_error'] : null;
+            unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
+            $csrfToken = (string) ($_SESSION['_csrf']['value'] ?? '');
+            $html      = View::render('system/webhooks', [
+                'webhooks'     => $webhookRepo->all(),
+                'csrfToken'    => $csrfToken,
+                'flashSuccess' => $flashSuccess,
+                'flashError'   => $flashError,
+            ]);
+
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => $pathWebhooks,
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function (ServerRequestInterface $req) use ($pathWebhooks, $errPrefix): Response {
+            /** @var Container $container */
+            $container = $req->getAttribute('container');
+            /** @var WebhookRepository $webhookRepo */
+            $webhookRepo = $container->get(WebhookRepository::class);
+
+            $body   = (array) ($req->getParsedBody() ?? []);
+            $action = (string) ($body['_action'] ?? '');
+
+            try {
+                if ($action === 'create') {
+                    $name   = trim((string) ($body['name'] ?? ''));
+                    $url    = trim((string) ($body['url'] ?? ''));
+                    $secret = isset($body['secret']) && $body['secret'] !== '' ? (string) $body['secret'] : null;
+                    $events = trim((string) ($body['events'] ?? 'zone.updated'));
+
+                    if ($name === '' || filter_var($url, FILTER_VALIDATE_URL) === false) {
+                        $_SESSION['flash_error'] = 'Please provide a valid name and webhook HTTP/S URL.';
+                    } else {
+                        $webhookRepo->create($name, $url, $secret, $events);
+                        $_SESSION['flash_success'] = 'Webhook endpoint registered.';
+                    }
+                } elseif ($action === 'delete') {
+                    $id = (int) ($body['id'] ?? 0);
+                    $webhookRepo->delete($id);
+                    $_SESSION['flash_success'] = 'Webhook deleted.';
+                }
+            } catch (\Throwable $e) {
+                $_SESSION['flash_error'] = $errPrefix . $e->getMessage();
+            }
+
+            return new Response(302, ['Location' => $pathWebhooks]);
         },
     ],
 ];

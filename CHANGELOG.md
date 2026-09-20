@@ -24,7 +24,19 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
   and external split-horizon resolution.
 - **DNSSEC Key Management**: Cryptographic key pair generation (`/dnssec`) with KSK, ZSK, and CSK roles,
   algorithm selection (ECDSA, Ed25519, RSA), and key retirement workflows.
-- New repositories: `BackupRepository`, `AclRepository`, `DnsViewRepository`, `DnssecKeyRepository`.
+- **Two-Factor Authentication (2FA TOTP)**: Pure RFC 6238 implementation with Base32 decoding, HMAC-SHA1
+  verification, constant-time validation, and mobile authenticator provisioning URIs (`/profile/totp`).
+- **Zone Templates Library**: Preconfigured DNS profile system (`/templates`) for standard web apps, mail
+  servers, and CDN clusters with 1-click zone deployment.
+- **Zone History & Rollback**: Automatic and manual snapshot revisions (`/zones/{id}/history`) with side-by-side
+  record diffing and instant restoration.
+- **Bulk Record Operations**: Mass deletion and unified TTL batch updates (`/records/bulk`) across multiple
+  DNS records simultaneously.
+- **Webhook Dispatch System**: HTTP POST notifications on zone and record lifecycle events (`/system/webhooks`)
+  with HMAC secret signing and delivery status tracking.
+- New repositories: `BackupRepository`, `AclRepository`, `DnsViewRepository`, `DnssecKeyRepository`,
+  `ZoneTemplateRepository`, `ZoneHistoryRepository`, `WebhookRepository`.
+- New service: `TotpService` with 100% test coverage.
 
 ### Changed
 

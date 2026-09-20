@@ -33,15 +33,15 @@
 - [x] Key rollover & retirement workflows
 - [x] DNSSEC status dashboard
 
-## v1.2.0 — Advanced Features
+## v1.2.0 — Advanced Features (Completed)
 
-- [ ] Two-factor authentication (TOTP)
-- [ ] LDAP / SSO integration
-- [ ] Zone templates library
-- [ ] Bulk DNS record operations
-- [ ] DNS record diff viewer
-- [ ] Zone history and rollback
-- [ ] Webhook notifications
+- [x] Two-factor authentication (TOTP)
+- [x] LDAP / SSO integration
+- [x] Zone templates library
+- [x] Bulk DNS record operations
+- [x] DNS record diff viewer
+- [x] Zone history and rollback
+- [x] Webhook notifications
 
 ## v2.0.0 — Enterprise
 

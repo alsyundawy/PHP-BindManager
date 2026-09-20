@@ -59,13 +59,13 @@ final class RbacMiddleware
     }
 
     /**
-     * @return ResponseInterface
+     * @return Response
      */
     private function buildForbiddenResponse(
         bool $isApi,
         string $sessionMessage,
         string $apiMessage = ''
-    ): ResponseInterface {
+    ): Response {
         if ($isApi) {
             $body = json_encode(
                 [

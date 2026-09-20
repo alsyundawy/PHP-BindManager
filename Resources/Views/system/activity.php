@@ -7,15 +7,10 @@ declare(strict_types=1);
  * @var string                           $category
  * @var int                              $total
  */
-if (! isset($logs) || ! is_array($logs)) {
-    $logs = [];
-}
-if (! isset($category) || ! is_string($category)) {
-    $category = '';
-}
-if (! isset($total) || ! is_int($total)) {
-    $total = 0;
-}
+$templateVars = get_defined_vars();
+$logs         = (array) ($templateVars['logs'] ?? []);
+$category     = (string) ($templateVars['category'] ?? '');
+$total        = (int) ($templateVars['total'] ?? 0);
 
 $title = 'Activity Log — PHP-BindManager';
 

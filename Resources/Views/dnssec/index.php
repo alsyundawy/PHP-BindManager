@@ -9,22 +9,13 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-if (! isset($zones) || ! is_array($zones)) {
-    $zones = [];
-}
-if (! isset($keys) || ! is_array($keys)) {
-    $keys = [];
-}
-if (! isset($csrfToken) || ! is_string($csrfToken)) {
-    $csrfToken = '';
-}
-if (! isset($flashSuccess)) {
-    $flashSuccess = null;
-}
-if (! isset($flashError)) {
-    $flashError = null;
-}
-$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$templateVars = get_defined_vars();
+$zones        = (array) ($templateVars['zones'] ?? []);
+$keys         = (array) ($templateVars['keys'] ?? []);
+$csrfToken    = (string) ($templateVars['csrfToken'] ?? '');
+$flashSuccess = isset($templateVars['flashSuccess']) ? (string) $templateVars['flashSuccess'] : null;
+$flashError   = isset($templateVars['flashError']) ? (string) $templateVars['flashError'] : null;
+$csrfVal      = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'DNSSEC Manager — PHP-BindManager';
 
@@ -49,13 +40,13 @@ $algoLabels    = [
     </div>
 </div>
 
-<?php if (isset($flashSuccess) && $flashSuccess !== '') : ?>
+<?php if ($flashSuccess !== null && $flashSuccess !== '') : ?>
     <div class="pbm-alert pbm-alert-success" role="alert">
         <i class="fa-solid fa-circle-check me-2"></i>
         <?= htmlspecialchars($flashSuccess, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
     </div>
 <?php endif; ?>
-<?php if (isset($flashError) && $flashError !== '') : ?>
+<?php if ($flashError !== null && $flashError !== '') : ?>
     <div class="pbm-alert pbm-alert-error" role="alert">
         <i class="fa-solid fa-circle-xmark me-2"></i>
         <?= htmlspecialchars($flashError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>

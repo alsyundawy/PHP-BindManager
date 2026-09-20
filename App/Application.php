@@ -19,13 +19,18 @@ use App\Repositories\Dns\AclRepository;
 use App\Repositories\Dns\DnssecKeyRepository;
 use App\Repositories\Dns\DnsViewRepository;
 use App\Repositories\Dns\RecordRepository;
+use App\Repositories\Dns\ZoneHistoryRepository;
 use App\Repositories\Dns\ZoneRepository;
+use App\Repositories\Dns\ZoneTemplateRepository;
 use App\Repositories\System\ActivityLogRepository;
 use App\Repositories\System\AuditLogRepository;
 use App\Repositories\System\BackupRepository;
+use App\Repositories\System\WebhookRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\CsrfService;
+use App\Services\Auth\LdapAuthService;
 use App\Services\Auth\RateLimiterService;
+use App\Services\Auth\TotpService;
 use App\Services\Dns\ZoneFileService;
 use App\Services\System\BackupService;
 use App\Support\Config;
@@ -148,6 +153,14 @@ final class Application
                 $c->get(Config::class)
             )
         );
+        $container->set(
+            TotpService::class,
+            static fn (): TotpService => new TotpService()
+        );
+        $container->set(
+            LdapAuthService::class,
+            static fn (): LdapAuthService => new LdapAuthService()
+        );
     }
 
     private static function registerDnsServices(Container $container): void
@@ -199,6 +212,18 @@ final class Application
                 $c->get(ConnectionFactory::class)->create()
             )
         );
+        $container->set(
+            ZoneTemplateRepository::class,
+            static fn (Container $c): ZoneTemplateRepository => new ZoneTemplateRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            ZoneHistoryRepository::class,
+            static fn (Container $c): ZoneHistoryRepository => new ZoneHistoryRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
     }
 
     private static function registerSystemServices(Container $container): void
@@ -239,6 +264,12 @@ final class Application
                     $backupDir,
                 );
             }
+        );
+        $container->set(
+            WebhookRepository::class,
+            static fn (Container $c): WebhookRepository => new WebhookRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
         );
     }
 

@@ -78,4 +78,34 @@ final class RecordRepository
         $statement = $this->pdo->prepare('DELETE FROM dns_records WHERE id = :id');
         $statement->execute([':id' => $id]);
     }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function update(int $id, array $data): void
+    {
+        $fields = [];
+        $params = [':id' => $id];
+
+        foreach (['name', 'record_type', 'ttl', 'priority', 'content'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $fields[]            = "{$field} = :{$field}";
+                $params[":{$field}"] = $data[$field];
+            }
+        }
+
+        if ($fields === []) {
+            return;
+        }
+
+        $sql       = 'UPDATE dns_records SET ' . implode(', ', $fields) . ' WHERE id = :id';
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute($params);
+    }
+
+    public function deleteAllForZone(int $zoneId): void
+    {
+        $statement = $this->pdo->prepare('DELETE FROM dns_records WHERE zone_id = :zone_id');
+        $statement->execute([':zone_id' => $zoneId]);
+    }
 }
