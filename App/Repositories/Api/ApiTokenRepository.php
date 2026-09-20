@@ -23,15 +23,15 @@ final class ApiTokenRepository
         ?string $expiresAt,
     ): int {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO api_tokens(user_id, name, token_hash, scopes_json, expires_at)
-             VALUES(:user_id, :name, :token_hash, :scopes_json, :expires_at)'
+            'INSERT INTO api_tokens(user_id, name, token_hash, scopes, expires_at)
+             VALUES(:user_id, :name, :token_hash, :scopes, :expires_at)'
         );
         $stmt->execute([
-            ':user_id'     => $userId,
-            ':name'        => $name,
-            ':token_hash'  => $hash,
-            ':scopes_json' => json_encode(array_values($scopes), JSON_THROW_ON_ERROR),
-            ':expires_at'  => $expiresAt,
+            ':user_id'    => $userId,
+            ':name'       => $name,
+            ':token_hash' => $hash,
+            ':scopes'     => json_encode(array_values($scopes), JSON_THROW_ON_ERROR),
+            ':expires_at' => $expiresAt,
         ]);
 
         return (int) $this->pdo->lastInsertId();
@@ -50,6 +50,63 @@ final class ApiTokenRepository
         $row = $stmt->fetch();
 
         return is_array($row) ? $row : null;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function findById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT t.*, u.username FROM api_tokens t
+             LEFT JOIN users u ON u.id = t.user_id
+             WHERE t.id = :id LIMIT 1'
+        );
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return is_array($row) ? $row : null;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function forUser(int $userId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM api_tokens WHERE user_id = :uid ORDER BY id DESC'
+        );
+        $stmt->execute([':uid' => $userId]);
+
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function all(): array
+    {
+        $stmt = $this->pdo->query(
+            'SELECT t.*, u.username FROM api_tokens t
+             LEFT JOIN users u ON u.id = t.user_id
+             ORDER BY t.id DESC'
+        );
+
+        return $stmt->fetchAll();
+    }
+
+    public function revoke(int $id): void
+    {
+        $stmt = $this->pdo->prepare(
+            'UPDATE api_tokens SET revoked_at = CURRENT_TIMESTAMP WHERE id = :id'
+        );
+        $stmt->execute([':id' => $id]);
+    }
+
+    public function delete(int $id): void
+    {
+        $stmt = $this->pdo->prepare('DELETE FROM api_tokens WHERE id = :id');
+        $stmt->execute([':id' => $id]);
     }
 
     public function touch(int $id): void

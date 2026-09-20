@@ -14,12 +14,20 @@ use App\Repositories\Auth\LoginAttemptRepository;
 use App\Repositories\Auth\RoleRepository;
 use App\Repositories\Auth\SessionRepository;
 use App\Repositories\Auth\UserRepository;
+use App\Repositories\Api\ApiTokenRepository;
+use App\Repositories\Dns\AclRepository;
+use App\Repositories\Dns\DnssecKeyRepository;
+use App\Repositories\Dns\DnsViewRepository;
 use App\Repositories\Dns\RecordRepository;
 use App\Repositories\Dns\ZoneRepository;
+use App\Repositories\System\ActivityLogRepository;
+use App\Repositories\System\AuditLogRepository;
+use App\Repositories\System\BackupRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\CsrfService;
 use App\Services\Auth\RateLimiterService;
 use App\Services\Dns\ZoneFileService;
+use App\Services\System\BackupService;
 use App\Support\Config;
 use App\Support\Env;
 use App\Support\Path;
@@ -137,6 +145,61 @@ final class Application
                     $chkZone,
                 );
             }
+        );
+        $container->set(
+            ActivityLogRepository::class,
+            static fn (Container $c): ActivityLogRepository => new ActivityLogRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            AuditLogRepository::class,
+            static fn (Container $c): AuditLogRepository => new AuditLogRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            ApiTokenRepository::class,
+            static fn (Container $c): ApiTokenRepository => new ApiTokenRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            BackupRepository::class,
+            static fn (Container $c): BackupRepository => new BackupRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            BackupService::class,
+            static function (Container $c): BackupService {
+                /** @var Config $cfg */
+                $cfg       = $c->get(Config::class);
+                $backupDir = (string) $cfg->get('database.backup_directory', Path::base('storage/backups'));
+
+                return new BackupService(
+                    $c->get(ConnectionFactory::class)->create(),
+                    $backupDir,
+                );
+            }
+        );
+        $container->set(
+            AclRepository::class,
+            static fn (Container $c): AclRepository => new AclRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            DnsViewRepository::class,
+            static fn (Container $c): DnsViewRepository => new DnsViewRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            DnssecKeyRepository::class,
+            static fn (Container $c): DnssecKeyRepository => new DnssecKeyRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
         );
         $container->set(
             Router::class,
