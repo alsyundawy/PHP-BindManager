@@ -36,12 +36,20 @@ final class ZoneFileService
         $out  = '$ORIGIN ' . rtrim((string) $zone['name'], '.') . ".\n\$TTL 3600\n";
 
         foreach ($rows as $r) {
+            $content = (string) $r['content'];
+            if ($r['priority'] !== null && in_array($r['record_type'], ['MX', 'SRV'], true)) {
+                $pfx = (string) $r['priority'] . ' ';
+                if (! str_starts_with($content, $pfx)) {
+                    $content = $pfx . $content;
+                }
+            }
+
             $out .= sprintf(
                 "%s %d IN %s %s\n",
                 $r['name'],
                 $r['ttl'],
                 $r['record_type'],
-                $r['content'],
+                $content,
             );
         }
 

@@ -10,7 +10,10 @@ $zones        = (array) ($templateVars['zones'] ?? []);
 $selectedId   = (int) ($templateVars['selectedId'] ?? 0);
 $csrfToken    = (string) ($templateVars['csrfToken'] ?? '');
 
-$recordTypes = ['A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'SRV', 'CAA', 'PTR'];
+$recordTypes = [
+    'A', 'AAAA', 'CNAME', 'MX', 'TXT', 'NS', 'SOA', 'SRV',
+    'CAA', 'PTR', 'NAPTR', 'TLSA', 'SSHFP', 'DS',
+];
 
 ob_start();
 ?>
@@ -143,6 +146,14 @@ ob_start();
                        background: var(--pbm-surface-2); color: var(--pbm-text);
                        border: 1px solid var(--pbm-border); font-family: monospace;"
             >
+            <div class="pbm-muted" style="font-size: .8rem; margin-top: 6px;">
+                <strong>Format hints:</strong>
+                CAA: <code>0 issue "letsencrypt.org"</code> &bull;
+                NAPTR: <code>100 10 "u" "sip+E2U" "!^.*$!sip:info@example.com!" .</code> &bull;
+                TLSA: <code>3 1 1 d2ab3453...</code> &bull;
+                SSHFP: <code>1 1 123456...</code> &bull;
+                DS: <code>2371 13 2 123456...</code>
+            </div>
         </div>
 
         <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;">

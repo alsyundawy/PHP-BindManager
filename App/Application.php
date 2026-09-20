@@ -11,6 +11,7 @@ use App\Http\Kernel;
 use App\Http\Router;
 use App\Logging\LoggerFactory;
 use App\Repositories\Auth\LoginAttemptRepository;
+use App\Repositories\Auth\RoleRepository;
 use App\Repositories\Auth\SessionRepository;
 use App\Repositories\Auth\UserRepository;
 use App\Repositories\Dns\RecordRepository;
@@ -73,6 +74,12 @@ final class Application
         $container->set(
             UserRepository::class,
             static fn (Container $c): UserRepository => new UserRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            RoleRepository::class,
+            static fn (Container $c): RoleRepository => new RoleRepository(
                 $c->get(ConnectionFactory::class)->create()
             )
         );

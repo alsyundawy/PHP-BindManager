@@ -34,6 +34,7 @@ final class Kernel
             new RateLimitMiddleware($this->container->get(RateLimiterService::class)),
             new CsrfMiddleware($this->container->get(CsrfService::class)),
             new AuthMiddleware($this->container->get(AuthenticationService::class)),
+            new \App\Http\Middleware\RbacMiddleware(),
         ];
 
         $handler = array_reduce(

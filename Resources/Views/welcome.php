@@ -11,11 +11,26 @@ $appName = (string) ($templateVars['appName'] ?? 'PHP-BindManager');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title><?= e($appName) ?></title>
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="PHP-BindManager - Enterprise Web GUI for BIND9 Authoritative DNS.">
+    <meta property="og:title" content="<?= e($appName) ?> - Authoritative DNS Manager">
+    <meta property="og:description" content="Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure.">
+    <meta property="og:type" content="website">
+    <title><?= e($appName) ?> - Authoritative DNS Manager</title>
     <!-- Local Offline Vendor CSS (Zero CDN) -->
     <link rel="stylesheet" href="/assets/vendor/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/app.min.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PHP-BindManager",
+        "operatingSystem": "Linux",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure."
+    }
+    </script>
     <style>
         :root {
             color-scheme: light dark;

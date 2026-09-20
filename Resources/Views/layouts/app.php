@@ -14,12 +14,27 @@ $content = (string) ($templateVars['content'] ?? '');
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#2563eb">
-    <meta name="description" content="PHP-BindManager BIND9 DNS operations dashboard">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="PHP-BindManager BIND9 Authoritative DNS operations platform.">
+    <meta property="og:title" content="<?= e($title ?? 'PHP-BindManager') ?>">
+    <meta property="og:description" content="Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PHP-BindManager">
     <link rel="manifest" href="/assets/manifest.json">
     <!-- Local Offline Vendor CSS (Zero CDN) -->
     <link rel="stylesheet" href="/assets/vendor/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/assets/css/app.min.css">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PHP-BindManager",
+        "operatingSystem": "Linux",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure."
+    }
+    </script>
     <script>
         try {
             const saved = localStorage.getItem("pbm-theme") || "auto";
@@ -32,10 +47,12 @@ $content = (string) ($templateVars['content'] ?? '');
     <title><?= e($title ?? 'PHP-BindManager') ?></title>
 </head>
 <body>
+    <a href="#pbm-main-content" class="pbm-skip-link">Skip to main content</a>
     <div class="pbm-app">
         <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+        <div class="pbm-sidebar-backdrop" aria-hidden="true"></div>
         <?php include_once __DIR__ . '/../partials/navbar.php'; ?>
-        <main class="pbm-main">
+        <main id="pbm-main-content" class="pbm-main" tabindex="-1">
             <div class="pbm-container">
                 <?php if (isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])) : ?>
                     <div class="pbm-alert pbm-alert-success mb-3" role="alert">
@@ -52,6 +69,14 @@ $content = (string) ($templateVars['content'] ?? '');
                     <?php unset($_SESSION['flash_error']); ?>
                 <?php endif; ?>
                 <?= $content ?? '' ?>
+                <footer class="pbm-footer" role="contentinfo">
+                    <div>
+                        <strong>PHP-BindManager</strong> v1.0.0 &bull; BIND 9 Authoritative DNS
+                    </div>
+                    <div>
+                        <span>Zero-CDN &bull; SQLite WAL &bull; PHP <?= PHP_VERSION ?></span>
+                    </div>
+                </footer>
             </div>
         </main>
     </div>

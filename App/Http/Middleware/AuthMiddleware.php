@@ -24,20 +24,26 @@ final class AuthMiddleware
         $route        = $request->getAttribute('route', []);
         $authRequired = (bool) ($route['auth'] ?? false);
 
-        if ($authRequired && ! $this->authenticationService->isAuthenticated()) {
-            $path   = $request->getUri()->getPath();
-            $accept = $request->getHeaderLine('Accept');
-
-            if (
-                str_starts_with($path, '/api')
-                || (str_contains($accept, 'application/json') && ! str_contains($accept, 'text/html'))
-            ) {
-                throw new AuthenticationException();
-            }
-
-            return new Response(302, ['Location' => '/login']);
+        if (! $authRequired) {
+            return $next($request);
         }
 
-        return $next($request);
+        if ($this->authenticationService->isAuthenticated()) {
+            return $next($request);
+        }
+
+        $path   = $request->getUri()->getPath();
+        $accept = $request->getHeaderLine('Accept');
+
+        if (
+            str_starts_with($path, '/api')
+            || (str_contains($accept, 'application/json') && ! str_contains($accept, 'text/html'))
+        ) {
+            throw new AuthenticationException();
+        }
+
+        $redirect = new Response(302, ['Location' => '/login']);
+
+        return $redirect;
     }
 }

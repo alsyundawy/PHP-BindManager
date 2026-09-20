@@ -23,6 +23,10 @@ $typeColors = [
     'SRV'   => '#f97316',
     'PTR'   => '#14b8a6',
     'CAA'   => '#84cc16',
+    'NAPTR' => '#a855f7',
+    'TLSA'  => '#0284c7',
+    'SSHFP' => '#64748b',
+    'DS'    => '#d97706',
 ];
 
 $selectedZoneName = '';

@@ -13,6 +13,8 @@ $flashError = (string) ($templateVars['flashError'] ?? '');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Sign in to PHP-BindManager BIND9 Authoritative DNS operations platform.">
     <title>Login - PHP-BindManager</title>
     <!-- Local Offline Vendor CSS (Zero CDN) -->
     <link rel="stylesheet" href="/assets/vendor/bootstrap/bootstrap.min.css">
