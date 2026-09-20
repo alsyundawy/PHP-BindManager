@@ -45,7 +45,7 @@ jobs:
       # 1. Checkout
       # -----------------------------------------------------------------------
       - name: Checkout Code
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -123,7 +123,7 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Archive MegaLinter reports
         if: success() || failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: MegaLinter-reports
           include-hidden-files: true
@@ -137,7 +137,7 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Upload SARIF to GitHub Security
         if: success() || failure()
-        uses: github/codeql-action/upload-sarif@3ea06614dafe36dec890db3446326e0d40ce53d4 # v3.38.1
+        uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
         with:
           sarif_file: megalinter-reports/megalinter-report.sarif
         continue-on-error: true
@@ -179,7 +179,7 @@ jobs:
         run: sudo chown -Rc "$UID" .git/
 
       - name: Commit and push linter fixes
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
         if: env.APPLY_FIXES_IF_COMMIT == 'true'
         with:
           branch: >-
@@ -196,7 +196,7 @@ jobs:
       # 7. Auto-PR mode (pull_request mode)
       # -----------------------------------------------------------------------
       - name: Create Pull Request with applied fixes
-        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         id: cpr
         if: env.APPLY_FIXES_IF_PR == 'true'
         with:
