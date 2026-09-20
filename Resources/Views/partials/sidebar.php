@@ -9,7 +9,7 @@ declare(strict_types=1);
         <span>PHP-BindManager</span>
     </div>
     <div class="pbm-nav-title">Authoritative DNS</div>
-    <nav>
+    <nav aria-label="Authoritative DNS navigation">
         <a class="pbm-nav-link is-active" href="/dashboard">
             <i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span>
         </a>
@@ -21,8 +21,12 @@ declare(strict_types=1);
         </a>
     </nav>
     <div class="pbm-nav-title">Administration</div>
-    <nav>
-        <a class="pbm-nav-link" href="/system"><i class="fa-solid fa-sliders"></i> <span>Operations</span></a>
-        <a class="pbm-nav-link" href="/api/docs"><i class="fa-solid fa-book-open"></i> <span>API Docs</span></a>
+    <nav aria-label="Administration navigation">
+        <a class="pbm-nav-link" href="/system">
+            <i class="fa-solid fa-sliders"></i> <span>Operations</span>
+        </a>
+        <a class="pbm-nav-link" href="/api/docs">
+            <i class="fa-solid fa-book-open"></i> <span>API Docs</span>
+        </a>
     </nav>
 </aside>

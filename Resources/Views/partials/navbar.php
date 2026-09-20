@@ -21,7 +21,7 @@ declare(strict_types=1);
         </div>
     </div>
     <div class="pbm-header-actions">
-        <div role="group" aria-label="Theme selector" class="btn-group btn-group-sm">
+        <fieldset aria-label="Theme selector" class="btn-group btn-group-sm border-0 p-0 m-0">
             <button class="pbm-icon-btn" type="button" data-theme-value="light" aria-label="Use light theme">
                 <i class="fa-solid fa-sun"></i>
             </button>
@@ -31,7 +31,7 @@ declare(strict_types=1);
             <button class="pbm-icon-btn" type="button" data-theme-value="auto" aria-label="Use automatic theme">
                 <i class="fa-solid fa-circle-half-stroke"></i>
             </button>
-        </div>
+        </fieldset>
         <a class="pbm-btn" href="/system"><i class="fa-solid fa-gear me-1"></i>Settings</a>
         <a class="pbm-btn" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</a>
     </div>

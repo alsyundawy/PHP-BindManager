@@ -50,4 +50,4 @@ ob_start();
 <?php
 $content = (string) ob_get_clean();
 $title = 'Zones - PHP-BindManager';
-require __DIR__ . '/../layouts/app.php';
+require_once __DIR__ . '/../layouts/app.php';

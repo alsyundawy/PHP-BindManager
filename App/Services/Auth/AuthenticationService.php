@@ -34,16 +34,20 @@ final class AuthenticationService
             default  => 'Lax',
         };
 
-        session_set_cookie_params([
-            'lifetime' => (int) $this->config->get('session.lifetime', 7200),
-            'path'     => '/',
-            'secure'   => true,
-            'httponly' => true,
-            'samesite' => $sameSite,
-        ]);
-
+        ini_set('session.cookie_secure', '1');
+        ini_set('session.cookie_httponly', '1');
+        ini_set('session.cookie_samesite', $sameSite);
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
+
+        session_set_cookie_params(
+            (int) $this->config->get('session.lifetime', 7200),
+            '/',
+            '',
+            true,
+            true
+        );
+
         session_start();
     }
 
