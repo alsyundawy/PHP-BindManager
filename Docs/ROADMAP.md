@@ -53,5 +53,3 @@
 - [ ] SLA reporting
 - [ ] Custom roles and permissions
 - [ ] White-label support
-- [ ] Kubernetes deployment support
-- [ ] Docker Compose production stack
