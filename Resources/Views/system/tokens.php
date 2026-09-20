@@ -79,7 +79,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
             <div class="pbm-form-group">
                 <label class="pbm-label" for="tok-expires">Expires At (optional)</label>
                 <input id="tok-expires" type="date" name="expires_at" class="pbm-input"
-                       min="<?= date('Y-m-d', strtotime('+1 day')) ?>">
+                       min="<?= date('Y-m-d', (int) strtotime('+1 day')) ?>">
             </div>
         </div>
         <fieldset class="pbm-form-group" style="border:none;padding:0;margin:0 0 16px 0;">

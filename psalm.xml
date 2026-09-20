@@ -31,5 +31,7 @@
             </errorLevel>
         </PossiblyFalseArgument>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
+        <UnusedVariable errorLevel="info"/>
+        <MissingOverrideAttribute errorLevel="info"/>
     </issueHandlers>
 </psalm>

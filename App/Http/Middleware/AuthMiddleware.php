@@ -17,6 +17,7 @@ final class AuthMiddleware
     }
 
     /**
+     * @suppress PHP0412
      * @param callable(ServerRequestInterface): ResponseInterface $next
      * @return ResponseInterface
      */

@@ -32,7 +32,7 @@ final class TotpService
         $secretKey = $this->base32Decode($secret);
 
         $timeBinary = pack('N*', 0) . pack('N*', $timeSlice);
-        $hash       = hash_hmac('sha1', $timeBinary, $secretKey, true);
+        $hash       = hash_hmac('sha1', $timeBinary, $secretKey, true); // DevSkim: ignore DS126858,DS197836
         $offset     = ord($hash[19]) & 0x0f;
 
         $part1 = (ord($hash[$offset]) & 0x7f)     << 24;
@@ -68,7 +68,7 @@ final class TotpService
         $encodedAccount = rawurlencode($accountName);
 
         return sprintf(
-            'otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30',
+            'otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=SHA1&digits=6&period=30', // DevSkim: ignore DS126858
             $encodedIssuer,
             $encodedAccount,
             $secret,

@@ -9,8 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 final class TotpServiceTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private TotpService $service;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

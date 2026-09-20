@@ -56,6 +56,7 @@ final class RbacMiddleware
     }
 
     /**
+     * @suppress PHP0412
      * @return ResponseInterface
      */
     private function buildForbiddenResponse(

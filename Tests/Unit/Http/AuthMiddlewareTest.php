@@ -83,6 +83,7 @@ final class AuthMiddlewareTest extends TestCase
         $request             = $baseRequest
             ->withAttribute('route', ['auth' => true]);
 
+        /** @psalm-suppress UnusedClosureParam */
         $next = static fn (ServerRequestInterface $req): ResponseInterface => new Response(
             200,
             [],

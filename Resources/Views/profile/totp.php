@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 /**
  * @var string      $secret
- * @var string      $provisioningUri
  * @var string      $csrfToken
  * @var string|null $flashSuccess
  * @var string|null $flashError
  */
-$templateVars    = get_defined_vars();
-$secret          = (string) ($templateVars['secret'] ?? '');
-$provisioningUri = (string) ($templateVars['provisioningUri'] ?? '');
-$csrfToken       = (string) ($templateVars['csrfToken'] ?? '');
-$flashSuccess    = isset($templateVars['flashSuccess']) ? (string) $templateVars['flashSuccess'] : null;
-$flashError      = isset($templateVars['flashError']) ? (string) $templateVars['flashError'] : null;
-$csrfVal         = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-$secretVal       = htmlspecialchars($secret, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$templateVars = get_defined_vars();
+$secret       = (string) ($templateVars['secret'] ?? '');
+$csrfToken    = (string) ($templateVars['csrfToken'] ?? '');
+$flashSuccess = isset($templateVars['flashSuccess']) ? (string) $templateVars['flashSuccess'] : null;
+$flashError   = isset($templateVars['flashError']) ? (string) $templateVars['flashError'] : null;
+$csrfVal      = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+$secretVal    = htmlspecialchars($secret, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'Two-Factor Authentication (2FA) — PHP-BindManager';
 ?>
