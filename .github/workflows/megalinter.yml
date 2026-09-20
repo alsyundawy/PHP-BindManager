@@ -18,6 +18,9 @@ env:
   APPLY_FIXES: all
   APPLY_FIXES_EVENT: pull_request
   APPLY_FIXES_MODE: commit
+  APPLY_FIXES_IF: 'false'
+  APPLY_FIXES_IF_COMMIT: 'false'
+  APPLY_FIXES_IF_PR: 'false'
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -44,7 +47,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       # -----------------------------------------------------------------------
@@ -197,7 +200,7 @@ jobs:
         id: cpr
         if: env.APPLY_FIXES_IF_PR == 'true'
         with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "[MegaLinter] Apply linters automatic fixes" # yamllint disable-line rule:quoted-strings
           title: "[MegaLinter] Apply linters automatic fixes" # yamllint disable-line rule:quoted-strings
           labels: bot,linting
