@@ -45,9 +45,9 @@ final class BackupService
         $realBackupDir   = realpath($this->backupDirectory);
 
         if (
-            $realBackup         === false
-            || $realDatabaseDir === false
-            || $realBackupDir   === false
+            ! is_string($realBackup)
+            || ! is_string($realDatabaseDir)
+            || ! is_string($realBackupDir)
             || ! str_starts_with($realBackup, $realBackupDir . DIRECTORY_SEPARATOR)
         ) {
             throw new RuntimeException('Backup path is outside the backup directory.');

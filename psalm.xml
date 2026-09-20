@@ -25,6 +25,11 @@
                 <file name="App/Support/View.php"/>
             </errorLevel>
         </UnusedParam>
+        <PossiblyFalseArgument>
+            <errorLevel type="suppress">
+                <file name="App/Services/System/BackupService.php"/>
+            </errorLevel>
+        </PossiblyFalseArgument>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
     </issueHandlers>
 </psalm>

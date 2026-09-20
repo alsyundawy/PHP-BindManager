@@ -13,8 +13,15 @@ $content = (string) ($templateVars['content'] ?? '');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#2563eb" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0f19" media="(prefers-color-scheme: dark)">
+    <meta name="color-scheme" content="light dark">
     <meta name="robots" content="noindex, nofollow">
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BindManager">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="PHP-BindManager BIND9 Authoritative DNS operations platform.">
     <meta property="og:title" content="<?= e($title ?? 'PHP-BindManager') ?>">
     <meta property="og:description" content="Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure.">

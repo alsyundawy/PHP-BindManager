@@ -36,6 +36,11 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    overflow-x: hidden;
 }
 
 body {
@@ -290,6 +295,8 @@ textarea {
     width: 100%;
     touch-action: pan-x pan-y;
     scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
 }
 
 .pbm-table {
@@ -304,6 +311,12 @@ textarea {
     border-bottom: 1px solid var(--pbm-border);
     text-align: left;
     white-space: nowrap;
+}
+
+.pbm-table td {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 320px;
 }
 
 .pbm-table th {
@@ -476,6 +489,33 @@ textarea {
     .pbm-page-heading .pbm-btn {
         margin-top: 14px;
         width: 100%;
+    }
+}
+
+/* ── Sub-compact / budget phones (Redmi A-series, POCO C-series, ≤ 400px) ── */
+@media (max-width: 400px) {
+    .pbm-main {
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+        padding-left: max(12px, env(safe-area-inset-left, 12px));
+        padding-right: max(12px, env(safe-area-inset-right, 12px));
+    }
+
+    .pbm-card {
+        padding: 14px;
+    }
+
+    .pbm-page-heading h1 {
+        font-size: 1.3rem;
+    }
+
+    .pbm-btn {
+        font-size: 0.85rem;
+        padding: 7px 10px;
+    }
+
+    .pbm-kpi-value {
+        font-size: 1.5rem;
     }
 }
 
