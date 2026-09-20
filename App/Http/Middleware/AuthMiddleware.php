@@ -6,7 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Exceptions\AuthenticationException;
 use App\Services\Auth\AuthenticationService;
-use Nyholm\Psr7\Response;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,8 +17,6 @@ final class AuthMiddleware
     }
 
     /**
-     * @suppress PHP0409
-     * @suppress PHP0410
      * @param callable(ServerRequestInterface): ResponseInterface $next
      * @return ResponseInterface
      */
@@ -45,8 +43,6 @@ final class AuthMiddleware
             throw new AuthenticationException();
         }
 
-        $redirect = new Response(302, ['Location' => '/login']);
-
-        return $redirect;
+        return new Psr17Factory()->createResponse(302)->withHeader('Location', '/login');
     }
 }

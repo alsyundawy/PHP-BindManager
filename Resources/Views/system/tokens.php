@@ -82,10 +82,9 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                        min="<?= date('Y-m-d', strtotime('+1 day')) ?>">
             </div>
         </div>
-        <div class="pbm-form-group">
-            <div id="scopes-heading" class="pbm-label">Scopes</div>
-            <div role="group" aria-labelledby="scopes-heading"
-                 style="display:flex;flex-wrap:wrap;gap:12px;margin-top:6px;">
+        <fieldset class="pbm-form-group" style="border:none;padding:0;margin:0 0 16px 0;">
+            <legend id="scopes-heading" class="pbm-label" style="padding:0;margin-bottom:6px;">Scopes</legend>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;">
                 <?php foreach ($allScopes as $scope) : ?>
                     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
                         <input type="checkbox" name="scopes[]"
@@ -96,7 +95,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                     </label>
                 <?php endforeach; ?>
             </div>
-        </div>
+        </fieldset>
         <button type="submit" class="pbm-btn" style="margin-top:4px;">
             <i class="fa-solid fa-key me-1"></i>Generate Token
         </button>

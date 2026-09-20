@@ -3,15 +3,14 @@
 declare(strict_types=1);
 
 /**
+ * @suppress PHP0408
+ * @suppress PHP0413
  * @var array<int, array<string, mixed>> $logs
  * @var int                              $total
  */
-if (! isset($logs) || ! is_array($logs)) {
-    $logs = [];
-}
-if (! isset($total) || ! is_int($total)) {
-    $total = 0;
-}
+$templateVars = get_defined_vars();
+$logs         = (array) ($templateVars['logs'] ?? []);
+$total        = (int) ($templateVars['total'] ?? 0);
 
 $title = 'Audit Trail — PHP-BindManager';
 

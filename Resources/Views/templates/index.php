@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 /**
+ * @suppress PHP0408
+ * @suppress PHP0413
  * @var array<int, array<string, mixed>> $templates
  * @var array<int, array<string, mixed>> $zones
  * @var string                           $csrfToken
@@ -130,7 +132,13 @@ $title = 'Zone Templates Library — PHP-BindManager';
                                 <form method="post" action="/templates/apply" style="display:flex;gap:6px;">
                                     <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                     <input type="hidden" name="template_id" value="<?= $tplId ?>">
-                                    <select name="zone_id" class="pbm-input"
+                                    <label for="zone-select-<?= $tplId ?>"
+                                           style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+                                                  overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">
+                                        Select Target Zone
+                                    </label>
+                                    <select id="zone-select-<?= $tplId ?>" name="zone_id" class="pbm-input"
+                                            aria-label="Select Target Zone"
                                             style="padding:4px 8px;font-size:.82rem;" required>
                                         <option value="">Select Target Zone</option>
                                         <?php foreach ($zones as $z) : ?>

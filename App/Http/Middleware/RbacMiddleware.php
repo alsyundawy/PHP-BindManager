@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use Nyholm\Psr7\Response;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -56,8 +56,6 @@ final class RbacMiddleware
     }
 
     /**
-     * @suppress PHP0409
-     * @suppress PHP0410
      * @return ResponseInterface
      */
     private function buildForbiddenResponse(
@@ -65,6 +63,7 @@ final class RbacMiddleware
         string $sessionMessage,
         string $apiMessage = ''
     ): ResponseInterface {
+        $factory = new Psr17Factory();
         if ($isApi) {
             $body = json_encode(
                 [
@@ -74,15 +73,13 @@ final class RbacMiddleware
                 JSON_THROW_ON_ERROR
             );
 
-            $apiResponse = new Response(403, ['Content-Type' => 'application/json'], $body);
-
-            return $apiResponse;
+            return $factory->createResponse(403)
+                ->withHeader('Content-Type', 'application/json')
+                ->withBody($factory->createStream($body));
         }
 
         $_SESSION['flash_error'] = $sessionMessage;
 
-        $redirectResponse = new Response(302, ['Location' => '/dashboard']);
-
-        return $redirectResponse;
+        return $factory->createResponse(302)->withHeader('Location', '/dashboard');
     }
 }

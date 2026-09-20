@@ -54,7 +54,7 @@ $title = 'Two-Factor Authentication (2FA) — PHP-BindManager';
     </p>
 
     <div class="pbm-form-group">
-        <label class="pbm-label">Secret Key</label>
+        <div class="pbm-label">Secret Key</div>
         <code style="display:block;padding:12px;background:var(--pbm-bg);border:1px solid var(--pbm-border);
                      border-radius:var(--pbm-radius);font-size:1.1rem;letter-spacing:2px;text-align:center;">
             <?= htmlspecialchars($secret, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
