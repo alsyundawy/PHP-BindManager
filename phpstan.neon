@@ -14,5 +14,4 @@ parameters:
     excludePaths:
         analyse:
             - vendor
-            - output
             - Tests

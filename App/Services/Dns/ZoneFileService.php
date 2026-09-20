@@ -4,18 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services\Dns;
 
+use App\Exceptions\ZoneException;
+use App\Exceptions\ZoneValidationException;
 use App\Repositories\Dns\RecordRepository;
 use App\Repositories\Dns\ZoneRepository;
-use RuntimeException;
 
 final class ZoneFileService
 {
     public function __construct(
-        private readonly ZoneRepository    $zones,
-        private readonly RecordRepository  $records,
-        private readonly string            $zonesDirectory,
-        private readonly string            $checkzoneBinary = '/usr/sbin/named-checkzone',
+        private readonly ZoneRepository $zones,
+        private readonly RecordRepository $records,
+        private readonly string $zonesDirectory,
+        private readonly string $checkzoneBinary = '/usr/sbin/named-checkzone',
     ) {
+    }
+
+    public function zonesDirectory(): string
+    {
+        return $this->zonesDirectory;
     }
 
     public function export(int $zoneId): string
@@ -23,7 +29,7 @@ final class ZoneFileService
         $zone = $this->zones->find($zoneId);
 
         if ($zone === null) {
-            throw new RuntimeException('Zone not found.');
+            throw new ZoneException('Zone not found.');
         }
 
         $rows = $this->records->forZone($zoneId);
@@ -47,13 +53,13 @@ final class ZoneFileService
         $tmp = tempnam(sys_get_temp_dir(), 'pbm-zone-');
 
         if ($tmp === false) {
-            throw new RuntimeException('Unable to create temporary zone file.');
+            throw new ZoneException('Unable to create temporary zone file.');
         }
 
         try {
             file_put_contents($tmp, $zoneText);
 
-            $command = [$this->checkzoneBinary, $zoneName, $tmp];
+            $command     = [$this->checkzoneBinary, $zoneName, $tmp];
             $descriptors = [
                 1 => ['pipe', 'w'],
                 2 => ['pipe', 'w'],
@@ -62,7 +68,7 @@ final class ZoneFileService
             $process = proc_open($command, $descriptors, $pipes);
 
             if (! is_resource($process)) {
-                throw new RuntimeException('Unable to execute named-checkzone.');
+                throw new ZoneException('Unable to execute named-checkzone.');
             }
 
             $stdout = (string) stream_get_contents($pipes[1]);
@@ -72,7 +78,14 @@ final class ZoneFileService
             $code = proc_close($process);
 
             if ($code !== 0) {
-                throw new RuntimeException(trim($stderr !== '' ? $stderr : ($stdout !== '' ? $stdout : 'Zone validation failed.')));
+                $errorMsg = 'Zone validation failed.';
+                if ($stderr !== '') {
+                    $errorMsg = $stderr;
+                } elseif ($stdout !== '') {
+                    $errorMsg = $stdout;
+                }
+
+                throw new ZoneValidationException(trim($errorMsg));
             }
 
             return true;

@@ -23,13 +23,17 @@ Storage/Backups/*
 !Storage/Uploads/.gitkeep
 !Storage/Backups/.gitkeep
 
-# PHPUnit
+# PHPUnit & Testing Caches
 .phpunit.result.cache
+.phpunit.cache/
+.php-cs-fixer.cache
+.psalm/
 coverage/
 
 # IDE
 .vscode/
 .idea/
+.kilo/
 *.swp
 *.swo
 *.sublime-project

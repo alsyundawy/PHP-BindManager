@@ -22,10 +22,12 @@ final class AuditLogRepository
         ?string $old = null,
         ?string $new = null,
     ): void {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO audit_logs(user_id, action, entity_type, entity_id, old_value, new_value, ip_address, user_agent)
-             VALUES(:user_id, :action, :entity_type, :entity_id, :old_value, :new_value, :ip_address, :user_agent)'
-        );
+        $sql = 'INSERT INTO audit_logs ('
+            . 'user_id, action, entity_type, entity_id, old_value, new_value, ip_address, user_agent'
+            . ') VALUES ('
+            . ':user_id, :action, :entity_type, :entity_id, :old_value, :new_value, :ip_address, :user_agent'
+            . ')';
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             ':user_id'     => $userId,
             ':action'      => $action,

@@ -24,7 +24,12 @@ final class DatabaseMaintenanceService
 
     public function integrityCheck(): bool
     {
-        $result = $this->pdo->query('PRAGMA integrity_check')?->fetchColumn();
+        $statement = $this->pdo->query('PRAGMA integrity_check');
+        if ($statement === false) {
+            return false;
+        }
+
+        $result = $statement->fetchColumn();
 
         return $result === 'ok';
     }
@@ -34,13 +39,20 @@ final class DatabaseMaintenanceService
      */
     public function stats(): array
     {
-        $result = $this->pdo->query(
-            "SELECT name, SUM(pgsize) AS bytes, SUM(ncell) AS rows
-             FROM dbstat
-             WHERE name NOT LIKE 'sqlite_%'
-             GROUP BY name"
+        $statement = $this->pdo->query(
+            'SELECT name, SUM(pgsize) AS bytes, SUM(ncell) AS rows '
+            . 'FROM dbstat '
+            . "WHERE name NOT LIKE 'sqlite_%' "
+            . 'GROUP BY name'
         );
 
-        return $result === false ? [] : $result->fetchAll();
+        if ($statement === false) {
+            return [];
+        }
+
+        /** @var array<int, array<string, mixed>> $results */
+        $results = $statement->fetchAll();
+
+        return $results;
     }
 }

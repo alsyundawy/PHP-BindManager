@@ -22,7 +22,7 @@ final class CsrfMiddleware
         }
 
         $parsedBody = $request->getParsedBody();
-        $token = null;
+        $token      = null;
 
         if (is_array($parsedBody)) {
             $token = $parsedBody['_csrf_token'] ?? null;

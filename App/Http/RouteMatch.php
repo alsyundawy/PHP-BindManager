@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http;
 
-use App\Exceptions\HttpException;
-use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,7 +15,7 @@ final class RouteMatch
      */
     public function __construct(
         public readonly ServerRequestInterface $request,
-        private readonly $handler,
+        private readonly mixed $handler,
         private readonly array $route,
     ) {
     }

@@ -33,21 +33,25 @@ Harassment of any kind will not be tolerated.
 3. Write code following the standards below
 4. Write or update tests (minimum 80% coverage)
 5. Run all QA checks before submitting:
-   ```bash
-   composer run phpcs
-   composer run phpstan
-   composer run psalm
-   composer run test
-   ```
+
+    ```bash
+    composer run phpcs
+    composer run phpstan
+    composer run psalm
+    composer run test
+    ```
+
 6. Commit using Conventional Commits:
-   ```
-   feat: add CAA record support
-   fix: resolve zone import encoding issue
-   docs: update API.md with new endpoints
-   refactor: simplify ZoneService::validate()
-   test: add unit tests for DnsRecordValidator
-   security: patch CSRF token regeneration
-   ```
+
+    ```text
+    feat: add CAA record support
+    fix: resolve zone import encoding issue
+    docs: update API.md with new endpoints
+    refactor: simplify ZoneService::validate()
+    test: add unit tests for DnsRecordValidator
+    security: patch CSRF token regeneration
+    ```
+
 7. Open a Pull Request against the `main` branch
 8. Fill in the PR template completely
 
@@ -81,14 +85,14 @@ php bin/seed.php
 
 ## Branch Naming
 
-| Type | Pattern |
-|---|---|
-| Feature | `feat/description` |
-| Bug Fix | `fix/description` |
-| Documentation | `docs/description` |
-| Refactor | `refactor/description` |
-| Security | `security/description` |
-| Release | `release/v1.0.0` |
+| Type          | Pattern                |
+| ------------- | ---------------------- |
+| Feature       | `feat/description`     |
+| Bug Fix       | `fix/description`      |
+| Documentation | `docs/description`     |
+| Refactor      | `refactor/description` |
+| Security      | `security/description` |
+| Release       | `release/v1.0.0`       |
 
 ---
 
@@ -96,7 +100,7 @@ php bin/seed.php
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 type(scope): short description
 
 Longer description if needed.

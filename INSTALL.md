@@ -2,18 +2,21 @@
 
 ## Requirements
 
-| Component | Version | Notes |
-|---|---|---|
-| PHP | 8.4+ | Required |
-| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required |
-| Nginx | 1.24+ | Recommended web server |
-| PHP-FPM | 8.4+ | Required |
-| BIND9 | 9.16+ | Must be installed and running |
-| Composer | 2.x | Required |
-| OS | Debian 12 / Ubuntu 22.04+ | Tested platforms |
-| Disk | 500MB+ | For logs, cache, backups |
+| Component      | Version                                                       | Notes                         |
+| -------------- | ------------------------------------------------------------- | ----------------------------- |
+| PHP            | 8.4+                                                          | Required                      |
+| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required                  |
+| Nginx          | 1.24+                                                         | Recommended web server        |
+| PHP-FPM        | 8.4+                                                          | Required                      |
+| BIND9          | 9.16+                                                         | Must be installed and running |
+| Composer       | 2.x                                                           | Required                      |
+| OS             | Debian 12 / Ubuntu 22.04+                                     | Tested platforms              |
+| Disk           | 500MB+                                                        | For logs, cache, backups      |
 
 ---
+
+> [!TIP]
+> For a comprehensive guide on BIND9 primary/secondary architecture, TSIG, Zimbra mail DNS records, rate-limiting, and Rocky Linux/CentOS commands, see **[TUTORIAL.md](TUTORIAL.md)**.
 
 ## Step 1 — Install System Dependencies
 
@@ -76,7 +79,8 @@ php bin/seed.php  # Creates default admin user
 ```
 
 Default credentials (change immediately):
-```
+
+```text
 Username: admin
 Password: ChangeMe@2026!
 ```
@@ -196,10 +200,10 @@ php bin/migrate.php
 
 ## Troubleshooting
 
-| Issue | Solution |
-|---|---|
-| 502 Bad Gateway | Check `systemctl status php8.4-fpm` |
-| Permission denied | Check `Storage/` and `Database/` ownership |
-| BIND9 not updating | Check `www-data` is in `bind` group |
-| SQLite locked | Verify WAL mode is enabled |
-| CSRF errors | Ensure session is writable |
+| Issue              | Solution                                   |
+| ------------------ | ------------------------------------------ |
+| 502 Bad Gateway    | Check `systemctl status php8.4-fpm`        |
+| Permission denied  | Check `Storage/` and `Database/` ownership |
+| BIND9 not updating | Check `www-data` is in `bind` group        |
+| SQLite locked      | Verify WAL mode is enabled                 |
+| CSRF errors        | Ensure session is writable                 |

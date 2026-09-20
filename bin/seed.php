@@ -13,40 +13,61 @@ Path::bootstrap(dirname(__DIR__));
 Env::load(Path::base('.env'));
 
 $config = new Config([
-    'database' => require Path::config('database.php'),
+    'database' => require_once Path::config('database.php'),
 ]);
 
 $factory = new ConnectionFactory($config);
 $pdo = $factory->create();
 
 $roles = [
-    ['name' => 'admin', 'description' => 'Full system administrator access', 'permissions' => json_encode(['*'], JSON_THROW_ON_ERROR)],
-    ['name' => 'editor', 'description' => 'Zone and record management access', 'permissions' => json_encode(['dashboard.view', 'zones.*', 'records.*'], JSON_THROW_ON_ERROR)],
-    ['name' => 'viewer', 'description' => 'Read-only access', 'permissions' => json_encode(['dashboard.view', 'zones.view', 'records.view', 'system.view'], JSON_THROW_ON_ERROR)],
+    [
+        'name'        => 'admin',
+        'description' => 'Full system administrator access',
+        'permissions' => json_encode(['*'], JSON_THROW_ON_ERROR),
+    ],
+    [
+        'name'        => 'editor',
+        'description' => 'Zone and record management access',
+        'permissions' => json_encode(
+            ['dashboard.view', 'zones.*', 'records.*'],
+            JSON_THROW_ON_ERROR
+        ),
+    ],
+    [
+        'name'        => 'viewer',
+        'description' => 'Read-only access',
+        'permissions' => json_encode(
+            ['dashboard.view', 'zones.view', 'records.view', 'system.view'],
+            JSON_THROW_ON_ERROR
+        ),
+    ],
 ];
 
-$roleStatement = $pdo->prepare(
-    'INSERT INTO roles (name, description, permissions) VALUES (:name, :description, :permissions) ON CONFLICT(name) DO UPDATE SET description = :description, permissions = :permissions'
-);
+$roleSql = 'INSERT INTO roles (name, description, permissions) '
+    . 'VALUES (:name, :description, :permissions) '
+    . 'ON CONFLICT(name) DO UPDATE SET description = :description, permissions = :permissions';
+$roleStatement = $pdo->prepare($roleSql);
 
 foreach ($roles as $role) {
     $roleStatement->execute([
-        ':name' => $role['name'],
+        ':name'        => $role['name'],
         ':description' => $role['description'],
         ':permissions' => $role['permissions'],
     ]);
 }
 
-$roleId = (int) $pdo->query("SELECT id FROM roles WHERE name = 'admin' LIMIT 1")->fetchColumn();
+$roleQuery = $pdo->query("SELECT id FROM roles WHERE name = 'admin' LIMIT 1");
+$roleId = $roleQuery !== false ? (int) $roleQuery->fetchColumn() : 1;
 $passwordHash = password_hash('ChangeMe@2026!', PASSWORD_ARGON2ID);
 
-$userStatement = $pdo->prepare(
-    'INSERT INTO users (role_id, username, email, password_hash) VALUES (:role_id, :username, :email, :password_hash) ON CONFLICT(username) DO NOTHING'
-);
+$userSql = 'INSERT INTO users (role_id, username, email, password_hash) '
+    . 'VALUES (:role_id, :username, :email, :password_hash) '
+    . 'ON CONFLICT(username) DO NOTHING';
+$userStatement = $pdo->prepare($userSql);
 $userStatement->execute([
-    ':role_id' => $roleId,
-    ':username' => 'admin',
-    ':email' => 'admin@localhost',
+    ':role_id'       => $roleId,
+    ':username'      => 'admin',
+    ':email'         => 'admin@localhost',
     ':password_hash' => $passwordHash,
 ]);
 

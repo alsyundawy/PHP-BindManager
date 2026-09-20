@@ -18,26 +18,27 @@ components:
       type: object
       required: [name, zone_type]
       properties:
-        name: {type: string, example: example.com.}
-        zone_type: {type: string, enum: [master, slave, forward, hint]}
+        name: { type: string, example: example.com. }
+        zone_type: { type: string, enum: [master, slave, forward, hint] }
     Record:
       type: object
       required: [name, record_type, ttl, content]
       properties:
-        name: {type: string, example: www}
-        record_type: {type: string, example: A}
-        ttl: {type: integer, minimum: 1}
-        content: {type: string, example: 192.0.2.10}
+        name: { type: string, example: www }
+        record_type: { type: string, example: A }
+        ttl: { type: integer, minimum: 1 }
+        content: { type: string, example: 192.0.2.10 }
 paths:
   /zones:
     get:
       summary: List zones
-      responses: {'200': {description: OK}}
+      responses: { "200": { description: OK } }
     post:
       summary: Create a zone
-      responses: {'201': {description: Created}}
+      responses: { "201": { description: Created } }
   /zones/{id}/records:
     get:
       summary: List zone records
-      parameters: [{name: id, in: path, required: true, schema: {type: integer}}]
-      responses: {'200': {description: OK}}
+      parameters:
+        [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses: { "200": { description: OK } }

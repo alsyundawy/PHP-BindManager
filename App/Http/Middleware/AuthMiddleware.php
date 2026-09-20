@@ -17,7 +17,7 @@ final class AuthMiddleware
 
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
-        $route = $request->getAttribute('route', []);
+        $route        = $request->getAttribute('route', []);
         $authRequired = (bool) ($route['auth'] ?? false);
 
         if ($authRequired && ! $this->authenticationService->isAuthenticated()) {

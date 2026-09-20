@@ -8,6 +8,5 @@
     <file>Routes</file>
     <file>bin</file>
     <exclude-pattern>vendor/*</exclude-pattern>
-    <exclude-pattern>output/*</exclude-pattern>
     <exclude-pattern>Tests/*</exclude-pattern>
 </ruleset>

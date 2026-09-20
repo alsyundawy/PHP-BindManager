@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Container;
 
-use InvalidArgumentException;
-use Psr\Container\ContainerExceptionInterface;
+use App\Exceptions\ContainerNotFoundException;
+use App\Exceptions\ContainerResolutionException;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
-use RuntimeException;
 use Throwable;
 
 final class Container implements ContainerInterface
@@ -30,15 +28,13 @@ final class Container implements ContainerInterface
         }
 
         if (! $this->has($id)) {
-            throw new class(sprintf('Service "%s" is not bound.', $id)) extends RuntimeException implements NotFoundExceptionInterface {
-            };
+            throw new ContainerNotFoundException(sprintf('Service "%s" is not bound.', $id));
         }
 
         try {
             $this->instances[$id] = ($this->bindings[$id])($this);
         } catch (Throwable $throwable) {
-            throw new class('Failed to resolve service.', 0, $throwable) extends RuntimeException implements ContainerExceptionInterface {
-            };
+            throw new ContainerResolutionException('Failed to resolve service.', 0, $throwable);
         }
 
         return $this->instances[$id];
@@ -50,14 +46,11 @@ final class Container implements ContainerInterface
     }
 
     /**
-     * @param callable(self): mixed $resolver
+     * @param callable(self): mixed $factory
      */
-    public function set(string $id, callable $resolver): void
+    public function set(string $id, callable $factory): void
     {
-        if ($id === '') {
-            throw new InvalidArgumentException('Service id cannot be empty.');
-        }
-
-        $this->bindings[$id] = $resolver;
+        $this->bindings[$id] = $factory;
+        unset($this->instances[$id]);
     }
 }

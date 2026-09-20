@@ -6,7 +6,6 @@ namespace App\Controllers\System;
 
 use App\Services\System\DatabaseOptimizer;
 use Nyholm\Psr7\Response;
-use Psr\Http\Message\ServerRequestInterface;
 
 final class SystemController
 {
@@ -14,7 +13,7 @@ final class SystemController
     {
     }
 
-    public function health(ServerRequestInterface $request): Response
+    public function health(): Response
     {
         $payload = [
             'success' => true,

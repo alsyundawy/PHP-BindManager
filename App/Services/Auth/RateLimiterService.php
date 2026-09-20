@@ -18,7 +18,7 @@ final class RateLimiterService
     public function allow(string $action, string $identifier): bool
     {
         $this->repository->clearExpired(time());
-        $limit = $this->limitForAction($action);
+        $limit  = $this->limitForAction($action);
         $record = $this->repository->find($identifier, $action);
 
         if ($record === null) {
@@ -43,7 +43,7 @@ final class RateLimiterService
     {
         return match ($action) {
             'login' => (int) $this->config->get('security.rate_limit_login', 10),
-            'api' => (int) $this->config->get('api.rate_limit', 300),
+            'api'   => (int) $this->config->get('api.rate_limit', 300),
             default => 120,
         };
     }

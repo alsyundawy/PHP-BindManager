@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use InvalidArgumentException;
-
 final class Config
 {
     /**
@@ -18,7 +16,7 @@ final class Config
     public function get(string $key, mixed $default = null): mixed
     {
         $segments = explode('.', $key);
-        $value = $this->items;
+        $value    = $this->items;
 
         foreach ($segments as $segment) {
             if (! is_array($value) || ! array_key_exists($segment, $value)) {

@@ -16,13 +16,13 @@ final class CsrfService
 
     public function token(): string
     {
-        $token = $_SESSION[self::SESSION_KEY]['value'] ?? null;
+        $token     = $_SESSION[self::SESSION_KEY]['value']          ?? null;
         $expiresAt = $_SESSION[self::SESSION_KEY]['expires_at'] ?? 0;
 
         if (! is_string($token) || (int) $expiresAt <= time()) {
-            $token = bin2hex(random_bytes(32));
+            $token                       = bin2hex(random_bytes(32));
             $_SESSION[self::SESSION_KEY] = [
-                'value' => $token,
+                'value'      => $token,
                 'expires_at' => time() + (int) $this->config->get('security.csrf_token_lifetime', 3600),
             ];
         }
@@ -37,7 +37,7 @@ final class CsrfService
         }
 
         $sessionToken = $_SESSION[self::SESSION_KEY]['value'] ?? null;
-        $expiresAt = (int) ($_SESSION[self::SESSION_KEY]['expires_at'] ?? 0);
+        $expiresAt    = (int) ($_SESSION[self::SESSION_KEY]['expires_at'] ?? 0);
 
         if (! is_string($sessionToken) || $expiresAt <= time()) {
             return false;

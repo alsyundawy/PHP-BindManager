@@ -13,7 +13,7 @@ final class ApiTokenRepository
     }
 
     /**
-     * @param  array<string>  $scopes
+     * @param array<string> $scopes
      */
     public function create(
         int $userId,

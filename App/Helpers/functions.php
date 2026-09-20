@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Support\Path;
-
 if (! function_exists('e')) {
     function e(?string $value): string
     {

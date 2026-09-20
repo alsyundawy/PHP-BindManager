@@ -1,14 +1,12 @@
 # PHP-BindManager
 
-<p align="center">
-  <img src="https://img.shields.io/badge/PHP-8.4%2B-blue?logo=php" alt="PHP 8.4+">
-  <img src="https://img.shields.io/badge/Bootstrap-5.3.x-purple?logo=bootstrap" alt="Bootstrap 5.3">
-  <img src="https://img.shields.io/badge/Tailwind_CSS-Latest-teal?logo=tailwindcss" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/SQLite3-WAL-green?logo=sqlite" alt="SQLite3">
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT">
-  <img src="https://img.shields.io/badge/Status-Development-orange" alt="Development">
-  <img src="https://img.shields.io/badge/BIND9-DNS%20Manager-red" alt="BIND9">
-</p>
+![PHP 8.4+](https://img.shields.io/badge/PHP-8.4%2B-blue?logo=php)
+![Bootstrap 5.3](https://img.shields.io/badge/Bootstrap-5.3.x-purple?logo=bootstrap)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-Latest-teal?logo=tailwindcss)
+![SQLite3](https://img.shields.io/badge/SQLite3-WAL-green?logo=sqlite)
+![License MIT](https://img.shields.io/badge/License-MIT-yellow)
+![Status](https://img.shields.io/badge/Status-Development-orange)
+![BIND9](https://img.shields.io/badge/BIND9-DNS%20Manager-red)
 
 > **Enterprise-grade Web GUI for BIND9 DNS Server Management**  
 > Built with PHP 8.4+, Bootstrap 5.3, Tailwind CSS, jQuery 3.7, SQLite3, RBAC, DNSSEC, and a full REST API.
@@ -17,24 +15,24 @@
 
 ## ✨ Features
 
-| Category | Features |
-|---|---|
-| **Dashboard** | Real-time stats, widgets, system health, activity feed |
-| **Zone Management** | Forward, Reverse, DNSSEC, Templates, Import/Export |
-| **Record Types** | A, AAAA, CNAME, MX, NS, TXT, PTR, SRV, CAA, NAPTR, TLSA, SOA |
-| **Security** | RBAC, CSRF, XSS, CSP, Brute-force, Rate-limiting, Argon2id |
-| **API** | REST API with Token auth, full Swagger/OpenAPI docs |
-| **ACL & Views** | BIND9 ACL and Views management |
-| **Backup & Restore** | Full zone backup and restore system |
-| **Audit Trail** | Full audit log with user, IP, action, timestamp |
-| **Multi-user** | Role-Based Access Control (Admin, Editor, Viewer) |
-| **Theme** | Light / Dark / Auto (prefers-color-scheme) |
+| Category             | Features                                                     |
+| -------------------- | ------------------------------------------------------------ |
+| **Dashboard**        | Real-time stats, widgets, system health, activity feed       |
+| **Zone Management**  | Forward, Reverse, DNSSEC, Templates, Import/Export           |
+| **Record Types**     | A, AAAA, CNAME, MX, NS, TXT, PTR, SRV, CAA, NAPTR, TLSA, SOA |
+| **Security**         | RBAC, CSRF, XSS, CSP, Brute-force, Rate-limiting, Argon2id   |
+| **API**              | REST API with Token auth, full Swagger/OpenAPI docs          |
+| **ACL & Views**      | BIND9 ACL and Views management                               |
+| **Backup & Restore** | Full zone backup and restore system                          |
+| **Audit Trail**      | Full audit log with user, IP, action, timestamp              |
+| **Multi-user**       | Role-Based Access Control (Admin, Editor, Viewer)            |
+| **Theme**            | Light / Dark / Auto (prefers-color-scheme)                   |
 
 ---
 
 ## 🚀 Quick Start
 
-See [INSTALL.md](INSTALL.md) for full installation instructions.
+See [INSTALL.md](INSTALL.md) for full installation instructions and [TUTORIAL.md](TUTORIAL.md) for a comprehensive multi-distribution production deployment and BIND9 configuration guide. Read [DOCNOTE.md](DOCNOTE.md) for architecture and engineering standards.
 
 ```bash
 git clone https://github.com/alsyundawy/PHP-BindManager.git
@@ -42,15 +40,16 @@ cd PHP-BindManager
 cp .env.example .env
 composer install --no-dev --optimize-autoloader
 php bin/migrate.php
+php bin/seed.php
 ```
 
 ---
 
 ## 🏗️ Architecture
 
-See [ARCHITECTURE.md](Docs/ARCHITECTURE.md) for full architecture documentation.
+See [ARCHITECTURE.md](Docs/ARCHITECTURE.md) and [DOCNOTE.md](DOCNOTE.md) for full architectural documentation.
 
-```
+```text
 Request → Nginx → PHP-FPM → public/index.php
        → Router → Middleware Stack → Controller
        → Service Layer → Repository → SQLite3
@@ -74,21 +73,21 @@ See [SECURITY.md](SECURITY.md) for full security policy.
 
 ## 📋 Requirements
 
-| Component | Version |
-|---|---|
-| PHP | 8.4+ |
-| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl |
-| Nginx | 1.24+ |
-| PHP-FPM | 8.4+ |
-| BIND9 | 9.16+ |
-| Composer | 2.x |
-| OS | Debian 12+ / Ubuntu 22.04+ |
+| Component      | Version                                                            |
+| -------------- | ------------------------------------------------------------------ |
+| PHP            | 8.4+                                                               |
+| PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl           |
+| Nginx          | 1.24+                                                              |
+| PHP-FPM        | 8.4+                                                               |
+| BIND9          | 9.16+                                                              |
+| Composer       | 2.x                                                                |
+| OS             | Ubuntu 22.04/24.04, Debian 11/12, Rocky Linux 8/9, CentOS 7/Stream |
 
 ---
 
 ## 📂 Project Structure
 
-```
+```text
 PHP-BindManager/
 ├── App/                    # Application core
 │   ├── Controllers/

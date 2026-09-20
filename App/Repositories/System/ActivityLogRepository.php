@@ -13,7 +13,7 @@ final class ActivityLogRepository
     }
 
     /**
-     * @param  array<string, mixed>  $context
+     * @param array<string, mixed> $context
      */
     public function write(
         ?int $userId,

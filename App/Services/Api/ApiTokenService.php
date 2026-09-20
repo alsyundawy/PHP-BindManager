@@ -15,7 +15,7 @@ final class ApiTokenService
     /**
      * Issue a new API token.
      *
-     * @param  array<string>  $scopes
+     * @param array<string> $scopes
      * @return array{token: string, token_hash: string, expires_at: ?string}
      */
     public function issue(

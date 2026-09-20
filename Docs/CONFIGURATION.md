@@ -97,15 +97,15 @@ API_TOKEN_LIFETIME=31536000  # 1 year in seconds
 
 ## Config Files
 
-| File | Purpose |
-|---|---|
-| `Config/app.php` | App-level settings |
-| `Config/database.php` | Database connection config |
-| `Config/session.php` | Session settings |
+| File                  | Purpose                          |
+| --------------------- | -------------------------------- |
+| `Config/app.php`      | App-level settings               |
+| `Config/database.php` | Database connection config       |
+| `Config/session.php`  | Session settings                 |
 | `Config/security.php` | Security settings (CSP, headers) |
-| `Config/bind9.php` | BIND9 paths and settings |
-| `Config/logging.php` | Log channel definitions |
-| `Config/cache.php` | Cache driver settings |
-| `Config/mail.php` | Mail settings |
-| `Config/api.php` | API settings |
-| `Config/rbac.php` | Role and permission definitions |
+| `Config/bind9.php`    | BIND9 paths and settings         |
+| `Config/logging.php`  | Log channel definitions          |
+| `Config/cache.php`    | Cache driver settings            |
+| `Config/mail.php`     | Mail settings                    |
+| `Config/api.php`      | API settings                     |
+| `Config/rbac.php`     | Role and permission definitions  |

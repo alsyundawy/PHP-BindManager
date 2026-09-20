@@ -8,7 +8,7 @@ PHP-BindManager follows a layered **MVC + Repository + Service** architecture, b
 
 ## Request Lifecycle
 
-```
+```text
 HTTP Request
     │
     ▼
@@ -56,17 +56,20 @@ HTTP Response
 ## Layer Responsibilities
 
 ### Application
+
 - Boots the environment and configuration
 - Registers dependencies in the container
 - Creates PSR-7 requests from globals
 - Delegates all handling to Kernel
 
 ### Kernel
+
 - Resolves route match
 - Builds middleware execution order
 - Converts exceptions into HTML error responses
 
 ### Controller
+
 - Receives HTTP request (PSR-7 ServerRequestInterface)
 - Validates input (delegates to Validator)
 - Calls Service layer
@@ -74,6 +77,7 @@ HTTP Response
 - No business logic — thin controllers
 
 ### Service Layer
+
 - Contains all business logic
 - Orchestrates multiple repositories
 - Handles BIND9 integration
@@ -81,12 +85,14 @@ HTTP Response
 - Called by Controllers and CLI
 
 ### Repository Layer
+
 - All database access via PDO prepared statements
 - Returns typed DTOs or domain objects
 - No business logic — pure data access
 - Implements Repository Interface
 
 ### Middleware
+
 - SessionMiddleware — secure PHP session initialization
 - RateLimitMiddleware — per-IP throttling
 - CsrfMiddleware — validates CSRF token on mutating requests
@@ -96,7 +102,7 @@ HTTP Response
 
 ## Database Schema (Phase 2)
 
-```
+```text
 roles
   id, name, description, permissions, created_at
 
@@ -121,7 +127,7 @@ audit_logs
 
 ## Authentication Flow
 
-```
+```text
 [GET /login]
    │
    ├── Start secure session
@@ -144,7 +150,7 @@ audit_logs
 
 ## Security Architecture
 
-```
+```text
 [Client]
    │  HTTPS (TLS 1.2/1.3)
    ▼

@@ -21,7 +21,7 @@ final class CsrfServiceTest extends TestCase
     public function testTokenCanBeGeneratedAndValidated(): void
     {
         $service = new CsrfService(new Config(['security' => ['csrf_token_lifetime' => 3600]]));
-        $token = $service->token();
+        $token   = $service->token();
 
         self::assertNotSame('', $token);
         self::assertTrue($service->validateToken($token));

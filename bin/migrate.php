@@ -13,7 +13,7 @@ Path::bootstrap(dirname(__DIR__));
 Env::load(Path::base('.env'));
 
 $config = new Config([
-    'database' => require Path::config('database.php'),
+    'database' => require_once Path::config('database.php'),
 ]);
 
 $factory = new ConnectionFactory($config);
@@ -29,7 +29,7 @@ if ($files === false) {
 sort($files);
 
 foreach ($files as $file) {
-    $queries = require $file;
+    $queries = require_once $file;
     if (! is_array($queries)) {
         continue;
     }

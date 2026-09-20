@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Database;
 
+use App\Exceptions\DatabaseConnectionException;
 use App\Support\Config;
 use PDO;
 use PDOException;
-use RuntimeException;
 
 final class ConnectionFactory
 {
@@ -30,7 +30,7 @@ final class ConnectionFactory
 
             return $pdo;
         } catch (PDOException $exception) {
-            throw new RuntimeException('Unable to establish database connection.', 0, $exception);
+            throw new DatabaseConnectionException('Unable to establish database connection.', 0, $exception);
         }
     }
 }

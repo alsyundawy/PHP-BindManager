@@ -23,7 +23,7 @@ final class RateLimiterServiceTest extends TestCase
 
     public function testItBlocksAfterConfiguredLimit(): void
     {
-        $repo = new LoginAttemptRepository($this->pdo);
+        $repo    = new LoginAttemptRepository($this->pdo);
         $service = new RateLimiterService($repo, new Config(['security' => ['rate_limit_login' => 2], 'api' => ['rate_limit' => 300]]));
 
         self::assertTrue($service->allow('login', '127.0.0.1'));

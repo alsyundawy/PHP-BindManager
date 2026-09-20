@@ -25,7 +25,7 @@ final class Kernel
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $router = $this->container->get(Router::class);
+        $router  = $this->container->get(Router::class);
         $matched = $router->match($request);
         $request = $matched->request;
 
@@ -39,19 +39,21 @@ final class Kernel
         $handler = array_reduce(
             array_reverse($middlewareStack),
             static function (callable $next, object $middleware): callable {
-                return static fn (ServerRequestInterface $request): ResponseInterface => $middleware->process($request, $next);
+                return static function (ServerRequestInterface $request) use ($middleware, $next): ResponseInterface {
+                    return $middleware->process($request, $next);
+                };
             },
-            static fn (ServerRequestInterface $request): ResponseInterface => $matched->dispatch($request)
+            static fn (ServerRequestInterface $request): ResponseInterface => $matched->dispatch($request),
         );
 
         return $handler($request);
     }
 
-    public function errorResponse(int $statusCode, string $message): ResponseInterface
+    public function errorResponse(int $statusCode, string $message): Response
     {
         $html = View::render('errors/generic', [
             'statusCode' => $statusCode,
-            'message' => $message,
+            'message'    => $message,
         ]);
 
         return new Response($statusCode, ['Content-Type' => 'text/html; charset=UTF-8'], $html);

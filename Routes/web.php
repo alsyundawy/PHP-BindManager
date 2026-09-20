@@ -2,38 +2,78 @@
 
 declare(strict_types=1);
 
-use App\Http\Router;
-use App\Services\Auth\AuthenticationService;
-use App\Services\Auth\CsrfService;
 use App\Support\View;
 use Nyholm\Psr7\Response;
-use Psr\Http\Message\ServerRequestInterface;
+
+$htmlHeaders = ['Content-Type' => 'text/html; charset=UTF-8'];
+$loginUri    = '/login';
 
 return [
     [
-        'method' => 'GET',
-        'path' => '/',
-        'auth' => false,
+        'method'     => 'GET',
+        'path'       => '/',
+        'auth'       => false,
         'rate_limit' => 'web',
-        'handler' => static function (ServerRequestInterface $request): Response {
+        'handler'    => static function () use ($htmlHeaders): Response {
             $html = View::render('welcome', [
                 'appName' => 'PHP-BindManager',
             ]);
 
-            return new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], $html);
+            return new Response(200, $htmlHeaders, $html);
         },
     ],
     [
-        'method' => 'GET',
-        'path' => '/login',
-        'auth' => false,
+        'method'     => 'GET',
+        'path'       => '/login',
+        'auth'       => false,
         'rate_limit' => 'web',
-        'handler' => static function (ServerRequestInterface $request): Response {
+        'handler'    => static function () use ($htmlHeaders): Response {
             $html = View::render('auth/login', [
                 'csrfToken' => ($_SESSION['_csrf']['value'] ?? ''),
             ]);
 
-            return new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], $html);
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'GET',
+        'path'       => '/dashboard',
+        'auth'       => true,
+        'rate_limit' => 'web',
+        'handler'    => static function () use ($htmlHeaders): Response {
+            $html = View::render('dashboard/index', [
+                'appName' => 'PHP-BindManager',
+            ]);
+
+            return new Response(200, $htmlHeaders, $html);
+        },
+    ],
+    [
+        'method'     => 'POST',
+        'path'       => '/logout',
+        'auth'       => false,
+        'rate_limit' => 'web',
+        'handler'    => static function () use ($loginUri): Response {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $_SESSION = [];
+                session_destroy();
+            }
+
+            return new Response(302, ['Location' => $loginUri]);
+        },
+    ],
+    [
+        'method'     => 'GET',
+        'path'       => '/logout',
+        'auth'       => false,
+        'rate_limit' => 'web',
+        'handler'    => static function () use ($loginUri): Response {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $_SESSION = [];
+                session_destroy();
+            }
+
+            return new Response(302, ['Location' => $loginUri]);
         },
     ],
 ];

@@ -17,8 +17,8 @@ final class RateLimitMiddleware
 
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
-        $route = $request->getAttribute('route', []);
-        $action = (string) ($route['rate_limit'] ?? 'web');
+        $route      = $request->getAttribute('route', []);
+        $action     = (string) ($route['rate_limit'] ?? 'web');
         $identifier = $this->resolveIdentifier($request);
 
         if (! $this->rateLimiter->allow($action, $identifier)) {

@@ -27,7 +27,7 @@ final class Router
 
     public static function fromFile(string $file): self
     {
-        $routes = require $file;
+        $routes = require_once $file;
 
         if (! is_array($routes)) {
             throw new InvalidArgumentException('Routes file must return an array.');
@@ -39,11 +39,15 @@ final class Router
     public function match(ServerRequestInterface $request): RouteMatch
     {
         $method = strtoupper($request->getMethod());
-        $path = rtrim($request->getUri()->getPath(), '/') ?: '/';
+        $path   = $request->getUri()->getPath();
+
+        if ($path === '') {
+            $path = '/';
+        }
 
         foreach ($this->routes as $route) {
-            $routeMethod = strtoupper((string) ($route['method'] ?? 'GET'));
-            $routePath = rtrim((string) ($route['path'] ?? '/'), '/') ?: '/';
+            $routeMethod = strtoupper((string) ($route['method'] ?? ''));
+            $routePath   = (string) ($route['path'] ?? '');
 
             if ($routeMethod !== $method || $routePath !== $path) {
                 continue;
@@ -59,7 +63,7 @@ final class Router
         throw new HttpException('Not Found', 404);
     }
 
-    public static function html(string $html, int $statusCode = 200): ResponseInterface
+    public static function html(string $html, int $statusCode = 200): Response
     {
         return new Response($statusCode, ['Content-Type' => 'text/html; charset=UTF-8'], $html);
     }

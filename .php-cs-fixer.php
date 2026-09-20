@@ -46,5 +46,7 @@ return $config
         'yoda_style'                                      => false,
     ])
     ->setFinder($finder)
+    ->setRiskyAllowed(true)
+    ->setUnsupportedPhpVersionAllowed(true)
     ->setUsingCache(true)
     ->setCacheFile(__DIR__ . '/.php-cs-fixer.cache');

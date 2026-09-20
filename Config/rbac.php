@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'roles' => [
-        'admin' => ['*'],
+        'admin'  => ['*'],
         'editor' => [
             'dashboard.view',
             'zones.view',

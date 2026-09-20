@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Support;
 
-use RuntimeException;
+use App\Exceptions\PathNotBootstrappedException;
 
 final class Path
 {
-    private static string $basePath;
+    private static ?string $basePath = null;
 
     public static function bootstrap(string $basePath): void
     {
@@ -17,7 +17,7 @@ final class Path
 
     public static function base(string $path = ''): string
     {
-        return self::join(self::$basePath ?? throw new RuntimeException('Path not bootstrapped.'), $path);
+        return self::join(self::$basePath ?? throw new PathNotBootstrappedException('Path not bootstrapped.'), $path);
     }
 
     public static function config(string $path = ''): string

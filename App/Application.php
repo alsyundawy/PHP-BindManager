@@ -39,44 +39,90 @@ final class Application
         Env::load(Path::base('.env'));
 
         $config = new Config([
-            'app' => require Path::config('app.php'),
-            'database' => require Path::config('database.php'),
-            'session' => require Path::config('session.php'),
-            'security' => require Path::config('security.php'),
-            'bind9' => require Path::config('bind9.php'),
-            'logging' => require Path::config('logging.php'),
-            'cache' => require Path::config('cache.php'),
-            'api' => require Path::config('api.php'),
-            'rbac' => require Path::config('rbac.php'),
+            'app'      => require_once Path::config('app.php'),
+            'database' => require_once Path::config('database.php'),
+            'session'  => require_once Path::config('session.php'),
+            'security' => require_once Path::config('security.php'),
+            'bind9'    => require_once Path::config('bind9.php'),
+            'logging'  => require_once Path::config('logging.php'),
+            'cache'    => require_once Path::config('cache.php'),
+            'api'      => require_once Path::config('api.php'),
+            'rbac'     => require_once Path::config('rbac.php'),
         ]);
 
         $container = new Container();
         $container->set(Config::class, static fn () => $config);
-        $container->set(Psr17Factory::class, static fn () => new Psr17Factory());
-        $container->set(ConnectionFactory::class, static fn () => new ConnectionFactory($config));
-        $container->set(LoggerFactory::class, static fn () => new LoggerFactory($config));
-        $container->set(SessionRepository::class, static fn (Container $c) => new SessionRepository($c->get(ConnectionFactory::class)->create()));
-        $container->set(UserRepository::class, static fn (Container $c) => new UserRepository($c->get(ConnectionFactory::class)->create()));
-        $container->set(LoginAttemptRepository::class, static fn (Container $c) => new LoginAttemptRepository($c->get(ConnectionFactory::class)->create()));
-        $container->set(RateLimiterService::class, static fn (Container $c) => new RateLimiterService(
-            $c->get(LoginAttemptRepository::class),
-            $c->get(Config::class)
-        ));
-        $container->set(CsrfService::class, static fn (Container $c) => new CsrfService($c->get(Config::class)));
-        $container->set(AuthenticationService::class, static fn (Container $c) => new AuthenticationService(
-            $c->get(UserRepository::class),
-            $c->get(SessionRepository::class),
-            $c->get(RateLimiterService::class),
-            $c->get(Config::class)
-        ));
-        $container->set(Router::class, static fn () => Router::fromFile(Path::routes('web.php')));
-        $container->set(Kernel::class, static fn (Container $c) => new Kernel($c));
+        $container->set(Psr17Factory::class, static fn (): Psr17Factory => new Psr17Factory());
+        $container->set(
+            ConnectionFactory::class,
+            static fn (): ConnectionFactory => new ConnectionFactory($config)
+        );
+        $container->set(
+            LoggerFactory::class,
+            static fn (): LoggerFactory => new LoggerFactory($config)
+        );
+        $container->set(
+            SessionRepository::class,
+            static fn (Container $c): SessionRepository => new SessionRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            UserRepository::class,
+            static fn (Container $c): UserRepository => new UserRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            LoginAttemptRepository::class,
+            static fn (Container $c): LoginAttemptRepository => new LoginAttemptRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            RateLimiterService::class,
+            static fn (Container $c): RateLimiterService => new RateLimiterService(
+                $c->get(LoginAttemptRepository::class),
+                $c->get(Config::class)
+            )
+        );
+        $container->set(
+            CsrfService::class,
+            static fn (Container $c): CsrfService => new CsrfService($c->get(Config::class))
+        );
+        $container->set(
+            AuthenticationService::class,
+            static fn (Container $c): AuthenticationService => new AuthenticationService(
+                $c->get(UserRepository::class),
+                $c->get(SessionRepository::class),
+                $c->get(RateLimiterService::class),
+                $c->get(Config::class)
+            )
+        );
+        $container->set(
+            Router::class,
+            static fn (): Router => Router::fromFile(Path::routes('web.php'))
+        );
+        $container->set(
+            Kernel::class,
+            static fn (Container $c): Kernel => new Kernel($c)
+        );
 
         return new self(
             $basePath,
             $container,
             $container->get(Kernel::class)
         );
+    }
+
+    public function basePath(): string
+    {
+        return $this->basePath;
+    }
+
+    public function container(): Container
+    {
+        return $this->container;
     }
 
     public function handleCurrentRequest(): ResponseInterface
@@ -101,9 +147,9 @@ final class Application
 
     public function isSecureRequest(): bool
     {
-        $https = $_SERVER['HTTPS'] ?? '';
+        $https          = $_SERVER['HTTPS']                  ?? '';
         $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
 
-        return $https === 'on' || $https === '1' || strtolower((string) $forwardedProto) === 'https';
+        return $https === 'on' || $https === '1' || strtolower($forwardedProto) === 'https';
     }
 }

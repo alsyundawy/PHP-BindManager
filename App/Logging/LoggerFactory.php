@@ -18,9 +18,24 @@ final class LoggerFactory
 
     public function make(string $channel): Logger
     {
-        $basePath = rtrim((string) $this->config->get('logging.path'), '/');
-        $level = Level::fromName(strtoupper((string) $this->config->get('logging.level', 'warning')));
-        $file = $basePath . '/' . $channel . '.log';
+        $basePath = rtrim((string) $this->config->get('logging.path', ''), '/');
+        if ($basePath !== '' && ! is_dir($basePath)) {
+            @mkdir($basePath, 0o750, true);
+        }
+
+        $levelName = strtoupper((string) $this->config->get('logging.level', 'WARNING'));
+        $level     = match ($levelName) {
+            'DEBUG'     => Level::Debug,
+            'INFO'      => Level::Info,
+            'NOTICE'    => Level::Notice,
+            'ERROR'     => Level::Error,
+            'CRITICAL'  => Level::Critical,
+            'ALERT'     => Level::Alert,
+            'EMERGENCY' => Level::Emergency,
+            default     => Level::Warning,
+        };
+
+        $file = $basePath !== '' ? $basePath . '/' . $channel . '.log' : $channel . '.log';
 
         $handler = new StreamHandler($file, $level);
         $handler->setFormatter(new LineFormatter(null, 'Y-m-d H:i:s', true, true));

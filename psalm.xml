@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <psalm
     errorLevel="4"
+    phpVersion="8.4"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -14,4 +15,15 @@
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <UnusedClass errorLevel="info"/>
+        <PossiblyUnusedMethod errorLevel="info"/>
+        <PossiblyUnusedProperty errorLevel="info"/>
+        <UnusedParam>
+            <errorLevel type="suppress">
+                <file name="App/Support/View.php"/>
+            </errorLevel>
+        </UnusedParam>
+        <RedundantPropertyInitializationCheck errorLevel="suppress"/>
+    </issueHandlers>
 </psalm>

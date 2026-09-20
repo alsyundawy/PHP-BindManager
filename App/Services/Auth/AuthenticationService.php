@@ -25,19 +25,31 @@ final class AuthenticationService
             return;
         }
 
-        session_name((string) $this->config->get('session.name'));
+        session_name((string) $this->config->get('session.name', 'pbm_session'));
+
+        $sameSiteConfig = strtolower((string) $this->config->get('session.samesite', 'lax'));
+        $sameSite       = match ($sameSiteConfig) {
+            'none'   => 'None',
+            'strict' => 'Strict',
+            default  => 'Lax',
+        };
+
         session_set_cookie_params([
-            'lifetime' => (int) $this->config->get('session.lifetime'),
-            'path' => '/',
-            'secure' => (bool) $this->config->get('session.secure'),
-            'httponly' => (bool) $this->config->get('session.httponly'),
-            'samesite' => (string) $this->config->get('session.samesite'),
+            'lifetime' => (int) $this->config->get('session.lifetime', 7200),
+            'path'     => '/',
+            'secure'   => (bool) $this->config->get('session.secure', true),
+            'httponly' => (bool) $this->config->get('session.httponly', true),
+            'samesite' => $sameSite,
         ]);
+
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_only_cookies', '1');
         session_start();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function attempt(string $username, string $password, string $ipAddress, string $userAgent): array
     {
         if (! $this->rateLimiter->allow('login', $ipAddress)) {
@@ -45,29 +57,46 @@ final class AuthenticationService
         }
 
         $user = $this->users->findByUsername($username);
-        if ($user === null || ! isset($user['password_hash']) || ! password_verify($password, (string) $user['password_hash'])) {
-            if ($user !== null && isset($user['id'])) {
+        if ($user === null) {
+            $this->rateLimiter->hit('login', $ipAddress);
+
+            throw new AuthenticationException('Invalid credentials.');
+        }
+
+        if (! isset($user['password_hash']) || ! password_verify($password, (string) $user['password_hash'])) {
+            if (isset($user['id'])) {
                 $this->users->incrementFailedAttempt(
                     (int) $user['id'],
-                    (int) $this->config->get('security.brute_force_max'),
-                    (int) $this->config->get('security.brute_force_lockout')
+                    (int) $this->config->get('security.brute_force_max', 5),
+                    (int) $this->config->get('security.brute_force_lockout', 900)
                 );
             }
 
             $this->rateLimiter->hit('login', $ipAddress);
+
             throw new AuthenticationException('Invalid credentials.');
         }
 
-        if (! empty($user['locked_until']) && strtotime((string) $user['locked_until']) > time()) {
+        if (
+            isset($user['locked_until'])
+            && is_string($user['locked_until'])
+            && $user['locked_until'] !== ''
+            && strtotime($user['locked_until']) > time()
+        ) {
             throw new AuthenticationException('Account is temporarily locked.');
         }
 
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
-        $_SESSION['role'] = (string) ($user['role_name'] ?? 'viewer');
+        $_SESSION['role']    = (string) ($user['role_name'] ?? 'viewer');
 
         $this->users->updateLastLogin((int) $user['id'], $ipAddress);
-        $this->sessions->store(session_id(), (int) $user['id'], $ipAddress, $userAgent, time());
+
+        $sessionId = session_id();
+        if (is_string($sessionId) && $sessionId !== '') {
+            $this->sessions->store($sessionId, (int) $user['id'], $ipAddress, $userAgent, time());
+        }
+
         $this->rateLimiter->clear('login', $ipAddress);
 
         return $user;
@@ -76,15 +105,27 @@ final class AuthenticationService
     public function logout(): void
     {
         $sessionId = session_id();
-        if ($sessionId !== '') {
+        if (is_string($sessionId) && $sessionId !== '') {
             $this->sessions->delete($sessionId);
         }
 
         $_SESSION = [];
 
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'] ?? '', (bool) $params['secure'], (bool) $params['httponly']);
+        $useCookies = ini_get('session.use_cookies');
+        if ($useCookies !== false && $useCookies !== '' && $useCookies !== '0') {
+            $sessionName = session_name();
+            if (is_string($sessionName)) {
+                $params = session_get_cookie_params();
+                setcookie(
+                    $sessionName,
+                    '',
+                    time() - 42000,
+                    $params['path'],
+                    $params['domain'],
+                    $params['secure'],
+                    $params['httponly']
+                );
+            }
         }
 
         session_destroy();
