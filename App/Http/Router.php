@@ -124,24 +124,20 @@ final class Router
             return [];
         }
 
-        if (! str_contains($routePath, '{')) {
-            return null;
+        $pattern = str_contains($routePath, '{')
+            ? preg_replace('/\{([a-zA-Z_]\w*)\}/', '(?P<$1>[^/]+)', $routePath)
+            : null;
+
+        if (is_string($pattern) && preg_match('#^' . $pattern . '$#', $path, $matches) === 1) {
+            /** @var array<string, string> */
+            return array_filter(
+                $matches,
+                static fn (mixed $key): bool => is_string($key),
+                ARRAY_FILTER_USE_KEY
+            );
         }
 
-        $pattern = preg_replace('/\{([a-zA-Z_]\w*)\}/', '(?P<$1>[^/]+)', $routePath);
-        if (! is_string($pattern) || preg_match('#^' . $pattern . '$#', $path, $matches) !== 1) {
-            return null;
-        }
-
-        /** @var array<string, string> $params */
-        $params = [];
-        foreach ($matches as $key => $value) {
-            if (is_string($key)) {
-                $params[$key] = $value;
-            }
-        }
-
-        return $params;
+        return null;
     }
 
     /**
