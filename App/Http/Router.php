@@ -18,6 +18,11 @@ final class Router
     private array $routes = [];
 
     /**
+     * @var array<string, array<int, array<string, mixed>>>
+     */
+    private static array $fileCache = [];
+
+    /**
      * @param array<int, array<string, mixed>> $routes
      */
     private function __construct(array $routes)
@@ -25,15 +30,31 @@ final class Router
         $this->routes = $routes;
     }
 
-    public static function fromFile(string $file): self
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private static function readRoutesFile(string $file): array
     {
-        $routes = require $file;
+        if (isset(self::$fileCache[$file])) {
+            return self::$fileCache[$file];
+        }
+
+        /** @psalm-suppress UnresolvableInclude */
+        $routes = require_once $file;
 
         if (! is_array($routes)) {
             throw new InvalidArgumentException('Routes file must return an array.');
         }
 
-        return new self($routes);
+        /** @var array<int, array<string, mixed>> $routes */
+        self::$fileCache[$file] = $routes;
+
+        return $routes;
+    }
+
+    public static function fromFile(string $file): self
+    {
+        return new self(self::readRoutesFile($file));
     }
 
     /**
@@ -53,11 +74,7 @@ final class Router
         $allRoutes = [];
         foreach ($files as $file) {
             if (file_exists($file)) {
-                $routes = require $file;
-                if (is_array($routes)) {
-                    /** @var array<int, array<string, mixed>> $routes */
-                    $allRoutes = array_merge($allRoutes, $routes);
-                }
+                $allRoutes = array_merge($allRoutes, self::readRoutesFile($file));
             }
         }
 
@@ -83,50 +100,66 @@ final class Router
 
         foreach ($this->routes as $route) {
             $routeMethod = strtoupper((string) ($route['method'] ?? ''));
-            $routePath   = (string) ($route['path'] ?? '');
-
             if ($routeMethod !== $method) {
                 continue;
             }
 
-            /** @var array<string, string> $params */
-            $params  = [];
-            $matched = false;
+            $routePath = (string) ($route['path'] ?? '');
+            $params    = $this->matchPath($routePath, $path);
 
-            if ($routePath === $path) {
-                $matched = true;
-            } elseif (str_contains($routePath, '{')) {
-                $pattern = preg_replace('/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/', '(?P<$1>[^/]+)', $routePath);
-                if (is_string($pattern)) {
-                    $regex = '#^' . $pattern . '$#';
-                    if (preg_match($regex, $path, $matches) === 1) {
-                        $matched = true;
-                        foreach ($matches as $key => $value) {
-                            if (is_string($key)) {
-                                $params[$key] = $value;
-                            }
-                        }
-                    }
-                }
+            if ($params !== null) {
+                return $this->createMatch($request, $route, $params);
             }
-
-            if (! $matched) {
-                continue;
-            }
-
-            /** @var callable(ServerRequestInterface): ResponseInterface $handler */
-            $handler = $route['handler'];
-            $request = $request->withAttribute('route', $route)
-                ->withAttribute('params', $params);
-
-            foreach ($params as $paramKey => $paramValue) {
-                $request = $request->withAttribute($paramKey, $paramValue);
-            }
-
-            return new RouteMatch($request, $handler, $route);
         }
 
         throw new HttpException('Not Found', 404);
+    }
+
+    /**
+     * @return array<string, string>|null
+     */
+    private function matchPath(string $routePath, string $path): ?array
+    {
+        if ($routePath === $path) {
+            return [];
+        }
+
+        if (! str_contains($routePath, '{')) {
+            return null;
+        }
+
+        $pattern = preg_replace('/\{([a-zA-Z_]\w*)\}/', '(?P<$1>[^/]+)', $routePath);
+        if (! is_string($pattern) || preg_match('#^' . $pattern . '$#', $path, $matches) !== 1) {
+            return null;
+        }
+
+        /** @var array<string, string> $params */
+        $params = [];
+        foreach ($matches as $key => $value) {
+            if (is_string($key)) {
+                $params[$key] = $value;
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param array<string, mixed> $route
+     * @param array<string, string> $params
+     */
+    private function createMatch(ServerRequestInterface $request, array $route, array $params): RouteMatch
+    {
+        /** @var callable(ServerRequestInterface): ResponseInterface $handler */
+        $handler = $route['handler'];
+        $request = $request->withAttribute('route', $route)
+            ->withAttribute('params', $params);
+
+        foreach ($params as $paramKey => $paramValue) {
+            $request = $request->withAttribute($paramKey, $paramValue);
+        }
+
+        return new RouteMatch($request, $handler, $route);
     }
 
     public static function html(string $html, int $statusCode = 200): Response
