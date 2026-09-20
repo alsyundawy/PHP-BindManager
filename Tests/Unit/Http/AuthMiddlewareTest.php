@@ -84,6 +84,8 @@ final class AuthMiddlewareTest extends TestCase
             ->withAttribute('route', ['auth' => true]);
 
         $next = static function (ServerRequestInterface $req): ResponseInterface {
+            unset($req);
+
             return new Response(200, [], 'dashboard-content');
         };
 

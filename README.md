@@ -1,6 +1,6 @@
 # PHP-BindManager — Enterprise Authoritative DNS Control Plane
 
-[![Release](https://img.shields.io/badge/Release-v1.0.0-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-BindManager/releases)
+[![Release](https://img.shields.io/badge/Release-v1.0.1-007ACC?style=for-the-badge&logo=github)](https://github.com/alsyundawy/PHP-BindManager/releases)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4%20%7C%208.5-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://www.php.net/)
 [![BIND 9](https://img.shields.io/badge/BIND%209-Authoritative%20Only-D9381E?style=for-the-badge&logo=internetcomputer&logoColor=white)](https://www.isc.org/bind/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
@@ -67,7 +67,7 @@ internet-dependent CDNs.
 
 ## 🚀 Why This Modernized Edition?
 
-This edition (**v1.0.0**) represents a clean-slate architectural, security, accessibility, and visual overhaul of
+This edition (**v1.0.1**) represents a clean-slate architectural, security, accessibility, and visual overhaul of
 modern DNS administration:
 
 ### 🛡️ 1. Zero-CDN Offline Architecture & Content Security

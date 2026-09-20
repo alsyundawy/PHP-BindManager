@@ -8,10 +8,20 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-$views        = $views ?? [];
-$csrfToken    = $csrfToken ?? '';
-$flashSuccess = $flashSuccess ?? null;
-$flashError   = $flashError ?? null;
+if (! isset($views) || ! is_array($views)) {
+    $views = [];
+}
+if (! isset($csrfToken) || ! is_string($csrfToken)) {
+    $csrfToken = '';
+}
+if (! isset($flashSuccess) || ! is_string($flashSuccess)) {
+    $flashSuccess = null;
+}
+if (! isset($flashError) || ! is_string($flashError)) {
+    $flashError = null;
+}
+
+$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'Split-Horizon Views — PHP-BindManager';
 ?>
@@ -46,8 +56,7 @@ $title = 'Split-Horizon Views — PHP-BindManager';
 <div id="view-form" class="pbm-card" style="margin-bottom:24px;display:none;">
     <div class="pbm-card-header"><i class="fa-solid fa-plus me-2"></i>New DNS View</div>
     <form method="post" action="/views" style="margin-top:16px;">
-        <input type="hidden" name="_csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
         <input type="hidden" name="_action" value="create">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
@@ -129,12 +138,7 @@ $title = 'Split-Horizon Views — PHP-BindManager';
                             <td>
                                 <form method="post" action="/views"
                                       onsubmit="return confirm('Delete view? Zones will lose their association.');">
-                                    <input type="hidden" name="_csrf_token"
-                                           value="<?= htmlspecialchars(
-                                               $csrfToken,
-                                               ENT_QUOTES | ENT_SUBSTITUTE,
-                                               'UTF-8'
-                                           ) ?>">
+                                    <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= (int) ($v['id'] ?? 0) ?>">
                                     <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger">

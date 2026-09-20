@@ -6,8 +6,12 @@ declare(strict_types=1);
  * @var array<int, array<string, mixed>> $logs
  * @var int                              $total
  */
-$logs  = $logs ?? [];
-$total = $total ?? 0;
+if (! isset($logs) || ! is_array($logs)) {
+    $logs = [];
+}
+if (! isset($total) || ! is_int($total)) {
+    $total = 0;
+}
 
 $title = 'Audit Trail — PHP-BindManager';
 
@@ -62,6 +66,8 @@ $actionBadge = [
                         $ipStr     = (string) ($log['ip_address'] ?? '');
                         $oldVal    = (string) ($log['old_value'] ?? '');
                         $newVal    = (string) ($log['new_value'] ?? '');
+                        $oldEsc    = htmlspecialchars($oldVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                        $newEsc    = htmlspecialchars($newVal, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
                         $hasChange = ($oldVal !== '' || $newVal !== '');
                         ?>
                         <tr>
@@ -95,23 +101,11 @@ $actionBadge = [
                                         <div style="margin-top:6px;font-size:.78rem;">
                                             <?php if ($oldVal !== '') : ?>
                                                 <div class="pbm-muted">Before:</div>
-                                                <pre
-                                                    style="margin:2px 0 8px;white-space:pre-wrap;word-break:break-all;"
-                                                ><?= htmlspecialchars(
-                                                    $oldVal,
-                                                    ENT_QUOTES | ENT_SUBSTITUTE,
-                                                    'UTF-8'
-                                                ) ?></pre>
+                                                <pre class="pbm-diff-code"><?= $oldEsc ?></pre>
                                             <?php endif; ?>
                                             <?php if ($newVal !== '') : ?>
                                                 <div class="pbm-muted">After:</div>
-                                                <pre
-                                                    style="margin:2px 0;white-space:pre-wrap;word-break:break-all;"
-                                                ><?= htmlspecialchars(
-                                                    $newVal,
-                                                    ENT_QUOTES | ENT_SUBSTITUTE,
-                                                    'UTF-8'
-                                                ) ?></pre>
+                                                <pre class="pbm-diff-code"><?= $newEsc ?></pre>
                                             <?php endif; ?>
                                         </div>
                                     </details>

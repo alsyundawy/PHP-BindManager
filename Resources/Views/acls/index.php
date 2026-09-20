@@ -8,10 +8,19 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-$acls         = $acls ?? [];
-$csrfToken    = $csrfToken ?? '';
-$flashSuccess = $flashSuccess ?? null;
-$flashError   = $flashError ?? null;
+if (! isset($acls) || ! is_array($acls)) {
+    $acls = [];
+}
+if (! isset($csrfToken) || ! is_string($csrfToken)) {
+    $csrfToken = '';
+}
+if (! isset($flashSuccess)) {
+    $flashSuccess = null;
+}
+if (! isset($flashError)) {
+    $flashError = null;
+}
+$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'Access Control Lists — PHP-BindManager';
 ?>
@@ -44,8 +53,7 @@ $title = 'Access Control Lists — PHP-BindManager';
 <div id="acl-form" class="pbm-card" style="margin-bottom:24px;display:none;">
     <div class="pbm-card-header"><i class="fa-solid fa-plus me-2"></i>New ACL</div>
     <form method="post" action="/acls" style="margin-top:16px;">
-        <input type="hidden" name="_csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
         <input type="hidden" name="_action" value="create">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
@@ -130,12 +138,7 @@ $title = 'Access Control Lists — PHP-BindManager';
                             <td>
                                 <form method="post" action="/acls"
                                       onsubmit="return confirm('Delete this ACL?');">
-                                    <input type="hidden" name="_csrf_token"
-                                           value="<?= htmlspecialchars(
-                                               $csrfToken,
-                                               ENT_QUOTES | ENT_SUBSTITUTE,
-                                               'UTF-8'
-                                           ) ?>">
+                                    <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                     <input type="hidden" name="_action" value="delete">
                                     <input type="hidden" name="id" value="<?= (int) ($acl['id'] ?? 0) ?>">
                                     <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger">

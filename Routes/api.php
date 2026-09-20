@@ -53,7 +53,7 @@ return [
             return Router::json([
                 'status'    => 'ok',
                 'service'   => 'PHP-BindManager API',
-                'version'   => '1.0.0',
+                'version'   => '1.0.1',
                 'database'  => 'connected',
                 'zones'     => $zoneCount,
                 'bind9'     => $bind9Up ? 'active' : 'inactive',

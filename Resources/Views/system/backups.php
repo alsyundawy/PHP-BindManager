@@ -9,11 +9,22 @@ declare(strict_types=1);
  * @var string|null                      $flashError
  * @var string                           $dbPath
  */
-$backups      = $backups ?? [];
-$csrfToken    = $csrfToken ?? '';
-$flashSuccess = $flashSuccess ?? null;
-$flashError   = $flashError ?? null;
-$dbPath       = $dbPath ?? '';
+if (! isset($backups) || ! is_array($backups)) {
+    $backups = [];
+}
+if (! isset($csrfToken) || ! is_string($csrfToken)) {
+    $csrfToken = '';
+}
+if (! isset($flashSuccess)) {
+    $flashSuccess = null;
+}
+if (! isset($flashError)) {
+    $flashError = null;
+}
+if (! isset($dbPath) || ! is_string($dbPath)) {
+    $dbPath = '';
+}
+$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'Backups & Restore — PHP-BindManager';
 
@@ -36,8 +47,7 @@ $fmtSize = static function (int $bytes): string {
         <p class="pbm-muted">Create and manage SQLite database snapshots.</p>
     </div>
     <form method="post" action="/system/backups">
-        <input type="hidden" name="_csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
         <input type="hidden" name="_action" value="create">
         <button type="submit" class="pbm-btn">
             <i class="fa-solid fa-plus me-1"></i>New Backup
@@ -128,12 +138,7 @@ $fmtSize = static function (int $bytes): string {
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                     <form method="post" action="/system/backups"
                                           onsubmit="return confirm('Restore live database? Proceed?');">
-                                        <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars(
-                                                   $csrfToken,
-                                                   ENT_QUOTES | ENT_SUBSTITUTE,
-                                                   'UTF-8'
-                                               ) ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                         <input type="hidden" name="_action" value="restore">
                                         <input type="hidden" name="id" value="<?= $bkId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-warning"
@@ -143,12 +148,7 @@ $fmtSize = static function (int $bytes): string {
                                     </form>
                                     <form method="post" action="/system/backups"
                                           onsubmit="return confirm('Delete backup permanently?');">
-                                        <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars(
-                                                   $csrfToken,
-                                                   ENT_QUOTES | ENT_SUBSTITUTE,
-                                                   'UTF-8'
-                                               ) ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                         <input type="hidden" name="_action" value="delete">
                                         <input type="hidden" name="id" value="<?= $bkId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger"

@@ -78,7 +78,7 @@ $content = (string) ($templateVars['content'] ?? '');
                 <?= $content ?? '' ?>
                 <footer class="pbm-footer" role="contentinfo">
                     <div>
-                        <strong>PHP-BindManager</strong> v1.0.0 &bull; BIND 9 Authoritative DNS
+                        <strong>PHP-BindManager</strong> v1.0.1 &bull; BIND 9 Authoritative DNS
                     </div>
                     <div>
                         <span>Zero-CDN &bull; SQLite WAL &bull; PHP <?= PHP_VERSION ?></span>

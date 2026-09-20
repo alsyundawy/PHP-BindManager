@@ -9,11 +9,22 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-$tokens       = $tokens ?? [];
-$csrfToken    = $csrfToken ?? '';
-$newToken     = $newToken ?? null;
-$flashSuccess = $flashSuccess ?? null;
-$flashError   = $flashError ?? null;
+if (! isset($tokens) || ! is_array($tokens)) {
+    $tokens = [];
+}
+if (! isset($csrfToken) || ! is_string($csrfToken)) {
+    $csrfToken = '';
+}
+if (! isset($newToken)) {
+    $newToken = null;
+}
+if (! isset($flashSuccess)) {
+    $flashSuccess = null;
+}
+if (! isset($flashError)) {
+    $flashError = null;
+}
+$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title       = 'API Tokens — PHP-BindManager';
 $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 'system:read'];
@@ -66,8 +77,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
         <i class="fa-solid fa-plus me-2"></i>Generate New Token
     </div>
     <form method="post" action="/system/tokens" style="margin-top:16px;">
-        <input type="hidden" name="_csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
         <input type="hidden" name="_action" value="create">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
             <div class="pbm-form-group">
@@ -176,12 +186,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                                 <?php if (! $isRevoked) : ?>
                                     <form method="post" action="/system/tokens"
                                           onsubmit="return confirm('Revoke this token permanently?');">
-                                        <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars(
-                                                   $csrfToken,
-                                                   ENT_QUOTES | ENT_SUBSTITUTE,
-                                                   'UTF-8'
-                                               ) ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                         <input type="hidden" name="_action" value="revoke">
                                         <input type="hidden" name="id" value="<?= $tokId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-danger"
@@ -192,12 +197,7 @@ $allScopes   = ['zones:read', 'zones:write', 'records:read', 'records:write', 's
                                 <?php else : ?>
                                     <form method="post" action="/system/tokens"
                                           onsubmit="return confirm('Delete this token record?');">
-                                        <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars(
-                                                   $csrfToken,
-                                                   ENT_QUOTES | ENT_SUBSTITUTE,
-                                                   'UTF-8'
-                                               ) ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                         <input type="hidden" name="_action" value="delete">
                                         <input type="hidden" name="id" value="<?= $tokId ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-secondary"

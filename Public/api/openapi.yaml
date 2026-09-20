@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PHP-BindManager API
-  version: 1.0.0
+  version: 1.0.1
   description: BIND9 zone and record management API.
 servers:
   - url: /api/v1

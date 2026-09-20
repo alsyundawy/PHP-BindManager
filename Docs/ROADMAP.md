@@ -1,40 +1,37 @@
 # Roadmap
 
-## v1.0.0 — MVP (Current Target)
+## v1.0.0 & v1.0.1 — Core Engine & Advanced Features (Completed)
 
 - [x] Project structure and documentation
-- [ ] Core framework bootstrap (Router, DI Container, Middleware)
-- [ ] Database migrations and schema
-- [ ] Authentication (login, logout, session, Argon2id)
-- [ ] RBAC (Admin, Editor, Viewer)
-- [ ] Dashboard with basic stats
-- [ ] Zone Management (CRUD, forward, reverse)
-- [ ] DNS Record Management (A, AAAA, CNAME, MX, NS, TXT, PTR, SRV, CAA, NAPTR, TLSA, SOA)
-- [ ] ACL Management
-- [ ] Views Management
-- [ ] Zone Import / Export
-- [ ] Zone Validation (named-checkzone)
-- [ ] Backup and Restore
-- [ ] Activity Log
-- [ ] Audit Trail
-- [ ] System Health
-- [ ] Settings
-- [ ] User Management
-- [ ] Profile
-- [ ] REST API v1
-- [ ] API Token Management
-- [ ] Light / Dark / Auto Theme
-- [ ] Notification System
-- [ ] Full documentation
-- [ ] PHPUnit tests (>= 80% coverage)
-
-## v1.1.0 — DNSSEC
-
-- [ ] DNSSEC key generation (KSK/ZSK)
-- [ ] Zone signing
-- [ ] DS record management
-- [ ] Key rollover
-- [ ] DNSSEC status dashboard
+- [x] Core framework bootstrap (Router, DI Container, Middleware)
+- [x] Database migrations and schema
+- [x] Authentication (login, logout, session, Argon2id)
+- [x] RBAC (Admin, Editor, Viewer)
+- [x] Dashboard with basic stats
+- [x] Zone Management (CRUD, forward, reverse)
+- [x] DNS Record Management (A, AAAA, CNAME, MX, NS, TXT, PTR, SRV, CAA, NAPTR, TLSA, SOA)
+- [x] ACL Management
+- [x] Views Management (Split-Horizon)
+- [x] Zone Import / Export
+- [x] Zone Validation (named-checkzone)
+- [x] Backup and Restore (SQLite WAL snapshots)
+- [x] Activity Log
+- [x] Audit Trail with JSON diffs
+- [x] System Health
+- [x] Settings
+- [x] User Management
+- [x] Profile
+- [x] REST API v1
+- [x] API Token Management (Granular scopes & SHA-256)
+- [x] Light / Dark / Auto Theme (Visual Subnet Calculator style)
+- [x] Notification System
+- [x] Full documentation
+- [x] PHPUnit tests (>= 80% coverage)
+- [x] DNSSEC key generation (KSK/ZSK/CSK)
+- [x] Zone signing state machine
+- [x] DS record management & key tags
+- [x] Key rollover & retirement workflows
+- [x] DNSSEC status dashboard
 
 ## v1.2.0 — Advanced Features
 

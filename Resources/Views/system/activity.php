@@ -7,9 +7,15 @@ declare(strict_types=1);
  * @var string                           $category
  * @var int                              $total
  */
-$logs     = $logs ?? [];
-$category = $category ?? '';
-$total    = $total ?? 0;
+if (! isset($logs) || ! is_array($logs)) {
+    $logs = [];
+}
+if (! isset($category) || ! is_string($category)) {
+    $category = '';
+}
+if (! isset($total) || ! is_int($total)) {
+    $total = 0;
+}
 
 $title = 'Activity Log — PHP-BindManager';
 

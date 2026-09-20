@@ -59,8 +59,6 @@ body {
         Arial,
         sans-serif;
     line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    -moz-text-size-adjust: 100%;
     min-height: 100vh;
     min-height: 100dvh;
     min-height: 100svh;
@@ -308,6 +306,13 @@ textarea {
 .table-responsive::-webkit-scrollbar-thumb {
     background: var(--pbm-border);
     border-radius: 4px;
+}
+
+.pbm-diff-code {
+    margin: 2px 0 8px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-size: 0.78rem;
 }
 
 .pbm-table {

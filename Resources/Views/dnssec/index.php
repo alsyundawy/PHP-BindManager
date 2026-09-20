@@ -9,11 +9,22 @@ declare(strict_types=1);
  * @var string|null                      $flashSuccess
  * @var string|null                      $flashError
  */
-$zones        = $zones ?? [];
-$keys         = $keys ?? [];
-$csrfToken    = $csrfToken ?? '';
-$flashSuccess = $flashSuccess ?? null;
-$flashError   = $flashError ?? null;
+if (! isset($zones) || ! is_array($zones)) {
+    $zones = [];
+}
+if (! isset($keys) || ! is_array($keys)) {
+    $keys = [];
+}
+if (! isset($csrfToken) || ! is_string($csrfToken)) {
+    $csrfToken = '';
+}
+if (! isset($flashSuccess)) {
+    $flashSuccess = null;
+}
+if (! isset($flashError)) {
+    $flashError = null;
+}
+$csrfVal = htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
 $title = 'DNSSEC Manager — PHP-BindManager';
 
@@ -56,8 +67,7 @@ $algoLabels    = [
         <i class="fa-solid fa-gears me-2"></i>Generate Key Pair
     </div>
     <form method="post" action="/dnssec" style="margin-top:16px;">
-        <input type="hidden" name="_csrf_token"
-               value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
         <input type="hidden" name="_action" value="generate">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
             <div class="pbm-form-group">
@@ -119,8 +129,8 @@ $algoLabels    = [
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($keys as $k) : ?>
-                        <?php
+                    <?php
+                    foreach ($keys as $k) :
                         $zName       = (string) ($k['zone_name'] ?? '');
                         $role        = (string) ($k['key_role'] ?? 'zsk');
                         $roleLabel   = $keyRoleLabels[$role] ?? strtoupper($role);
@@ -134,6 +144,7 @@ $algoLabels    = [
                             'revoked' => 'pbm-badge-danger',
                             default   => 'pbm-badge-secondary',
                         };
+                        $createdAt   = (string) ($k['created_at'] ?? '');
                         ?>
                         <tr>
                             <td><?= (int) ($k['id'] ?? 0) ?></td>
@@ -155,22 +166,13 @@ $algoLabels    = [
                                 </span>
                             </td>
                             <td style="font-size:.82rem;">
-                                <?= htmlspecialchars(
-                                    (string) ($k['created_at'] ?? ''),
-                                    ENT_QUOTES | ENT_SUBSTITUTE,
-                                    'UTF-8'
-                                ) ?>
+                                <?= htmlspecialchars($createdAt, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                             </td>
                             <td>
                                 <?php if ($status === 'active') : ?>
                                     <form method="post" action="/dnssec"
                                           onsubmit="return confirm('Retire key? It will no longer sign.');">
-                                        <input type="hidden" name="_csrf_token"
-                                               value="<?= htmlspecialchars(
-                                                   $csrfToken,
-                                                   ENT_QUOTES | ENT_SUBSTITUTE,
-                                                   'UTF-8'
-                                               ) ?>">
+                                        <input type="hidden" name="_csrf_token" value="<?= $csrfVal ?>">
                                         <input type="hidden" name="_action" value="retire">
                                         <input type="hidden" name="id" value="<?= (int) ($k['id'] ?? 0) ?>">
                                         <button type="submit" class="pbm-btn pbm-btn-sm pbm-btn-warning">

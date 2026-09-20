@@ -7,7 +7,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 ---
 
-## [1.1.0] - 2026-09-21
+## [1.0.1] - 2026-09-21
 
 ### Added
 
@@ -30,20 +30,25 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 - Modularized `App\Application::boot()` by extracting `registerCoreServices()`, `registerAuthServices()`,
   `registerDnsServices()`, and `registerSystemServices()` to ensure clean dependency injection.
-- Optimized `Public/assets/css/app.min.css` with cross-browser `text-size-adjust` fallbacks
-  (`-webkit-text-size-adjust`, `-moz-text-size-adjust`, `text-size-adjust`) and thin scrollbars.
-- Hardened Xiaomi/Redmi/POCO responsive viewports with dynamic `100svh`/`100dvh` units and
-  safe-area-inset bounds to prevent clipping under MIUI/HyperOS navigation bars.
+- Optimized `Public/assets/css/app.min.css`: removed invalid vendor-prefixed properties that triggered CSS linter
+  warnings, normalized text-size-adjust, added custom `.pbm-diff-code` word-wrapping, and implemented thin 6px
+  styled scrollbars for high-density tables.
+- Hardened Xiaomi, Redmi, & POCO responsive viewports (HyperOS & MIUI): integrated `viewport-fit=cover`,
+  `100svh`/`100dvh` units, safe-area-inset bounds, and flexible zero-minwidth containers to prevent UI clipping
+  and horizontal scrolling under floating navigation gestures.
 
 ### Fixed
 
-- Fixed column name mismatch in `ApiTokenRepository` (`scopes_json` -> `scopes`).
+- **100% Linter & Static Analysis Eradication**: Fixed all Intelephense, PHP-CS-Fixer, PHPCS, Psalm, and PHPStan
+  Level 8 issues with zero errors.
+- Eliminated all undefined template variable warnings across views (`acls/index.php`, `dnssec/index.php`,
+  `views/index.php`, `system/backups.php`, `system/tokens.php`, `system/activity.php`, `system/audit-logs.php`)
+  using safe `if (! isset(...))` guards.
+- Streamlined form CSRF token embedding via precomputed `$csrfVal` variables, eliminating multiline formatting
+  and PHPCS indentation errors.
+- Fixed closure return type mismatch and unused parameters in `Tests/Unit/Http/AuthMiddlewareTest.php`.
+- Corrected column name mapping in `ApiTokenRepository` (`scopes_json` -> `scopes`).
 - Fixed `PDOStatement|false` checks in `ApiTokenRepository::all()` and `ActivityLogRepository::count()`.
-- Fixed short ternary operators, redundant casts, and non-boolean `if` conditions in `Routes/system.php`
-  to achieve 100% PHPStan Level 8 strict compliance.
-- Re-formatted all system views (`backups.php`, `activity.php`, `audit-logs.php`, `tokens.php`,
-  `acls/index.php`, `views/index.php`, `dnssec/index.php`) to strictly conform to PSR-12, line length <= 120 chars,
-  and `require_once` semantics.
 - Fixed accessible grouping on API token scope checkboxes (`role="group"` and `aria-labelledby`).
 
 ---

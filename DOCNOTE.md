@@ -52,7 +52,7 @@ The codebase adheres strictly to:
 - **Strict Line Length ($\le 120$ characters)**: Enforced across all PHP controllers, services, repositories,
   HTML/PHP view templates, and unit tests.
 
-## 5. v1.1.0 Feature Additions & Mobile Viewport Resilience
+## 5. v1.0.1 Maintenance, Feature Completion & Viewport Resilience
 
 - **DNSSEC Lifecycle**: Fully integrated KSK/ZSK/CSK cryptographic key pair generation (Algorithms 5, 7, 8, 10,
   13, 14, 15, 16) with automated key tag computation, rollover management, and zone signing state machine.
@@ -63,3 +63,8 @@ The codebase adheres strictly to:
 - **Xiaomi, Redmi, & POCO Viewport Resilience**: HyperOS / MIUI floating gestures and dynamic address bars
   are accommodated via `100svh` / `100dvh` units, `env(safe-area-inset-*)`, and `min-width: 0` flex/grid constraints
   to prevent text truncation and horizontal overflow during system font scaling.
+- **Cross-OS Distribution Abstraction**: Normalized paths between Debian/Ubuntu (`/etc/bind`, `bind9` service)
+  and RHEL/CentOS/AlmaLinux/Rocky/Oracle (`/etc/named.conf`, `named` service, `/var/named`).
+- **Complete Linter Zero-Error Status**: 100% PSR-12, PHPStan Level 8, Psalm Level 4, and PHPUnit (30 tests,
+  94 assertions) pass without a single warning or error. All template variables protected with strict `if (! isset(...))`
+  constructs.

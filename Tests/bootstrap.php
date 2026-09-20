@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+// phpcs:disable PSR1.Files.SideEffects
+
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/App');
 define('CONFIG_PATH', BASE_PATH . '/Config');
