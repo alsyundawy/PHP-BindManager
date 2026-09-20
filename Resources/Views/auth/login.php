@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 /** @var string $csrfToken */
+/** @var string $flashError */
 $templateVars = get_defined_vars();
-$csrfToken = (string) ($templateVars['csrfToken'] ?? '');
+$csrfToken  = (string) ($templateVars['csrfToken'] ?? '');
+$flashError = (string) ($templateVars['flashError'] ?? '');
 ?>
 <!doctype html>
 <html lang="en" data-theme="dark" data-bs-theme="dark">
@@ -26,6 +28,16 @@ $csrfToken = (string) ($templateVars['csrfToken'] ?? '');
         </div>
         <h2 class="h4 fw-bold mb-1">Sign in</h2>
         <p>Use your administrator credentials to access DNS management.</p>
+<?php if ($flashError !== '') : ?>
+        <div
+            class="pbm-alert pbm-alert-danger"
+            role="alert"
+            aria-live="assertive"
+        >
+            <i class="fa-solid fa-circle-exclamation me-2"></i>
+            <?= htmlspecialchars($flashError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+        </div>
+<?php endif; ?>
         <input type="hidden" name="_csrf_token" value="<?= e($csrfToken ?? '') ?>">
         <label for="username">Username</label>
         <input

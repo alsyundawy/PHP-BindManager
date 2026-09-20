@@ -93,4 +93,39 @@ final class ZoneFileService
             @unlink($tmp);
         }
     }
+
+    public function deploy(int $zoneId): bool
+    {
+        $zone = $this->zones->find($zoneId);
+
+        if ($zone === null) {
+            throw new ZoneException('Zone not found.');
+        }
+
+        $zoneName = (string) $zone['name'];
+        $zoneText = $this->export($zoneId);
+
+        if (is_executable($this->checkzoneBinary)) {
+            $this->validateText($zoneName, $zoneText);
+        }
+
+        if (
+            ! is_dir($this->zonesDirectory)
+            && ! @mkdir($this->zonesDirectory, 0o755, true)
+            && ! is_dir($this->zonesDirectory)
+        ) {
+            throw new ZoneException("Cannot create zones directory: {$this->zonesDirectory}");
+        }
+
+        $cleanName = ltrim(rtrim($zoneName, '.'), '.');
+        $filePath  = rtrim($this->zonesDirectory, '/') . '/db.' . $cleanName;
+
+        if (file_put_contents($filePath, $zoneText) === false) {
+            throw new ZoneException("Failed to write zone file: {$filePath}");
+        }
+
+        $this->zones->updateStatus($zoneId, 'active');
+
+        return true;
+    }
 }

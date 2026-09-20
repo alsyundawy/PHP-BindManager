@@ -37,6 +37,20 @@ $content = (string) ($templateVars['content'] ?? '');
         <?php include_once __DIR__ . '/../partials/navbar.php'; ?>
         <main class="pbm-main">
             <div class="pbm-container">
+                <?php if (isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])) : ?>
+                    <div class="pbm-alert pbm-alert-success mb-3" role="alert">
+                        <i class="fa-solid fa-circle-check me-2"></i>
+                        <?= e($_SESSION['flash_success']) ?>
+                    </div>
+                    <?php unset($_SESSION['flash_success']); ?>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['flash_error']) && is_string($_SESSION['flash_error'])) : ?>
+                    <div class="pbm-alert pbm-alert-danger mb-3" role="alert">
+                        <i class="fa-solid fa-circle-exclamation me-2"></i>
+                        <?= e($_SESSION['flash_error']) ?>
+                    </div>
+                    <?php unset($_SESSION['flash_error']); ?>
+                <?php endif; ?>
                 <?= $content ?? '' ?>
             </div>
         </main>

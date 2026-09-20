@@ -2,6 +2,20 @@
 
 declare(strict_types=1);
 
+/** @var string $dbSize */
+/** @var int $zoneCount */
+/** @var int $recordCount */
+/** @var bool $bind9Healthy */
+/** @var string $phpVersion */
+/** @var string $zonesDir */
+$templateVars = get_defined_vars();
+$dbSize       = (string) ($templateVars['dbSize'] ?? '24.8 MB');
+$zoneCount    = (int) ($templateVars['zoneCount'] ?? 0);
+$recordCount  = (int) ($templateVars['recordCount'] ?? 0);
+$bind9Healthy = (bool) ($templateVars['bind9Healthy'] ?? false);
+$phpVersion   = (string) ($templateVars['phpVersion'] ?? PHP_VERSION);
+$zonesDir     = (string) ($templateVars['zonesDir'] ?? '/etc/bind/zones');
+
 ob_start();
 ?>
 <section class="pbm-page-heading">
@@ -15,23 +29,25 @@ ob_start();
 <section class="pbm-grid pbm-grid-kpi">
     <article class="pbm-card">
         <div class="pbm-kpi-label">Database size</div>
-        <div class="pbm-kpi-value">24.8 MB</div>
-        <div class="pbm-kpi-meta pbm-success"><i class="fa-solid fa-database me-1"></i>WAL enabled</div>
+        <div class="pbm-kpi-value"><?= htmlspecialchars($dbSize, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+        <div class="pbm-kpi-meta pbm-success"><i class="fa-solid fa-database me-1"></i>SQLite WAL</div>
     </article>
     <article class="pbm-card">
-        <div class="pbm-kpi-label">Backups</div>
-        <div class="pbm-kpi-value">42</div>
-        <div class="pbm-kpi-meta pbm-muted">Last: 8 min ago</div>
+        <div class="pbm-kpi-label">Authoritative zones</div>
+        <div class="pbm-kpi-value"><?= $zoneCount ?></div>
+        <div class="pbm-kpi-meta pbm-muted"><?= number_format($recordCount) ?> total records</div>
     </article>
     <article class="pbm-card">
-        <div class="pbm-kpi-label">Audit events</div>
-        <div class="pbm-kpi-value">1,284</div>
-        <div class="pbm-kpi-meta pbm-muted">Retention active</div>
+        <div class="pbm-kpi-label">PHP Environment</div>
+        <div class="pbm-kpi-value" style="font-size: 1.25rem;">v<?= htmlspecialchars($phpVersion, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+        <div class="pbm-kpi-meta pbm-success"><i class="fa-solid fa-shield me-1"></i>Hardened</div>
     </article>
     <article class="pbm-card">
-        <div class="pbm-kpi-label">Notifications</div>
-        <div class="pbm-kpi-value">00</div>
-        <div class="pbm-kpi-meta pbm-success">All clear</div>
+        <div class="pbm-kpi-label">BIND9 Daemon</div>
+        <div class="pbm-kpi-value <?= $bind9Healthy ? 'pbm-success' : 'pbm-muted' ?>" style="font-size: 1.25rem;">
+            <?= $bind9Healthy ? 'Active' : 'Standby / Inactive' ?>
+        </div>
+        <div class="pbm-kpi-meta pbm-muted">Directory: <code><?= htmlspecialchars($zonesDir, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></code></div>
     </article>
 </section>
 

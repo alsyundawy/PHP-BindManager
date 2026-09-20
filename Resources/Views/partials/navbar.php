@@ -33,6 +33,5 @@ declare(strict_types=1);
             </button>
         </fieldset>
         <a class="pbm-btn" href="/system"><i class="fa-solid fa-gear me-1"></i>Settings</a>
-        <a class="pbm-btn" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i>Logout</a>
     </div>
 </header>

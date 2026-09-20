@@ -19,6 +19,7 @@
         <UnusedClass errorLevel="info"/>
         <PossiblyUnusedMethod errorLevel="info"/>
         <PossiblyUnusedProperty errorLevel="info"/>
+        <PossiblyUnusedReturnValue errorLevel="info"/>
         <UnusedParam>
             <errorLevel type="suppress">
                 <file name="App/Support/View.php"/>

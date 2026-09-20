@@ -9,11 +9,21 @@
 [![Database](https://img.shields.io/badge/Database-SQLite%203%20WAL-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Donate PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.me/alsyundawy)
 
-> **Enterprise-grade, security-hardened Web GUI and automation engine for BIND9 Authoritative DNS servers. Engineered with modern PHP 8.4+, strict PSR standards, zero external CDN dependencies, dual dark/light theming inspired by Visual Subnet Calculator, SQLite3 WAL persistence, and full REST API automation.**
+> **Enterprise-grade, security-hardened Web GUI and automation engine for BIND9 Authoritative DNS servers.
+> Engineered with modern PHP 8.4+, strict PSR standards, zero external CDN dependencies, dual dark/light theming
+> inspired by Visual Subnet Calculator, SQLite3 WAL persistence, and full REST API automation.**
 >
-> Designed, engineered, and maintained by **[`HARRY DERTIN SUTISNA ALSYUNDAWY (@alsyundawy)`](https://github.com/alsyundawy)** — Built for mission-critical DNS operations.
+> Designed, engineered, and maintained by
+> **[`HARRY DERTIN SUTISNA ALSYUNDAWY (@alsyundawy)`](https://github.com/alsyundawy)** —
+> Built for mission-critical DNS operations.
 >
-> 📦 **[`GitHub Releases`](https://github.com/alsyundawy/PHP-BindManager/releases)** &nbsp;|&nbsp; 📖 **[`Installation Guide`](INSTALL.md)** &nbsp;|&nbsp; 🛠️ **[`Production Deployment Tutorial`](TUTORIAL.md)** &nbsp;|&nbsp; 🏛️ **[`Architecture & Notes`](DOCNOTE.md)** &nbsp;|&nbsp; 📜 **[`Full Changelog`](CHANGELOG.md)** &nbsp;|&nbsp; 💖 **[`Support via PayPal`](https://www.paypal.me/alsyundawy)** &nbsp;|&nbsp; 🇮🇩 **[`QRIS Donation`](#-support--donation)**
+> 📦 **[`GitHub Releases`](https://github.com/alsyundawy/PHP-BindManager/releases)** &nbsp;|&nbsp;
+> 📖 **[`Installation Guide`](INSTALL.md)** &nbsp;|&nbsp;
+> 🛠️ **[`Production Deployment Tutorial`](TUTORIAL.md)** &nbsp;|&nbsp;
+> 🏛️ **[`Architecture & Notes`](DOCNOTE.md)** &nbsp;|&nbsp;
+> 📜 **[`Full Changelog`](CHANGELOG.md)** &nbsp;|&nbsp;
+> 💖 **[`Support via PayPal`](https://www.paypal.me/alsyundawy)** &nbsp;|&nbsp;
+> 🇮🇩 **[`QRIS Donation`](#-support--donation)**
 
 ---
 
@@ -42,46 +52,64 @@
 
 ## 🌟 Overview
 
-**PHP-BindManager** is a high-performance, web-based authoritative DNS management suite tailored for system administrators, network engineers, hosting providers, and DevOps teams.
+**PHP-BindManager** is a high-performance, web-based authoritative DNS management suite tailored for system
+administrators, network engineers, hosting providers, and DevOps teams.
 
-Managing BIND 9 zone files manually through terminal text editors is error-prone, risks syntax errors, and creates bottlenecks during incident response. **PHP-BindManager** bridges this gap by providing an intuitive, accessible Web GUI and automation API while ensuring full compliance with RFC standards and zero downtime.
+Managing BIND 9 zone files manually through terminal text editors is error-prone, risks syntax errors, and creates
+bottlenecks during incident response. **PHP-BindManager** bridges this gap by providing an intuitive, accessible
+Web GUI and automation API while ensuring full compliance with RFC standards and zero downtime.
 
-Whether deployed on Debian, Ubuntu, Rocky Linux, or CentOS, PHP-BindManager delivers sub-millisecond local configuration rendering, atomic database operations via SQLite WAL mode, and complete decoupling from internet-dependent CDNs.
+Whether deployed on Debian, Ubuntu, Rocky Linux, or CentOS, PHP-BindManager delivers sub-millisecond local
+configuration rendering, atomic database operations via SQLite WAL mode, and complete decoupling from
+internet-dependent CDNs.
 
 ---
 
 ## 🚀 Why This Modernized Edition?
 
-This edition (**v1.0.0**) represents a clean-slate architectural, security, accessibility, and visual overhaul of modern DNS administration:
+This edition (**v1.0.0**) represents a clean-slate architectural, security, accessibility, and visual overhaul of
+modern DNS administration:
 
 ### 🛡️ 1. Zero-CDN Offline Architecture & Content Security
 
-- **100% Local Distribution**: Ships with production bundles of **Bootstrap 3.5.8**, **jQuery 3.7.1**, and **Font Awesome 6.7.2** located in `Public/assets/vendor/`.
-- **Air-Gapped & Offline Ready**: Runs reliably in isolated server networks, air-gapped enclaves, and private intranets without third-party CDN latency, outages, or telemetry tracking.
-- **Strict Content Security Policy (CSP)**: HTTP headers enforce `default-src 'self'` and `style-src 'self' 'unsafe-inline'` with zero external origins permitted.
+- **100% Local Distribution**: Ships with production bundles of **Bootstrap 3.5.8**, **jQuery 3.7.1**, and
+  **Font Awesome 6.7.2** located in `Public/assets/vendor/`.
+- **Air-Gapped & Offline Ready**: Runs reliably in isolated server networks, air-gapped enclaves, and private
+  intranets without third-party CDN latency, outages, or telemetry tracking.
+- **Strict Content Security Policy (CSP)**: HTTP headers enforce `default-src 'self'` and
+  `style-src 'self' 'unsafe-inline'` with zero external origins permitted.
 
 ### ⚡ 2. Strict Authoritative DNS Invariant (No Cache-Poisoning Vectors)
 
 - **Dedicated Primary/Secondary Authority**: Explicitly configured for authoritative forward and reverse zones.
-- **Elimination of Recursive Bloat**: Recursive resolution and Response Policy Zones (RPZ) are deliberately omitted from authoritative nodes. This eliminates DNS cache poisoning, recursive query amplification, and memory bloat.
+- **Elimination of Recursive Bloat**: Recursive resolution and Response Policy Zones (RPZ) are deliberately omitted
+  from authoritative nodes. This eliminates DNS cache poisoning, recursive query amplification, and memory bloat.
 
 ### 🎨 3. Visual Subnet Calculator Theming & Mobile Notch Optimization
 
-- **Ergonomic Palette**: Inspired by the dark/light design system of [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc).
-- **Dual Synchronization**: Instant reactivity syncing both `data-theme` and `data-bs-theme` attributes across `dark`, `light`, and `auto` system preferences.
-- **Notch & Cutout Safe**: Implements `viewport-fit=cover`, CSS `env(safe-area-inset-*)`, and modern `100dvh` viewport units to prevent cutoffs on smartphones (including Xiaomi, Redmi, Poco, iPhone, and Android tablets).
+- **Ergonomic Palette**: Inspired by the dark/light design system of
+  [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc).
+- **Dual Synchronization**: Instant reactivity syncing both `data-theme` and `data-bs-theme` attributes across
+  `dark`, `light`, and `auto` system preferences.
+- **Notch & Cutout Safe**: Implements `viewport-fit=cover`, CSS `env(safe-area-inset-*)`, and modern `100dvh`
+  viewport units to prevent cutoffs on smartphones (including Xiaomi, Redmi, Poco, iPhone, and Android tablets).
 
 ### 🔒 4. Enterprise Security & Defense-in-Depth
 
 - **Brute-Force Rate Limiting**: IP-based rate limiting on authentication and API endpoints with automatic cooldowns.
-- **Secure Session Management**: Strict `HttpOnly`, `SameSite=Strict`, and `Secure` cookie attributes verified by static security analyzers (SonarLint S3330 compliant).
-- **Cryptographic CSRF Tokens**: Double-submitted CSRF validation on all state-changing mutating requests (`POST`, `PUT`, `DELETE`).
-- **Input Sanitization & Output Escaping**: Automated contextual escaping helper `e()` protects all view templates against Cross-Site Scripting (XSS).
+- **Secure Session Management**: Strict `HttpOnly`, `SameSite=Strict`, and `Secure` cookie attributes verified by
+  static security analyzers (SonarLint S3330 compliant).
+- **Cryptographic CSRF Tokens**: Double-submitted CSRF validation on all state-changing mutating requests
+  (`POST`, `PUT`, `DELETE`).
+- **Input Sanitization & Output Escaping**: Automated contextual escaping helper `e()` protects all view templates
+  against Cross-Site Scripting (XSS).
 
 ### 🗄️ 5. Resilient Local Database (SQLite WAL Mode)
 
-- **Atomic Transactions**: Leverages SQLite 3 in **Write-Ahead Logging (WAL)** mode for concurrent readers and sequential zero-lock writers.
-- **Single-File Portability**: Eliminates MySQL/PostgreSQL network roundtrips and service dependencies. Database backup requires simply copying `Storage/Database/bindmanager.sqlite`.
+- **Atomic Transactions**: Leverages SQLite 3 in **Write-Ahead Logging (WAL)** mode for concurrent readers and
+  sequential zero-lock writers.
+- **Single-File Portability**: Eliminates MySQL/PostgreSQL network roundtrips and service dependencies. Database
+  backup requires simply copying `Storage/Database/bindmanager.sqlite`.
 
 ---
 
@@ -167,19 +195,25 @@ PHP-BindManager validates and formats all standard DNS Resource Records:
 
 ## 🎨 Visual Subnet Calculator Design & Mobile Responsive System
 
-The interface has been meticulously designed following the acclaimed aesthetic of [Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc):
+The interface has been meticulously designed following the acclaimed aesthetic of
+[Visual Subnet Calculator](https://alsyundawy.github.io/visualsubnetcalc):
 
-- **Curated Dark/Light Palette**: Deep obsidian dark background (`#0b0f19` / `#111827`), subtle borders (`#1f2937` / `#334155`), and vibrant primary accents (`#3b82f6` with `#60a5fa` hover glow).
+- **Curated Dark/Light Palette**: Deep obsidian dark background (`#0b0f19` / `#111827`), subtle borders
+  (`#1f2937` / `#334155`), and vibrant primary accents (`#3b82f6` with `#60a5fa` hover glow).
 - **Glassmorphism Navigation Header**: Semi-transparent sticky navigation header with `backdrop-filter: blur(12px)`.
-- **Notch, Cutout & Safe Area Insets**: Integrated with `viewport-fit=cover` and CSS safe-area padding (`padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);`).
-- **Dynamic Viewport Height**: Replaces rigid `100vh` with adaptive `100dvh` to prevent content from being clipped beneath mobile browser address bars.
-- **Touch-Friendly Overflow Scrolling**: Horizontal table wrappers utilize `-webkit-overflow-scrolling: touch` with rounded boundary containers.
+- **Notch, Cutout & Safe Area Insets**: Integrated with `viewport-fit=cover` and CSS safe-area padding
+  (`padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);`).
+- **Dynamic Viewport Height**: Replaces rigid `100vh` with adaptive `100dvh` to prevent content from being clipped
+  beneath mobile browser address bars.
+- **Touch-Friendly Overflow Scrolling**: Horizontal table wrappers utilize `-webkit-overflow-scrolling: touch` with
+  rounded boundary containers.
 
 ---
 
 ## 🌐 Cross-OS Production Deployment & Migration
 
-PHP-BindManager is verified across enterprise Linux operating systems. When migrating between distributions, the primary variation lies in service naming and file locations:
+PHP-BindManager is verified across enterprise Linux operating systems. When migrating between distributions,
+the primary variation lies in service naming and file locations:
 
 ### Distribution Paths & Configuration Mapping
 
@@ -299,7 +333,7 @@ php bin/seed.php
 >
 > - **Username**: `admin`
 > - **Password**: `Admin@12345`
-> - _(Important: You will be prompted to change this immediately upon first login)._
+> - *(Important: You will be prompted to change this immediately upon first login).*
 
 ### 4. File Permissions
 
@@ -439,19 +473,26 @@ Every commit of PHP-BindManager passes rigorous automated quality gates:
 To guarantee long-term maintainability, reliability, and security, the following invariants are enforced:
 
 - **Strict Typing Mandatory**: Every PHP source file and view template declares `declare(strict_types=1);` at line 3.
-- **Strict Line Length Bound**: All controllers, services, repositories, HTML/PHP view templates, and unit tests strictly adhere to $\le 120$ characters per line.
-- **Zero Third-Party CDN Dependency**: No runtime asset requests may query external hosts. All vendor CSS, JS, and fonts must reside in `Public/assets/vendor/`.
-- **Prepared Statements Exclusive**: Raw SQL query concatenations are strictly forbidden. All database operations must utilize PDO prepared statements with explicit parameter binding.
-- **Fail-Safe Session Cookies**: Session cookies must always have `secure: true`, `httponly: true`, and `SameSite: Strict` configured.
+- **Strict Line Length Bound**: All controllers, services, repositories, HTML/PHP view templates, and unit tests
+  strictly adhere to $\le 120$ characters per line.
+- **Zero Third-Party CDN Dependency**: No runtime asset requests may query external hosts. All vendor CSS, JS, and
+  fonts must reside in `Public/assets/vendor/`.
+- **Prepared Statements Exclusive**: Raw SQL query concatenations are strictly forbidden. All database operations
+  must utilize PDO prepared statements with explicit parameter binding.
+- **Fail-Safe Session Cookies**: Session cookies must always have `secure: true`, `httponly: true`, and
+  `SameSite: Strict` configured.
 
 ---
 
 ## 🔒 Security & Content Safety
 
-- **OWASP Top 10 Hardened**: Validated against SQL Injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery (CSRF), Insecure Direct Object References (IDOR), and Broken Access Control.
-- **Argon2id Password Hashes**: Passwords are saved with `password_hash($password, PASSWORD_ARGON2ID)` using secure memory and time cost factors.
+- **OWASP Top 10 Hardened**: Validated against SQL Injection, Cross-Site Scripting (XSS), Cross-Site Request Forgery
+  (CSRF), Insecure Direct Object References (IDOR), and Broken Access Control.
+- **Argon2id Password Hashes**: Passwords are saved with `password_hash($password, PASSWORD_ARGON2ID)` using secure
+  memory and time cost factors.
 - **Subresource Integrity (SRI)**: All local vendor assets are checksum-verified against vendor distributions.
-- **Audit Trails**: Security actions (login attempts, zone modifications, privilege elevations) are persisted in the `activity_logs` table with IP addresses and user agents.
+- **Audit Trails**: Security actions (login attempts, zone modifications, privilege elevations) are persisted in the
+  `activity_logs` table with IP addresses and user agents.
 
 ---
 
@@ -530,7 +571,8 @@ Contributions are welcome! Please follow these guidelines:
 
 1. Fork the repository and create your feature branch: `git checkout -b feature/amazing-feature`.
 2. Ensure all changes adhere strictly to PSR-12 and max 120-character line lengths.
-3. Verify that all quality gates pass: `vendor/bin/phpunit`, `phpstan analyse`, `psalm`, `phpcs`, `php-cs-fixer`, and `trunk check --no-fix`.
+3. Verify that all quality gates pass: `vendor/bin/phpunit`, `phpstan analyse`, `psalm`, `phpcs`,
+   `php-cs-fixer`, and `trunk check --no-fix`.
 4. Commit your changes with conventional commit messages: `git commit -m 'feat: add DNSSEC rollover support'`.
 5. Push to your branch and open a Pull Request.
 
@@ -551,7 +593,8 @@ For technical inquiries, enterprise deployments, security consultations, or coll
 
 ## 💖 Support & Donation
 
-If **PHP-BindManager** has saved you time, enhanced your DNS operations, or provided value in your enterprise infrastructure, consider supporting its continuous maintenance, security audits, and open-source development:
+If **PHP-BindManager** has saved you time, enhanced your DNS operations, or provided value in your enterprise
+infrastructure, consider supporting its continuous maintenance, security audits, and open-source development:
 
 ### 💳 International Support: PayPal
 
@@ -561,7 +604,8 @@ If **PHP-BindManager** has saved you time, enhanced your DNS operations, or prov
 
 ### 🇮🇩 Indonesian & Regional Support: QRIS (Quick Response Code Indonesian Standard)
 
-Scan the QRIS barcode below using any Indonesian mobile banking app (BCA, Mandiri, BRI, BNI, BSI, CIMB Niaga, Permata) or e-wallet (GoPay, OVO, DANA, LinkAja, ShopeePay):
+Scan the QRIS barcode below using any Indonesian mobile banking app (BCA, Mandiri, BRI, BNI, BSI, CIMB Niaga, Permata)
+or e-wallet (GoPay, OVO, DANA, LinkAja, ShopeePay):
 
 ![QRIS Donation Barcode - ALSYUNDAWY](https://github.com/user-attachments/assets/a0126f28-6dde-43da-ba14-d7c9a27de0df)
 

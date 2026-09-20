@@ -15,6 +15,33 @@ final class RecordRepository
     /**
      * @return array<int, array<string, mixed>>
      */
+    public function all(): array
+    {
+        $statement = $this->pdo->query('SELECT * FROM dns_records ORDER BY name, record_type');
+        if ($statement === false) {
+            return [];
+        }
+
+        /** @var array<int, array<string, mixed>> */
+        return $statement->fetchAll();
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function find(int $id): ?array
+    {
+        $statement = $this->pdo->prepare('SELECT * FROM dns_records WHERE id = :id');
+        $statement->execute([':id' => $id]);
+        $record = $statement->fetch();
+
+        /** @var array<string, mixed>|null */
+        return is_array($record) ? $record : null;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function forZone(int $zoneId): array
     {
         $sql       = 'SELECT * FROM dns_records WHERE zone_id = :zone_id ORDER BY name, record_type';

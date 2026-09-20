@@ -21,6 +21,12 @@ final class CsrfMiddleware
             return $next($request);
         }
 
+        /** @var array<string, mixed> $route */
+        $route = (array) $request->getAttribute('route', []);
+        if (isset($route['csrf']) && $route['csrf'] === false) {
+            return $next($request);
+        }
+
         $parsedBody = $request->getParsedBody();
         $token      = null;
 

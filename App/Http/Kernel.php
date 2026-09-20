@@ -27,7 +27,7 @@ final class Kernel
     {
         $router  = $this->container->get(Router::class);
         $matched = $router->match($request);
-        $request = $matched->request;
+        $request = $matched->request->withAttribute('container', $this->container);
 
         $middlewareStack = [
             new SessionMiddleware($this->container->get(AuthenticationService::class)),

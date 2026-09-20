@@ -71,4 +71,10 @@ final class ZoneRepository
             ':id'     => $id,
         ]);
     }
+
+    public function delete(int $id): void
+    {
+        $statement = $this->pdo->prepare('DELETE FROM zones WHERE id = :id');
+        $statement->execute([':id' => $id]);
+    }
 }

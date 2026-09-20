@@ -13,9 +13,12 @@ use App\Logging\LoggerFactory;
 use App\Repositories\Auth\LoginAttemptRepository;
 use App\Repositories\Auth\SessionRepository;
 use App\Repositories\Auth\UserRepository;
+use App\Repositories\Dns\RecordRepository;
+use App\Repositories\Dns\ZoneRepository;
 use App\Services\Auth\AuthenticationService;
 use App\Services\Auth\CsrfService;
 use App\Services\Auth\RateLimiterService;
+use App\Services\Dns\ZoneFileService;
 use App\Support\Config;
 use App\Support\Env;
 use App\Support\Path;
@@ -100,8 +103,44 @@ final class Application
             )
         );
         $container->set(
+            ZoneRepository::class,
+            static fn (Container $c): ZoneRepository => new ZoneRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            RecordRepository::class,
+            static fn (Container $c): RecordRepository => new RecordRepository(
+                $c->get(ConnectionFactory::class)->create()
+            )
+        );
+        $container->set(
+            ZoneFileService::class,
+            static function (Container $c): ZoneFileService {
+                /** @var Config $config */
+                $config     = $c->get(Config::class);
+                $defaultDir = (string) $config->get('bind9.zones_directory', '/etc/bind/zones');
+                $zonesDir   = (string) ($config->get('bind9.zones_dir') ?? $defaultDir);
+                $chkZone    = (string) $config->get('bind9.checkzone', '/usr/sbin/named-checkzone');
+
+                return new ZoneFileService(
+                    $c->get(ZoneRepository::class),
+                    $c->get(RecordRepository::class),
+                    $zonesDir,
+                    $chkZone,
+                );
+            }
+        );
+        $container->set(
             Router::class,
-            static fn (): Router => Router::fromFile(Path::routes('web.php'))
+            static function (): Router {
+                return Router::loadFromFiles([
+                    Path::routes('web.php'),
+                    Path::routes('dns.php'),
+                    Path::routes('system.php'),
+                    Path::routes('api.php'),
+                ]);
+            }
         );
         $container->set(
             Kernel::class,
