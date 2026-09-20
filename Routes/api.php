@@ -169,20 +169,26 @@ return [
                 return Router::json($zoneNotFound, 404);
             }
 
+            $error = null;
+
             try {
                 $service->deploy($id);
-
-                return Router::json([
-                    'status'  => 'deployed',
-                    'zone_id' => $id,
-                    'zone'    => $zoneRepo->find($id),
-                ]);
             } catch (\Throwable $e) {
+                $error = $e->getMessage();
+            }
+
+            if ($error !== null) {
                 return Router::json([
                     'error'   => 'Deployment failed',
-                    'message' => $e->getMessage(),
+                    'message' => $error,
                 ], 500);
             }
+
+            return Router::json([
+                'status'  => 'deployed',
+                'zone_id' => $id,
+                'zone'    => $zoneRepo->find($id),
+            ]);
         },
     ],
     [

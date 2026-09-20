@@ -9,7 +9,6 @@ use App\Http\Router;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 final class RouterParameterTest extends TestCase
@@ -20,7 +19,7 @@ final class RouterParameterTest extends TestCase
             [
                 'method'  => 'GET',
                 'path'    => '/zones',
-                'handler' => static fn (): ResponseInterface => new Response(200, [], 'zones list'),
+                'handler' => static fn (): Response => new Response(200, [], 'zones list'),
             ],
         ];
 
@@ -37,7 +36,7 @@ final class RouterParameterTest extends TestCase
             [
                 'method'  => 'GET',
                 'path'    => '/zones/{id}',
-                'handler' => static function (ServerRequestInterface $req): ResponseInterface {
+                'handler' => static function (ServerRequestInterface $req): Response {
                     $id = (string) $req->getAttribute('id');
 
                     return new Response(200, [], "zone: {$id}");
@@ -60,7 +59,7 @@ final class RouterParameterTest extends TestCase
             [
                 'method'  => 'POST',
                 'path'    => '/zones/{id}/deploy',
-                'handler' => static function (ServerRequestInterface $req): ResponseInterface {
+                'handler' => static function (ServerRequestInterface $req): Response {
                     return new Response(200, [], 'deployed ' . (string) $req->getAttribute('id'));
                 },
             ],
@@ -80,7 +79,7 @@ final class RouterParameterTest extends TestCase
             [
                 'method'  => 'DELETE',
                 'path'    => '/zones/{zone_id}/records/{record_id}',
-                'handler' => static function (ServerRequestInterface $req): ResponseInterface {
+                'handler' => static function (ServerRequestInterface $req): Response {
                     $zoneId   = (string) $req->getAttribute('zone_id');
                     $recordId = (string) $req->getAttribute('record_id');
 
@@ -104,7 +103,7 @@ final class RouterParameterTest extends TestCase
             [
                 'method'  => 'GET',
                 'path'    => '/zones/{id}',
-                'handler' => static fn (): ResponseInterface => new Response(200),
+                'handler' => static fn (): Response => new Response(200),
             ],
         ];
 

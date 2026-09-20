@@ -128,6 +128,7 @@ final class Router
             ? preg_replace('/\{([a-zA-Z_]\w*)\}/', '(?P<$1>[^/]+)', $routePath)
             : null;
 
+        $matches = [];
         if (is_string($pattern) && preg_match('#^' . $pattern . '$#', $path, $matches) === 1) {
             /** @var array<string, string> */
             return array_filter(

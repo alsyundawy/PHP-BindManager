@@ -80,13 +80,11 @@ return [
                 return new Response(302, ['Location' => '/dashboard']);
             } catch (\App\Exceptions\AuthenticationException $e) {
                 $_SESSION['flash_error'] = $e->getMessage();
-
-                return new Response(302, ['Location' => $loginUri]);
             } catch (\Throwable) {
                 $_SESSION['flash_error'] = 'An unexpected error occurred.';
-
-                return new Response(302, ['Location' => $loginUri]);
             }
+
+            return new Response(302, ['Location' => $loginUri]);
         },
     ],
     [

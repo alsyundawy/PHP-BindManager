@@ -35,6 +35,12 @@ final class AuthMiddleware
             return new Response(302, ['Location' => '/login']);
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        if ($response instanceof ResponseInterface) {
+            return $response;
+        }
+
+        return new Response(500, [], 'Invalid middleware response');
     }
 }
