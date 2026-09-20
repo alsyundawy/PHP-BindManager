@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 /**
+ * @suppress PHP0408
+ * @suppress PHP0413
  * @var array<int, array<string, mixed>> $logs
  * @var string                           $category
  * @var int                              $total

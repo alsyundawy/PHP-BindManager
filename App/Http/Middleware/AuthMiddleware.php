@@ -17,6 +17,8 @@ final class AuthMiddleware
     }
 
     /**
+     * @suppress PHP0409
+     * @suppress PHP0410
      * @param callable(ServerRequestInterface): ResponseInterface $next
      * @return ResponseInterface
      */
@@ -43,6 +45,8 @@ final class AuthMiddleware
             throw new AuthenticationException();
         }
 
-        return new Response(302, ['Location' => '/login']);
+        $redirect = new Response(302, ['Location' => '/login']);
+
+        return $redirect;
     }
 }

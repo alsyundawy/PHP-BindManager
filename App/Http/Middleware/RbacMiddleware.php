@@ -41,22 +41,23 @@ final class RbacMiddleware
             true
         );
 
+        $denied = null;
         if ($userRole !== 'admin' && $requiredRole === 'admin') {
-            return $this->buildForbiddenResponse($isApi, 'Administrator privileges required.');
-        }
-
-        if ($userRole === 'viewer' && $isStateChange) {
-            return $this->buildForbiddenResponse(
+            $denied = $this->buildForbiddenResponse($isApi, 'Administrator privileges required.');
+        } elseif ($userRole === 'viewer' && $isStateChange) {
+            $denied = $this->buildForbiddenResponse(
                 $isApi,
                 'Your account has read-only permissions.',
                 'Viewer role has read-only permissions.'
             );
         }
 
-        return null;
+        return $denied;
     }
 
     /**
+     * @suppress PHP0409
+     * @suppress PHP0410
      * @return ResponseInterface
      */
     private function buildForbiddenResponse(
@@ -73,11 +74,15 @@ final class RbacMiddleware
                 JSON_THROW_ON_ERROR
             );
 
-            return new Response(403, ['Content-Type' => 'application/json'], $body);
+            $apiResponse = new Response(403, ['Content-Type' => 'application/json'], $body);
+
+            return $apiResponse;
         }
 
         $_SESSION['flash_error'] = $sessionMessage;
 
-        return new Response(302, ['Location' => '/dashboard']);
+        $redirectResponse = new Response(302, ['Location' => '/dashboard']);
+
+        return $redirectResponse;
     }
 }

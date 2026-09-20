@@ -13,10 +13,19 @@ indent_style = space
 indent_size = 4
 php_diagnostic_php408 = none
 php_diagnostic_php0408 = none
+php_diagnostic_php409 = none
+php_diagnostic_php0409 = none
 php_diagnostic_php410 = none
 php_diagnostic_php0410 = none
 php_diagnostic_php412 = none
 php_diagnostic_php0412 = none
+php_diagnostic_php413 = none
+php_diagnostic_php0413 = none
+
+[Resources/**.php]
+php_diagnostic = none
+php_diagnostic_php408 = none
+php_diagnostic_php0408 = none
 php_diagnostic_php413 = none
 php_diagnostic_php0413 = none
 
