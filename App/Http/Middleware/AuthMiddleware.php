@@ -16,6 +16,9 @@ final class AuthMiddleware
     {
     }
 
+    /**
+     * @param callable(ServerRequestInterface): ResponseInterface $next
+     */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
         $route        = $request->getAttribute('route', []);
@@ -35,12 +38,6 @@ final class AuthMiddleware
             return new Response(302, ['Location' => '/login']);
         }
 
-        $response = $next($request);
-
-        if ($response instanceof ResponseInterface) {
-            return $response;
-        }
-
-        return new Response(500, [], 'Invalid middleware response');
+        return $next($request);
     }
 }
