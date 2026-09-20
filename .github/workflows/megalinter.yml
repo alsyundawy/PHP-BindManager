@@ -42,7 +42,7 @@ jobs:
       # 1. Checkout
       # -----------------------------------------------------------------------
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -51,7 +51,7 @@ jobs:
       # 2. MegaLinter v10.1.0 — latest release
       # -----------------------------------------------------------------------
       - name: MegaLinter
-        uses: oxsecurity/megalinter@v10.1.0
+        uses: oxsecurity/megalinter@9949bad031045f366be2467e00e8371a7328a2e2 # v10.1.0
         id: ml
         env:
           # Validate full codebase on main/master push; diff only on PRs
@@ -81,9 +81,9 @@ jobs:
           PHP_PHPCS_CONFIG_FILE: phpcs.xml
           PHP_PHPSTAN_CONFIG_FILE: phpstan.neon
           PHP_PSALM_CONFIG_FILE: psalm.xml
-          PHP_PHPSTAN_ARGUMENTS: "--level=8 --no-progress"
-          PHP_PHPCS_ARGUMENTS: "--standard=PSR12 --extensions=php"
-          PHP_PHPMD_ARGUMENTS: "--rulesets cleancode,codesize,controversial,design,naming,unusedcode"
+          PHP_PHPSTAN_ARGUMENTS: --level=8 --no-progress
+          PHP_PHPCS_ARGUMENTS: --standard=PSR12 --extensions=php
+          PHP_PHPMD_ARGUMENTS: --rulesets cleancode,codesize,controversial,design,naming,unusedcode
           MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.json
 
           # --------------- Exclusions ---------------------------------------
@@ -92,12 +92,12 @@ jobs:
 
           # --------------- Reporting ----------------------------------------
           REPORT_OUTPUT_FOLDER: megalinter-reports
-          SARIF_REPORTER: "true"
-          TEXT_REPORTER: "true"
-          JSON_REPORTER: "true"
-          SHOW_ELAPSED_TIME: "true"
-          SHOW_SKIPPED_LINTERS: "false"
-          PARALLEL: "true"
+          SARIF_REPORTER: true
+          TEXT_REPORTER: true
+          JSON_REPORTER: true
+          SHOW_ELAPSED_TIME: true
+          SHOW_SKIPPED_LINTERS: false
+          PARALLEL: true
           LOG_LEVEL: INFO
 
       # -----------------------------------------------------------------------
@@ -105,10 +105,10 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Archive MegaLinter reports
         if: success() || failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: MegaLinter-reports
-          include-hidden-files: "true"
+          include-hidden-files: true
           retention-days: 30
           path: |
             megalinter-reports
@@ -119,7 +119,7 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Upload SARIF to GitHub Security
         if: success() || failure()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@3ea06614dafe36dec890db3446326e0d40ce53d4 # v3.38.1
         with:
           sarif_file: megalinter-reports/megalinter-report.sarif
         continue-on-error: true
@@ -161,7 +161,7 @@ jobs:
         run: sudo chown -Rc "$UID" .git/
 
       - name: Commit and push linter fixes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
         if: env.APPLY_FIXES_IF_COMMIT == 'true'
         with:
           branch: >-
@@ -170,7 +170,7 @@ jobs:
               github.head_ref ||
               github.ref
             }}
-          commit_message: "[MegaLinter] Apply linters automatic fixes"
+          commit_message: "[MegaLinter] Apply linters automatic fixes" # yamllint disable-line rule:quoted-strings
           commit_user_name: megalinter-bot
           commit_user_email: 129584137+megalinter-bot@users.noreply.github.com
 
@@ -178,13 +178,13 @@ jobs:
       # 7. Auto-PR mode (pull_request mode)
       # -----------------------------------------------------------------------
       - name: Create Pull Request with applied fixes
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
         id: cpr
         if: env.APPLY_FIXES_IF_PR == 'true'
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          commit-message: "[MegaLinter] Apply linters automatic fixes"
-          title: "[MegaLinter] Apply linters automatic fixes"
+          commit-message: "[MegaLinter] Apply linters automatic fixes" # yamllint disable-line rule:quoted-strings
+          title: "[MegaLinter] Apply linters automatic fixes" # yamllint disable-line rule:quoted-strings
           labels: bot,linting
 
       - name: Create PR output

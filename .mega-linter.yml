@@ -68,16 +68,16 @@ FILTER_REGEX_INCLUDE: >-
 # ---------------------------------------------------------------------------
 # PHP_PHPCS — PSR-12 standard
 # ---------------------------------------------------------------------------
-PHP_PHPCS_ARGUMENTS: "--standard=PSR12 --extensions=php"
+PHP_PHPCS_ARGUMENTS: --standard=PSR12 --extensions=php
 PHP_PHPCS_FILE_EXTENSIONS:
-  - ".php"
+  - .php
 PHP_PHPCS_CONFIG_FILE: phpcs.xml
 
 # ---------------------------------------------------------------------------
 # PHP_PHPSTAN — level 8
 # ---------------------------------------------------------------------------
 PHP_PHPSTAN_CONFIG_FILE: phpstan.neon
-PHP_PHPSTAN_ARGUMENTS: "--level=8 --no-progress"
+PHP_PHPSTAN_ARGUMENTS: --level=8 --no-progress
 
 # ---------------------------------------------------------------------------
 # PHP_PSALM — level 4
@@ -87,37 +87,37 @@ PHP_PSALM_CONFIG_FILE: psalm.xml
 # ---------------------------------------------------------------------------
 # PHP_PHPMD — rulesets
 # ---------------------------------------------------------------------------
-PHP_PHPMD_ARGUMENTS: "--rulesets cleancode,codesize,controversial,design,naming,unusedcode"
+PHP_PHPMD_ARGUMENTS: --rulesets cleancode,codesize,controversial,design,naming,unusedcode
 
 # ---------------------------------------------------------------------------
 # HTML_HTMLHINT
 # ---------------------------------------------------------------------------
 HTML_HTMLHINT_FILE_EXTENSIONS:
-  - ".html"
-  - ".htm"
+  - .html
+  - .htm
 
 # ---------------------------------------------------------------------------
 # CSS_STYLELINT
 # ---------------------------------------------------------------------------
 CSS_STYLELINT_FILE_EXTENSIONS:
-  - ".css"
-  - ".scss"
-  - ".sass"
+  - .css
+  - .scss
+  - .sass
 
 # ---------------------------------------------------------------------------
 # JAVASCRIPT_ES — ESLint
 # ---------------------------------------------------------------------------
 JAVASCRIPT_ES_FILE_EXTENSIONS:
-  - ".js"
-  - ".mjs"
+  - .js
+  - .mjs
 
 # ---------------------------------------------------------------------------
 # MARKDOWN_MARKDOWNLINT — markdownlint-cli2
 # ---------------------------------------------------------------------------
 MARKDOWN_MARKDOWNLINT_CONFIG_FILE: .markdownlint.json
 MARKDOWN_MARKDOWNLINT_FILE_EXTENSIONS:
-  - ".md"
-  - ".markdown"
+  - .md
+  - .markdown
 
 # ---------------------------------------------------------------------------
 # Reporting
