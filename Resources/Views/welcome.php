@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /** @var string $appName */
-$appName = isset($appName) ? (string) $appName : 'PHP-BindManager';
+$templateVars = get_defined_vars();
+$appName = (string) ($templateVars['appName'] ?? 'PHP-BindManager');
 ?>
 <!doctype html>
 <html lang="en" data-theme="dark" data-bs-theme="dark">

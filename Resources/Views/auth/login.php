@@ -3,7 +3,8 @@
 declare(strict_types=1);
 
 /** @var string $csrfToken */
-$csrfToken = isset($csrfToken) ? (string) $csrfToken : '';
+$templateVars = get_defined_vars();
+$csrfToken = (string) ($templateVars['csrfToken'] ?? '');
 ?>
 <!doctype html>
 <html lang="en" data-theme="dark" data-bs-theme="dark">

@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 /** @var string $title */
-$title = isset($title) ? (string) $title : 'PHP-BindManager';
-
 /** @var string $content */
-$content = isset($content) ? (string) $content : '';
+$templateVars = get_defined_vars();
+$title = (string) ($templateVars['title'] ?? 'PHP-BindManager');
+$content = (string) ($templateVars['content'] ?? '');
 ?>
 <!doctype html>
 <html lang="en" data-theme="dark" data-bs-theme="dark">

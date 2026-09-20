@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 /** @var int|string $statusCode */
-$statusCode = isset($statusCode) ? (string) $statusCode : '500';
-
 /** @var string $message */
-$message = isset($message) ? (string) $message : 'An error occurred';
+$templateVars = get_defined_vars();
+$statusCode = (string) ($templateVars['statusCode'] ?? '500');
+$message = (string) ($templateVars['message'] ?? 'An error occurred');
 ?>
 <!doctype html>
 <html lang="en" data-theme="dark" data-bs-theme="dark">
