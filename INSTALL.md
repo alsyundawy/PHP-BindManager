@@ -2,8 +2,8 @@
 
 ## Requirements
 
-| Component      | Version                                                       | Notes                         |
-|----------------|---------------------------------------------------------------|-------------------------------|
+| Component      | Version                                                       | Notes                             |
+|----------------|---------------------------------------------------------------|-----------------------------------|
 | PHP            | 8.1 – 8.5 (Recommended: 8.3 or 8.4)                           | Fully compatible across 8.1 - 8.5 |
 | PHP Extensions | pdo_sqlite, sqlite3, mbstring, json, openssl, curl, intl, zip | All required                      |
 | Nginx          | 1.24+                                                         | Recommended web server            |

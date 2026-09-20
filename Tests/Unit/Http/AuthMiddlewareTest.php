@@ -45,7 +45,8 @@ final class AuthMiddlewareTest extends TestCase
         unset($_SESSION['user_id']);
         $authService = $this->createAuthService();
         $middleware  = new AuthMiddleware($authService);
-        $request     = new ServerRequest('GET', '/dashboard')
+        $baseRequest = new ServerRequest('GET', '/dashboard');
+        $request     = $baseRequest
             ->withAttribute('route', ['auth' => true])
             ->withHeader('Accept', 'text/html,application/xhtml+xml');
 
@@ -62,7 +63,8 @@ final class AuthMiddlewareTest extends TestCase
         unset($_SESSION['user_id']);
         $authService = $this->createAuthService();
         $middleware  = new AuthMiddleware($authService);
-        $request     = new ServerRequest('GET', '/api/v1/zones')
+        $baseRequest = new ServerRequest('GET', '/api/v1/zones');
+        $request     = $baseRequest
             ->withAttribute('route', ['auth' => true])
             ->withHeader('Accept', 'application/json');
 
@@ -77,7 +79,8 @@ final class AuthMiddlewareTest extends TestCase
         $_SESSION['user_id'] = 42;
         $authService         = $this->createAuthService();
         $middleware          = new AuthMiddleware($authService);
-        $request             = new ServerRequest('GET', '/dashboard')
+        $baseRequest         = new ServerRequest('GET', '/dashboard');
+        $request             = $baseRequest
             ->withAttribute('route', ['auth' => true]);
 
         $next = static fn (ServerRequestInterface $req): ResponseInterface => new Response(200, [], 'dashboard-content');

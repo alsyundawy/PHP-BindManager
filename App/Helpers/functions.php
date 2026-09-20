@@ -32,30 +32,24 @@ if (! function_exists('isBind9Active')) {
         // 1. Systemd service checks (named / bind9)
         /** @psalm-suppress ForbiddenCode */
         $namedStatus = shell_exec('systemctl is-active named 2>/dev/null');
-        if (is_string($namedStatus) && trim($namedStatus) === 'active') {
-            return true;
-        }
-
         /** @psalm-suppress ForbiddenCode */
         $bind9Status = shell_exec('systemctl is-active bind9 2>/dev/null');
-        if (is_string($bind9Status) && trim($bind9Status) === 'active') {
+
+        if (
+            (is_string($namedStatus) && trim($namedStatus) === 'active')
+            || (is_string($bind9Status) && trim($bind9Status) === 'active')
+        ) {
             return true;
         }
 
         // 2. Process table checks (Docker / LXC / non-systemd environments)
         /** @psalm-suppress ForbiddenCode */
         $pgrep = shell_exec('pgrep -x named 2>/dev/null || pidof named 2>/dev/null');
-        if (is_string($pgrep) && trim($pgrep) !== '') {
-            return true;
-        }
-
         // 3. RNDC control channel check
         /** @psalm-suppress ForbiddenCode */
         $rndc = shell_exec('rndc status 2>/dev/null');
-        if (is_string($rndc) && str_contains($rndc, 'server is up and running')) {
-            return true;
-        }
 
-        return false;
+        return (is_string($pgrep) && trim($pgrep) !== '')
+            || (is_string($rndc) && str_contains($rndc, 'server is up and running'));
     }
 }
