@@ -16,36 +16,34 @@ final class RbacMiddleware
      */
     public function process(ServerRequestInterface $request, callable $next): ResponseInterface
     {
+        $denied = $this->checkAccess($request);
+        if ($denied !== null) {
+            return $denied;
+        }
+
+        return $next($request);
+    }
+
+    private function checkAccess(ServerRequestInterface $request): ?ResponseInterface
+    {
         $route = $request->getAttribute('route', []);
-
         if (! (bool) ($route['auth'] ?? false)) {
-            return $next($request);
+            return null;
         }
 
-        $userRole     = (string) ($_SESSION['role'] ?? 'viewer');
-        $requiredRole = (string) ($route['role'] ?? '');
-        $path         = $request->getUri()->getPath();
-        $isApi        = str_starts_with($path, '/api');
-
-        // Admin has full access — early return
-        if ($userRole === 'admin') {
-            return $next($request);
-        }
-
-        // Route requires admin and current user is not admin
-        if ($requiredRole === 'admin') {
-            return $this->buildForbiddenResponse(
-                $isApi,
-                'Administrator privileges required.'
-            );
-        }
-
-        // Viewer cannot perform state-changing operations
+        $userRole      = (string) ($_SESSION['role'] ?? 'viewer');
+        $requiredRole  = (string) ($route['role'] ?? '');
+        $path          = $request->getUri()->getPath();
+        $isApi         = str_starts_with($path, '/api');
         $isStateChange = in_array(
             strtoupper($request->getMethod()),
             ['POST', 'PUT', 'DELETE', 'PATCH'],
             true
         );
+
+        if ($userRole !== 'admin' && $requiredRole === 'admin') {
+            return $this->buildForbiddenResponse($isApi, 'Administrator privileges required.');
+        }
 
         if ($userRole === 'viewer' && $isStateChange) {
             return $this->buildForbiddenResponse(
@@ -55,7 +53,7 @@ final class RbacMiddleware
             );
         }
 
-        return $next($request);
+        return null;
     }
 
     /**

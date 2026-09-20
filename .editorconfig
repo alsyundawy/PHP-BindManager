@@ -11,10 +11,14 @@ insert_final_newline = true
 [*.php]
 indent_style = space
 indent_size = 4
-php_diagnostic_php0408 = false
-php_diagnostic_php0410 = false
-php_diagnostic_php0412 = false
-php_diagnostic_php0413 = false
+php_diagnostic_php408 = none
+php_diagnostic_php0408 = none
+php_diagnostic_php410 = none
+php_diagnostic_php0410 = none
+php_diagnostic_php412 = none
+php_diagnostic_php0412 = none
+php_diagnostic_php413 = none
+php_diagnostic_php0413 = none
 
 [*.md]
 trim_trailing_whitespace = false
