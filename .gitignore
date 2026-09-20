@@ -4,7 +4,7 @@
 .env.production
 
 # Composer
-vendor/
+/vendor/
 composer.lock
 
 # Database (runtime files only, not migrations)

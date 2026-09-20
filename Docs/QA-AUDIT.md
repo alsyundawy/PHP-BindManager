@@ -16,5 +16,5 @@ This document defines the automated quality gates, security invariants, and test
 - **Syntax & Parse Integrity**: Strict typing, typed properties, zero deprecated function calls.
 - **Security Boundaries**: Prepared statements on all SQL queries, CSRF token validation on mutating actions, rate limiting, and secure HTTP-only cookies.
 - **DNS Server Role**: Authoritative Primary/Secondary BIND9 server focus with simple isolated recursive fallback and zero RPZ bloat.
-- **Asset Integrity**: Complete offline assets (Bootstrap, jQuery, Font Awesome) without third-party CDN reliance.
+- **Asset Integrity**: Complete offline assets (Bootstrap 3.5.8, jQuery 3.7.1, Font Awesome 6.7.2) without third-party CDN reliance.
 - **Responsive Viewport**: Fully responsive across mobile viewports (Xiaomi, Redmi, Poco, iPhone, Samsung) respecting safe-area insets and dynamic viewport heights.
