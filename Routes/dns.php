@@ -13,9 +13,11 @@ use App\Support\View;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
-$htmlHeaders = ['Content-Type' => 'text/html; charset=UTF-8'];
-$pathZones   = '/zones';
-$pathRecords = '/records';
+$htmlHeaders     = ['Content-Type' => 'text/html; charset=UTF-8'];
+$pathZones       = '/zones';
+$pathRecords     = '/records';
+$pathTemplates   = '/templates';
+$msgZoneNotFound = 'Zone not found';
 
 return [
     // --- Zones ---
@@ -111,7 +113,10 @@ return [
         'path'       => '/zones/{id}',
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+        'handler'    => static function (ServerRequestInterface $req) use (
+            $htmlHeaders,
+            $msgZoneNotFound
+        ): Response {
             /** @var Container $container */
             $container = $req->getAttribute('container');
             /** @var ZoneRepository $zoneRepo */
@@ -125,7 +130,7 @@ return [
             $zone = $zoneRepo->find($id);
 
             if ($zone === null) {
-                throw new HttpException('Zone not found', 404);
+                throw new HttpException($msgZoneNotFound, 404);
             }
 
             $records = $recordRepo->forZone($id);
@@ -152,7 +157,7 @@ return [
         'path'       => '/zones/{id}/deploy',
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($msgZoneNotFound): Response {
             /** @var Container $container */
             $container = $req->getAttribute('container');
             /** @var ZoneFileService $service */
@@ -164,7 +169,7 @@ return [
             $zone = $zoneRepo->find($id);
 
             if ($zone === null) {
-                throw new HttpException('Zone not found', 404);
+                throw new HttpException($msgZoneNotFound, 404);
             }
 
             try {
@@ -330,7 +335,7 @@ return [
     // --- Templates ---
     [
         'method'     => 'GET',
-        'path'       => '/templates',
+        'path'       => $pathTemplates,
         'auth'       => true,
         'rate_limit' => 'web',
         'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
@@ -361,10 +366,10 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/templates',
+        'path'       => $pathTemplates,
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req): Response {
+        'handler'    => static function (ServerRequestInterface $req) use ($pathTemplates): Response {
             /** @var Container $container */
             $container = $req->getAttribute('container');
             /** @var ZoneTemplateRepository $tplRepo */
@@ -388,7 +393,7 @@ return [
                 }
             }
 
-            return new Response(302, ['Location' => '/templates']);
+            return new Response(302, ['Location' => $pathTemplates]);
         },
     ],
     [
@@ -415,41 +420,36 @@ return [
             $tpl  = $tplRepo->findById($tplId);
             $zone = $zoneRepo->find($zoneId);
 
-            if ($tpl !== null && $zone !== null) {
-                $existing = $recRepo->forZone($zoneId);
-                $userId   = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
-                $historyRepo->recordSnapshot(
-                    $zoneId,
-                    (int) ($zone['serial'] ?? 1),
-                    json_encode($existing, JSON_THROW_ON_ERROR),
-                    "Pre-template snapshot before applying '{$tpl['name']}'",
-                    $userId
-                );
-
-                $records = json_decode((string) ($tpl['records_json'] ?? '[]'), true);
-                if (is_array($records)) {
-                    foreach ($records as $r) {
-                        if (! is_array($r)) {
-                            continue;
-                        }
-                        $rName = (string) ($r['name'] ?? '@');
-                        $rType = strtoupper((string) ($r['type'] ?? 'A'));
-                        $rTtl  = (int) ($r['ttl'] ?? 3600);
-                        $rPri  = isset($r['priority']) ? (int) $r['priority'] : null;
-                        $rVal  = (string) ($r['content'] ?? '');
-                        if ($rVal !== '') {
-                            $recRepo->create($zoneId, [
-                                'name'        => $rName,
-                                'record_type' => $rType,
-                                'ttl'         => $rTtl,
-                                'priority'    => $rPri,
-                                'content'     => $rVal,
-                            ]);
-                        }
-                    }
-                }
-                $_SESSION['flash_success'] = "Template '{$tpl['name']}' applied to zone '{$zone['name']}'.";
+            if ($tpl === null || $zone === null) {
+                return new Response(302, ['Location' => "/records?zone_id={$zoneId}"]);
             }
+
+            $existing = $recRepo->forZone($zoneId);
+            $userId   = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
+            $historyRepo->recordSnapshot(
+                $zoneId,
+                (int) ($zone['serial'] ?? 1),
+                json_encode($existing, JSON_THROW_ON_ERROR),
+                "Pre-template snapshot before applying '{$tpl['name']}'",
+                $userId
+            );
+
+            $records = json_decode((string) ($tpl['records_json'] ?? '[]'), true);
+            if (is_array($records)) {
+                foreach ($records as $r) {
+                    if (! is_array($r) || ! isset($r['content']) || (string) $r['content'] === '') {
+                        continue;
+                    }
+                    $recRepo->create($zoneId, [
+                        'name'        => (string) ($r['name'] ?? '@'),
+                        'record_type' => strtoupper((string) ($r['type'] ?? 'A')),
+                        'ttl'         => (int) ($r['ttl'] ?? 3600),
+                        'priority'    => isset($r['priority']) ? (int) $r['priority'] : null,
+                        'content'     => (string) $r['content'],
+                    ]);
+                }
+            }
+            $_SESSION['flash_success'] = "Template '{$tpl['name']}' applied to zone '{$zone['name']}'.";
 
             return new Response(302, ['Location' => "/records?zone_id={$zoneId}"]);
         },
@@ -460,7 +460,10 @@ return [
         'path'       => '/zones/{id}/history',
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
+        'handler'    => static function (ServerRequestInterface $req) use (
+            $htmlHeaders,
+            $msgZoneNotFound
+        ): Response {
             /** @var Container $container */
             $container = $req->getAttribute('container');
             /** @var ZoneRepository $zoneRepo */
@@ -471,7 +474,7 @@ return [
             $id   = (int) $req->getAttribute('id');
             $zone = $zoneRepo->find($id);
             if ($zone === null) {
-                throw new HttpException('Zone not found', 404);
+                throw new HttpException($msgZoneNotFound, 404);
             }
 
             $flashSuccess = isset($_SESSION['flash_success']) && is_string($_SESSION['flash_success'])
@@ -510,23 +513,26 @@ return [
             $historyId = (int) ($parsed['history_id'] ?? 0);
             $snapshot  = $historyRepo->findById($historyId);
 
-            if ($snapshot !== null && (int) $snapshot['zone_id'] === $zoneId) {
-                $decoded = json_decode((string) $snapshot['zone_content'], true);
-                if (is_array($decoded)) {
-                    $recRepo->deleteAllForZone($zoneId);
-                    foreach ($decoded as $r) {
-                        if (is_array($r)) {
-                            $recRepo->create($zoneId, [
-                                'name'        => (string) ($r['name'] ?? '@'),
-                                'record_type' => (string) ($r['type'] ?? $r['record_type'] ?? 'A'),
-                                'ttl'         => (int) ($r['ttl'] ?? 3600),
-                                'priority'    => isset($r['priority']) ? (int) $r['priority'] : null,
-                                'content'     => (string) ($r['content'] ?? ''),
-                            ]);
-                        }
+            if ($snapshot === null || (int) $snapshot['zone_id'] !== $zoneId) {
+                return new Response(302, ['Location' => "/zones/{$zoneId}/history"]);
+            }
+
+            $decoded = json_decode((string) $snapshot['zone_content'], true);
+            if (is_array($decoded)) {
+                $recRepo->deleteAllForZone($zoneId);
+                foreach ($decoded as $r) {
+                    if (! is_array($r)) {
+                        continue;
                     }
-                    $_SESSION['flash_success'] = "Zone rolled back to snapshot #{$historyId}.";
+                    $recRepo->create($zoneId, [
+                        'name'        => (string) ($r['name'] ?? '@'),
+                        'record_type' => (string) ($r['type'] ?? $r['record_type'] ?? 'A'),
+                        'ttl'         => (int) ($r['ttl'] ?? 3600),
+                        'priority'    => isset($r['priority']) ? (int) $r['priority'] : null,
+                        'content'     => (string) ($r['content'] ?? ''),
+                    ]);
                 }
+                $_SESSION['flash_success'] = "Zone rolled back to snapshot #{$historyId}.";
             }
 
             return new Response(302, ['Location' => "/zones/{$zoneId}/history"]);

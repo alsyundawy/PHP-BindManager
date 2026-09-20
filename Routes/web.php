@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 $htmlHeaders      = ['Content-Type' => 'text/html; charset=UTF-8'];
 $loginUri         = '/login';
 $routeProfile     = '/profile';
+$routeProfileTotp = '/profile/totp';
 $routeUsers       = '/users';
 $routeUsersCreate = '/users/create';
 
@@ -248,7 +249,7 @@ return [
     // --- Profile 2FA TOTP ---
     [
         'method'     => 'GET',
-        'path'       => '/profile/totp',
+        'path'       => $routeProfileTotp,
         'auth'       => true,
         'rate_limit' => 'web',
         'handler'    => static function (ServerRequestInterface $req) use ($htmlHeaders): Response {
@@ -285,10 +286,13 @@ return [
     ],
     [
         'method'     => 'POST',
-        'path'       => '/profile/totp',
+        'path'       => $routeProfileTotp,
         'auth'       => true,
         'rate_limit' => 'web',
-        'handler'    => static function (ServerRequestInterface $req) use ($routeProfile): Response {
+        'handler'    => static function (ServerRequestInterface $req) use (
+            $routeProfile,
+            $routeProfileTotp
+        ): Response {
             /** @var \App\Container\Container $c */
             $c = $req->getAttribute('container');
             /** @var \App\Services\Auth\TotpService $totpService */
@@ -300,7 +304,7 @@ return [
             if ($secret === '' || ! $totpService->verify($secret, $code)) {
                 $_SESSION['flash_error'] = 'Invalid 6-digit TOTP verification code. Please try again.';
 
-                return new Response(302, ['Location' => '/profile/totp']);
+                return new Response(302, ['Location' => $routeProfileTotp]);
             }
 
             $_SESSION['flash_success'] = 'Two-factor authentication (2FA) successfully verified and enabled!';

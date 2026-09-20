@@ -12,6 +12,9 @@ final class AuditLogRepository
     {
     }
 
+    /**
+     * @param array{old?: ?string, new?: ?string} $diff
+     */
     public function write(
         ?int $userId,
         string $action,
@@ -19,9 +22,11 @@ final class AuditLogRepository
         ?string $entityId,
         string $ip,
         string $agent,
-        ?string $old = null,
-        ?string $new = null,
+        array $diff = [],
     ): void {
+        $old = $diff['old'] ?? null;
+        $new = $diff['new'] ?? null;
+
         $sql = 'INSERT INTO audit_logs ('
             . 'user_id, action, entity_type, entity_id, old_value, new_value, ip_address, user_agent'
             . ') VALUES ('

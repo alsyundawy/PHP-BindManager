@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\System;
 
+use App\Exceptions\BackupException;
 use PDO;
-use RuntimeException;
 
 final class BackupService
 {
@@ -28,7 +28,7 @@ final class BackupService
         $this->pdo->exec("VACUUM INTO '{$quoted}'");
 
         if (! is_file($path)) {
-            throw new RuntimeException('Database backup was not created.');
+            throw new BackupException('Database backup was not created.');
         }
 
         return $this->metadata($path, 'database', $sourceName);
@@ -37,7 +37,7 @@ final class BackupService
     public function restore(string $backupPath, string $databasePath): void
     {
         if (! is_file($backupPath) || ! is_readable($backupPath)) {
-            throw new RuntimeException('Backup file is unavailable.');
+            throw new BackupException('Backup file is unavailable.');
         }
 
         $realBackup      = realpath($backupPath);
@@ -50,18 +50,18 @@ final class BackupService
             || ! is_string($realBackupDir)
             || ! str_starts_with($realBackup, $realBackupDir . DIRECTORY_SEPARATOR)
         ) {
-            throw new RuntimeException('Backup path is outside the backup directory.');
+            throw new BackupException('Backup path is outside the backup directory.');
         }
 
         $tmp = $databasePath . '.restore-' . bin2hex(random_bytes(6));
         if (! copy($realBackup, $tmp)) {
-            throw new RuntimeException('Unable to stage database restore.');
+            throw new BackupException('Unable to stage database restore.');
         }
 
         if (! rename($tmp, $databasePath)) {
             @unlink($tmp);
 
-            throw new RuntimeException('Unable to atomically replace database.');
+            throw new BackupException('Unable to atomically replace database.');
         }
     }
 
@@ -89,7 +89,7 @@ final class BackupService
             && ! mkdir($this->backupDirectory, 0o750, true)
             && ! is_dir($this->backupDirectory)
         ) {
-            throw new RuntimeException('Unable to create backup directory.');
+            throw new BackupException('Unable to create backup directory.');
         }
     }
 
@@ -97,7 +97,7 @@ final class BackupService
     {
         $base = realpath($this->backupDirectory);
         if ($base === false) {
-            throw new RuntimeException('Backup directory is invalid.');
+            throw new BackupException('Backup directory is invalid.');
         }
 
         return $base . DIRECTORY_SEPARATOR . $filename;

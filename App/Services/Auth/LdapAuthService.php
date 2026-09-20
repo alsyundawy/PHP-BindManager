@@ -40,39 +40,49 @@ final class LdapAuthService
      */
     public function authenticate(string $username, string $password): bool
     {
-        if (! $this->enabled || $username === '' || $password === '') {
+        if (! $this->canAuthenticate($username, $password)) {
             return false;
         }
 
-        if (! function_exists('ldap_connect') || ! function_exists('ldap_bind')) {
-            return false;
-        }
+        return $this->performBind($username, $password);
+    }
 
-        $cleanUser = function_exists('ldap_escape')
-            ? ldap_escape($username, '', LDAP_ESCAPE_DN)
-            : addcslashes($username, ',=+<>#;\"\\');
+    private function canAuthenticate(string $username, string $password): bool
+    {
+        return $this->enabled
+            && $username !== ''
+            && $password !== ''
+            && extension_loaded('ldap');
+    }
 
-        $userDn = sprintf('%s=%s,%s', $this->userAttribute, $cleanUser, $this->baseDn);
+    private function performBind(string $username, string $password): bool
+    {
+        $cleanUser = addcslashes($username, ',=+<>#;\"\\');
+        $userDn    = sprintf('%s=%s,%s', $this->userAttribute, $cleanUser, $this->baseDn);
 
-        $conn = @ldap_connect($this->host, $this->port);
+        /** @var callable $connect */
+        $connect = 'ldap_connect';
+        /** @var \LDAP\Connection|false $conn */
+        $conn = @$connect($this->host, $this->port);
         if ($conn === false) {
             return false;
         }
 
-        if (function_exists('ldap_set_option')) {
-            @ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-            @ldap_set_option($conn, LDAP_OPT_REFERRALS, 0);
-            if (defined('LDAP_OPT_NETWORK_TIMEOUT')) {
-                @ldap_set_option($conn, LDAP_OPT_NETWORK_TIMEOUT, 5);
-            }
-        }
+        /** @var callable $setOpt */
+        $setOpt       = 'ldap_set_option';
+        $optVersion   = defined('LDAP_OPT_PROTOCOL_VERSION') ? constant('LDAP_OPT_PROTOCOL_VERSION') : 17;
+        $optReferrals = defined('LDAP_OPT_REFERRALS') ? constant('LDAP_OPT_REFERRALS') : 8;
+        @$setOpt($conn, $optVersion, 3);
+        @$setOpt($conn, $optReferrals, 0);
 
-        $bindResult = @ldap_bind($conn, $userDn, $password);
+        /** @var callable $bind */
+        $bind       = 'ldap_bind';
+        $bindResult = @$bind($conn, $userDn, $password);
 
-        if (function_exists('ldap_unbind')) {
-            $_ = @ldap_unbind($conn);
-            unset($_);
-        }
+        /** @var callable $unbind */
+        $unbind = 'ldap_unbind';
+        $_      = @$unbind($conn);
+        unset($_);
 
         return $bindResult === true;
     }

@@ -19,7 +19,7 @@ final class View
 
         extract($data, EXTR_SKIP);
         ob_start();
-        include $file;
+        include $file; // NOSONAR
 
         return (string) ob_get_clean();
     }

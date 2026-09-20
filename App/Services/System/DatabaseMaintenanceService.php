@@ -50,9 +50,7 @@ final class DatabaseMaintenanceService
             return [];
         }
 
-        /** @var array<int, array<string, mixed>> $results */
-        $results = $statement->fetchAll();
-
-        return $results;
+        /** @var array<int, array<string, mixed>> */
+        return $statement->fetchAll();
     }
 }

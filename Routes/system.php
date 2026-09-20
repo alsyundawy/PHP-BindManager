@@ -30,40 +30,59 @@ $pathWebhooks = '/system/webhooks';
 $errPrefix    = 'Error: ';
 
 /**
+ * Extract public key content and key tag from generated key files.
+ *
+ * @return array{0: string|null, 1: int|null}
+ */
+$extractKeyData = static function (string $zonesDir, string $keyFile): array {
+    $pubFile = $zonesDir . '/' . $keyFile . '.key';
+    if (! is_file($pubFile)) {
+        return [null, null];
+    }
+    $content   = file_get_contents($pubFile);
+    $publicKey = ($content !== false && $content !== '') ? $content : null;
+    $matches   = [];
+    $keyTag    = preg_match('/\+(\d{5})$/', $keyFile, $matches) === 1 ? (int) $matches[1] : null;
+
+    return [$publicKey, $keyTag];
+};
+
+/**
  * Helper to run dnssec-keygen if available.
  *
  * @return array{keyFile: string, keyTag: int, publicKey: string|null}
  */
-$generateDnssecKey = static function (int $zoneId, string $keyRole, int $algorithm, string $zonesDir): array {
+$generateDnssecKey = static function (
+    int $zoneId,
+    string $keyRole,
+    int $algorithm,
+    string $zonesDir
+) use ($extractKeyData): array {
     $keyFile   = 'K' . $zoneId . '-' . $keyRole . '-' . time();
     $keyTag    = random_int(1, 65535);
     $publicKey = null;
 
     $dnssecKeygen = '/usr/sbin/dnssec-keygen';
-    if (is_executable($dnssecKeygen)) {
-        $roleFlag = $keyRole === 'ksk' ? ' -f KSK' : '';
-        $cmd      = escapeshellcmd($dnssecKeygen)
-                   . $roleFlag
-                   . ' -a ' . $algorithm
-                   . ' -n ZONE'
-                   . ' -K ' . escapeshellarg($zonesDir)
-                   . ' zone' . $zoneId;
-        $output  = [];
-        $retCode = 0;
-        exec($cmd . ' 2>&1', $output, $retCode);
-        if ($retCode === 0 && isset($output[0])) {
-            $keyFile = $output[0];
-            $pubFile = $zonesDir . '/' . $keyFile . '.key';
-            if (is_file($pubFile)) {
-                $content = file_get_contents($pubFile);
-                if ($content !== false && $content !== '') {
-                    $publicKey = $content;
-                }
-                $matches = [];
-                if (preg_match('/\+(\d{5})$/', $keyFile, $matches) === 1) {
-                    $keyTag = (int) $matches[1];
-                }
-            }
+    if (! is_executable($dnssecKeygen)) {
+        return ['keyFile' => $keyFile, 'keyTag' => $keyTag, 'publicKey' => $publicKey];
+    }
+
+    $roleFlag = $keyRole === 'ksk' ? ' -f KSK' : '';
+    $cmd      = escapeshellcmd($dnssecKeygen)
+               . $roleFlag
+               . ' -a ' . $algorithm
+               . ' -n ZONE'
+               . ' -K ' . escapeshellarg($zonesDir)
+               . ' zone' . $zoneId;
+    $output  = [];
+    $retCode = 0;
+    exec($cmd . ' 2>&1', $output, $retCode);
+    if ($retCode === 0 && isset($output[0])) {
+        $keyFile                       = $output[0];
+        [$extractedPub, $extractedTag] = $extractKeyData($zonesDir, $keyFile);
+        $publicKey                     = $extractedPub;
+        if ($extractedTag !== null) {
+            $keyTag = $extractedTag;
         }
     }
 
