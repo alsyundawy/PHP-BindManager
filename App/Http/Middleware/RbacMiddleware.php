@@ -11,11 +11,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class RbacMiddleware
 {
-    private readonly ResponseFactoryInterface $responseFactory;
-
-    public function __construct(?ResponseFactoryInterface $responseFactory = null)
-    {
-        $this->responseFactory = $responseFactory ?? new Psr17Factory();
+    public function __construct(
+        private readonly ResponseFactoryInterface $responseFactory = new Psr17Factory()
+    ) {
     }
     /**
      * @param callable(ServerRequestInterface): ResponseInterface $next

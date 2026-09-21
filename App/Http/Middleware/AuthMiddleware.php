@@ -13,13 +13,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 final class AuthMiddleware
 {
-    private readonly ResponseFactoryInterface $responseFactory;
-
     public function __construct(
         private readonly AuthenticationService $authenticationService,
-        ?ResponseFactoryInterface $responseFactory = null
+        private readonly ResponseFactoryInterface $responseFactory = new Psr17Factory()
     ) {
-        $this->responseFactory = $responseFactory ?? new Psr17Factory();
     }
 
     /**
