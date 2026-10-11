@@ -13,7 +13,7 @@ $message = (string) ($templateVars['message'] ?? 'An error occurred');
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title><?= e((string) $statusCode) ?> - Error</title>
+    <title><?= e($statusCode) ?> - Error</title>
     <!-- Local Offline Vendor CSS (Zero CDN) -->
     <link rel="stylesheet" href="/assets/vendor/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css">
@@ -54,9 +54,9 @@ $message = (string) ($templateVars['message'] ?? 'An error occurred');
 <div class="wrap">
     <div class="box">
         <h1 class="h2 fw-bold text-danger">
-            <i class="fa-solid fa-triangle-exclamation me-2"></i><?= e((string) $statusCode) ?>
+            <i class="fa-solid fa-triangle-exclamation me-2"></i><?= e($statusCode) ?>
         </h1>
-        <p class="text-secondary"><?= e($message ?? 'An error occurred.') ?></p>
+        <p class="text-secondary"><?= e($message) ?></p>
         <p class="mt-4"><a href="/"><i class="fa-solid fa-house me-1"></i>Return to home</a></p>
     </div>
 </div>

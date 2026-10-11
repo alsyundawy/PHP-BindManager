@@ -87,7 +87,7 @@ $appName = (string) ($templateVars['appName'] ?? 'PHP-BindManager');
 <div class="wrap">
     <div class="card">
         <h1>
-            <i class="fa-solid fa-server text-primary me-2"></i><?= e($appName ?? 'PHP-BindManager') ?>
+            <i class="fa-solid fa-server text-primary me-2"></i><?= e($appName) ?>
         </h1>
         <p>
             Enterprise-grade Web GUI for BIND9 DNS management with secure authentication,

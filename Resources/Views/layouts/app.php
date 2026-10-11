@@ -23,7 +23,7 @@ $content = (string) ($templateVars['content'] ?? '');
     <meta name="apple-mobile-web-app-title" content="BindManager">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="PHP-BindManager BIND9 Authoritative DNS operations platform.">
-    <meta property="og:title" content="<?= e($title ?? 'PHP-BindManager') ?>">
+    <meta property="og:title" content="<?= e($title) ?>">
     <meta property="og:description" content="Enterprise Web GUI for BIND9 Authoritative DNS Infrastructure.">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="PHP-BindManager">
@@ -51,7 +51,7 @@ $content = (string) ($templateVars['content'] ?? '');
             document.documentElement.setAttribute("data-bs-theme", theme);
         } catch (e) {}
     </script>
-    <title><?= e($title ?? 'PHP-BindManager') ?></title>
+    <title><?= e($title) ?></title>
 </head>
 <body>
     <a href="#pbm-main-content" class="pbm-skip-link">Skip to main content</a>
@@ -75,7 +75,7 @@ $content = (string) ($templateVars['content'] ?? '');
                     </div>
                     <?php unset($_SESSION['flash_error']); ?>
                 <?php endif; ?>
-                <?= $content ?? '' ?>
+                <?= $content ?>
                 <footer class="pbm-footer" role="contentinfo">
                     <div>
                         <strong>PHP-BindManager</strong> v1.0.1 &bull; BIND 9 Authoritative DNS

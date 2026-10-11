@@ -50,7 +50,7 @@ final class AuthMiddlewareTest extends TestCase
             ->withAttribute('route', ['auth' => true])
             ->withHeader('Accept', 'text/html,application/xhtml+xml');
 
-        $next = static fn (ServerRequestInterface $req): ResponseInterface => new Response(200, [], 'OK');
+        $next = static fn (ServerRequestInterface $_req): ResponseInterface => new Response(200, [], 'OK');
 
         $response = $middleware->process($request, $next);
 
@@ -68,7 +68,7 @@ final class AuthMiddlewareTest extends TestCase
             ->withAttribute('route', ['auth' => true])
             ->withHeader('Accept', 'application/json');
 
-        $next = static fn (ServerRequestInterface $req): ResponseInterface => new Response(200, [], 'OK');
+        $next = static fn (ServerRequestInterface $_req): ResponseInterface => new Response(200, [], 'OK');
 
         $this->expectException(AuthenticationException::class);
         $middleware->process($request, $next);

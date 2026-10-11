@@ -40,7 +40,7 @@ $flashError = (string) ($templateVars['flashError'] ?? '');
             <?= htmlspecialchars($flashError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
         </div>
 <?php endif; ?>
-        <input type="hidden" name="_csrf_token" value="<?= e($csrfToken ?? '') ?>">
+        <input type="hidden" name="_csrf_token" value="<?= e($csrfToken) ?>">
         <label for="username">Username</label>
         <input
             id="username"
