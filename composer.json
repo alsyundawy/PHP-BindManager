@@ -53,7 +53,7 @@
     "phpstan/phpstan-strict-rules": "^2.0",
     "vimeo/psalm": "^6.0",
     "friendsofphp/php-cs-fixer": "^3.65",
-    "phpmd/phpmd": "^2.15",
+    "phpmd/phpmd": "^3.0",
     "slevomat/coding-standard": "^8.15",
     "phpstan/phpstan-phpunit": "^2.0"
   },
