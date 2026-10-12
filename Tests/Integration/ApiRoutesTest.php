@@ -15,10 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 final class ApiRoutesTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private Container $container;
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private Router $router;
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private PDO $pdo;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

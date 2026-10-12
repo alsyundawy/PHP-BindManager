@@ -12,8 +12,10 @@ use PHPUnit\Framework\TestCase;
 
 final class RateLimiterServiceTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private PDO $pdo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->pdo = new PDO('sqlite::memory:');

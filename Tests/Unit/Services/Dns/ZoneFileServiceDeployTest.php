@@ -12,9 +12,12 @@ use PHPUnit\Framework\TestCase;
 
 final class ZoneFileServiceDeployTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private string $tempDir;
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private PDO $pdo;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
